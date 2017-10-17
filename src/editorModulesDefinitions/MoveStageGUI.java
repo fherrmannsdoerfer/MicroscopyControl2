@@ -2,6 +2,8 @@ package editorModulesDefinitions;
 
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.JCheckBox;
@@ -22,6 +24,7 @@ public class MoveStageGUI extends EditorModules{
 	JTextField xPos = new JTextField("0");
 	JTextField yPos = new JTextField("0");
 	JTextField zPos = new JTextField("0");
+	JCheckBox useVariableFromLoop = new JCheckBox("Use Variable From Loop");
 	
 	private static String name = "MoveStage";
 	
@@ -42,7 +45,7 @@ public class MoveStageGUI extends EditorModules{
 		zPos = Utility.setFormatTextFields(zPos,30,20,3);
 		
 		JPanel retPanel = new JPanel();
-		retPanel.setLayout(new GridLayout(3, 2,60,15));
+		retPanel.setLayout(new GridLayout(4, 2,60,15));
 		
 		retPanel.add(new JLabel("X Position in nm:"));
 		retPanel.add(xPos);
@@ -50,8 +53,22 @@ public class MoveStageGUI extends EditorModules{
 		retPanel.add(yPos);
 		retPanel.add(new JLabel("Z Position in nm:"));
 		retPanel.add(zPos);
+		retPanel.add(new JLabel(""));
+		retPanel.add(useVariableFromLoop);
+		useVariableFromLoop.addActionListener(new chkBoxActionListener());
 
 		return retPanel;
+	}
+	
+	class chkBoxActionListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			xPos.setEnabled(!useVariableFromLoop.isSelected());
+			yPos.setEnabled(!useVariableFromLoop.isSelected());
+			zPos.setEnabled(!useVariableFromLoop.isSelected());
+		}
+		
 	}
 	
 		

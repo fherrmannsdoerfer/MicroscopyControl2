@@ -2,6 +2,8 @@ package editorModulesDefinitions;
 
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -24,7 +26,7 @@ public class LoopROIsGUI extends LoopModules{
 	JLabel numberRuns = new JLabel("");
 	JButton updateButton = new JButton("Update ROI List");
 	MainFrameEditor mfe;
-	MainFrame mf;
+	JPanel dispList;
 	
 	private static String name = "LoopROIs";
 	EditorModules endLoop = new EndLoopGUI(this);
@@ -32,7 +34,6 @@ public class LoopROIsGUI extends LoopModules{
 	public LoopROIsGUI(MainFrameEditor mfe) {
 		super(mfe);
 		this.mfe = mfe;
-		this.mf = mfe.getMainFrameReference();
 		this.setParameterButtonsName(name);
 		this.setColor(mfe.style.getColorLoop());
 		this.setOptionPanel(createOptionPanel());
@@ -44,16 +45,39 @@ public class LoopROIsGUI extends LoopModules{
 	
 	private JPanel createOptionPanel(){
 		
+		PositionList list = mfe.getMainFrameReference().getPositionList();
+
 		JPanel retPanel = new JPanel();
-		retPanel.setLayout(new GridLayout(2, 2,60,15));
-		retPanel.add(new JLabel("Number of iterations:"));
-		PositionList list = mf.getPositionList();
+		JPanel upperPart = new JPanel();
+		upperPart.setLayout(new GridLayout(2, 2,60,15));
+		upperPart.add(new JLabel("Number of iterations:"));
+		upperPart.add(numberRuns);
+		upperPart.add(new JLabel(""));
+		upperPart.add(updateButton);
+		updateButton.addActionListener(new updateButtonActionListener());
+		
+		dispList = new JPanel();
+		updatePositionList();
+		Box verticalBox = Box.createVerticalBox();
+		verticalBox.add(upperPart);
+		verticalBox.add(Box.createVerticalStrut(30));
+		verticalBox.add(dispList);
+		retPanel.add(verticalBox);
+		return retPanel;
+	}
+	
+	class updateButtonActionListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			updatePositionList();
+		}
+	}
+	
+	private void updatePositionList(){
+		dispList.removeAll();
+		PositionList list = mfe.getMainFrameReference().getPositionList();
 		numberRuns.setText(String.valueOf(list.getNumberOfPositions()));
-		retPanel.add(numberRuns);
-		retPanel.add(new JLabel(""));
-		retPanel.add(updateButton);
-		JPanel dispList = new JPanel();
-		dispList.setLayout(new GridLayout(list.getNumberOfPositions()+1,4));
+		dispList.setLayout(new GridLayout(list.getNumberOfPositions()+1,4,10,10));
 		dispList.add(new JLabel("Position:"));
 		dispList.add(new JLabel("X:"));
 		dispList.add(new JLabel("Y:"));
@@ -64,8 +88,6 @@ public class LoopROIsGUI extends LoopModules{
 			dispList.add(new JLabel(String.valueOf(list.getPosition(i).getY())));
 			dispList.add(new JLabel(String.valueOf(list.getPosition(i).getZ())));
 		}
-		retPanel.add(dispList);
-		return retPanel;
 	}
 	
 	@Override

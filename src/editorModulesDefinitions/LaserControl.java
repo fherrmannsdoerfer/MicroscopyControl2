@@ -1,16 +1,12 @@
 package editorModulesDefinitions;
 
-import java.awt.Component;
 import java.awt.GridLayout;
 
-import javax.swing.Box;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import microscopeControl.MainFrame;
 import utility.Utility;
 import editor.EditorModules;
 import editor.MainFrameEditor;

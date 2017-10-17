@@ -6,10 +6,12 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.io.File;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
 
@@ -26,10 +28,12 @@ import com.sun.xml.internal.bind.v2.runtime.Coordinator;
 
 import utility.Utility;
 import dataTypes.ROIParameters;
+import editor.ControlerEditor;
+import editor.MainFrameEditor;
 import mmcorej.CMMCore;
 
 //MainFrame is the parent window for all control elements
-public class MainFrame extends JFrame{
+public class MainFrame extends JFrame {
 	//Path to the python executable
 	String pathToPython = "c:\\Program Files\\Anaconda\\python.exe";
 	
@@ -57,6 +61,7 @@ public class MainFrame extends JFrame{
 	Display disp;
 	OutputPathControl outCon;
 	ROISettings roiSet;
+	EditorControl editCon;
 	AutomatedReconstructionControl autoRecCon;
 	PifocPositionAndMonitor pifocCon;
 	FilterWheelControl filterWheelCon;
@@ -89,9 +94,12 @@ public class MainFrame extends JFrame{
 	
 	private PositionList posList;
 
+	File experimentFolder = new File(System.getProperty("user.home")+"//ExperimentEditor");
+	final JFileChooser experimentFileChooserLoad = new JFileChooser(experimentFolder);
 	
 	public MainFrame(CMMCore core, ScriptInterface app)
 	{
+		this.app = app;
 		this.core = core;
 		this.setBounds(100,00,1000,1090);
 		this.setResizable(false);
@@ -103,6 +111,7 @@ public class MainFrame extends JFrame{
 		disp = new Display(this);
 		outCon = new OutputPathControl(this,outPathDims,outPathDims,outPathDims);
 		roiSet = new ROISettings(this,minSize,prefSize,maxSize);
+		editCon = new EditorControl(this,minSize,prefSize,maxSize);
 		autoRecCon = new AutomatedReconstructionControl(this, minSize, prefSize, maxSize);
 		pifocCon = new PifocPositionAndMonitor(this,minSize,new Dimension(column2PrefWidth,250),maxSize);
 		filterWheelCon = new FilterWheelControl(this, minSize, prefSize, maxSize);
@@ -121,6 +130,7 @@ public class MainFrame extends JFrame{
 		tabbedPane.addTab("RapidSTORM", autoRecCon);
 		tabbedPane.addTab("Z-Calibration", new ZCalibration(this, minSize, prefSize, maxSize));
 		tabbedPane.addTab("Filter Wheel", filterWheelCon);
+		tabbedPane.addTab("Editor", editCon);
 		
 		JPanel column1 = new JPanel();
 		column1.setLayout(new BoxLayout(column1, BoxLayout.Y_AXIS));
@@ -239,6 +249,32 @@ public class MainFrame extends JFrame{
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public void startEditor() {
+		ControlerEditor controler = new ControlerEditor();
+		MainFrameEditor mfe = new MainFrameEditor(controler,this);
+		controler.setMainFrameReference(mfe);
+		mfe.setVisible(true);
+		mfe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+
+	public String loadExperiment() {
+		int returnVal = experimentFileChooserLoad.showOpenDialog(null);
+		if (returnVal == JFileChooser.APPROVE_OPTION){
+			return experimentFileChooserLoad.getSelectedFile().getAbsolutePath();
+		}
+		return "Import Was Canceled";
+	}
+
+	public void startExperiment() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void stopExperiment() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

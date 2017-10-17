@@ -25,6 +25,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -41,6 +42,7 @@ import javax.swing.SwingConstants;
 
 import microscopeControl.MainFrame;
 import editorModulesDefinitions.EndLoopGUI;
+import editorModulesDefinitions.IterableInputGUI;
 import editorModulesDefinitions.LaserControl;
 import editorModulesDefinitions.LoopGUI;
 import editorModulesDefinitions.LoopROIsGUI;
@@ -48,9 +50,9 @@ import editorModulesDefinitions.MoveStageGUI;
 import editorModulesDefinitions.StainingRobotCommandGUI;
 import editorModulesDefinitions.StartImageAcquisitionGUI;
 
-public class MainFrameEditor extends JFrame implements Serializable{
+public class MainFrameEditor extends JDialog implements Serializable{
 	
-	private MainFrame mf;
+	transient private MainFrame mf;
 	private ArrayList<EditorModules> listProcessingStepPanels = new ArrayList<EditorModules>();
 	ControlerEditor controlerReference;
 	JPanel panel;
@@ -72,7 +74,8 @@ public class MainFrameEditor extends JFrame implements Serializable{
 	private final ArrayList<EditorModules> microscopeComboBoxOptions = new ArrayList<EditorModules>();
 	private final ArrayList<EditorModules> loopsComboBoxOptions = new ArrayList<EditorModules>();
 
-	public MainFrameEditor(final ControlerEditor controler) {
+	public MainFrameEditor(final ControlerEditor controler, MainFrame mf) {
+		this.mf = mf;
 		setMinimumSize(style.getSizeEditor());
 		folder.mkdir();
 		optionPanel = new JPanel();
@@ -109,6 +112,7 @@ public class MainFrameEditor extends JFrame implements Serializable{
 		microscopeComboBoxOptions.add(new LaserControl());
 		microscopeComboBoxOptions.add(new StartImageAcquisitionGUI());
 		microscopeComboBoxOptions.add(new MoveStageGUI());
+		microscopeComboBoxOptions.add(new IterableInputGUI());
 		
 		stainingRobotComboBoxOptions.add(new StainingRobotCommandGUI());
 		
@@ -391,15 +395,15 @@ public class MainFrameEditor extends JFrame implements Serializable{
 		Component verticalStrut_4 = Box.createVerticalStrut(20);
 		selectedModulesBox.add(verticalStrut_4);
 		
-				panel = new RootPanel(this);
-				
-				wholeEditorBox.add(panel);
-				panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS));
-				JScrollPane scrollPane = new JScrollPane(panel);
-				selectedModulesBox.add(scrollPane);
-				scrollPane.setPreferredSize(new Dimension(style.getWidthEditorModules()+60,1200));
-				scrollPane.setMinimumSize(new Dimension(style.getWidthEditorModules()+30,500));
-				scrollPane.setMaximumSize(new Dimension(style.getWidthEditorModules()+900,33200));
+		panel = new RootPanel(this);
+		
+		wholeEditorBox.add(panel);
+		panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS));
+		JScrollPane scrollPane = new JScrollPane(panel);
+		selectedModulesBox.add(scrollPane);
+		scrollPane.setPreferredSize(new Dimension(style.getWidthEditorModules()+60,1200));
+		scrollPane.setMinimumSize(new Dimension(style.getWidthEditorModules()+30,500));
+		scrollPane.setMaximumSize(new Dimension(style.getWidthEditorModules()+900,33200));
 		
 		Box parameterBox = Box.createVerticalBox();
 		parameterBox.setMaximumSize(style.getDimensionParameters());
@@ -472,6 +476,12 @@ public class MainFrameEditor extends JFrame implements Serializable{
 		panel.repaint();
 		panel.revalidate();
 	}
+	
+	public void repaintOptionPanel(){
+		optionPanel.repaint();
+		optionPanel.revalidate();
+	}
+	
 
 	public void removePanel(EditorModules thisPanel) {
 		//if the deleted module is any kind of LoopModules then the according endLoop module is deleted as well

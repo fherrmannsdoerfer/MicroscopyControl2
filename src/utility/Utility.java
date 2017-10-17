@@ -7,6 +7,7 @@ import ij.process.ImageProcessor;
 
 import java.awt.Dimension;
 import java.awt.Polygon;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.swing.JTextField;
@@ -15,7 +16,7 @@ import dataTypes.ROIParameters;
 
 
 //some useful general functions
-public class Utility {
+public class Utility implements Serializable {
 	
 	//function to save space when formating the JTextFields
 	static public JTextField setFormatTextFields(JTextField txtField, int width, int height, int nbrColumns){

@@ -7,6 +7,8 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import microscopeControl.MainFrame;
+
 
 public class StartEditor {
 	static ControlerEditor controler;
@@ -34,10 +36,11 @@ public class StartEditor {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					mfe = new MainFrameEditor(controler);
+					MainFrame mf = new MainFrame(null,null);
+					mfe = new MainFrameEditor(controler,mf);
 					controler.setMainFrameReference(mfe);
 					mfe.setVisible(true);
-					mfe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+					mfe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
