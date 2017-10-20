@@ -24,7 +24,7 @@ public class MoveStageGUI extends EditorModules{
 	JTextField xPos = new JTextField("0");
 	JTextField yPos = new JTextField("0");
 	JTextField zPos = new JTextField("0");
-	JCheckBox useVariableFromLoop = new JCheckBox("Use Variable From Loop");
+	JCheckBox useVariableFromLoop = new JCheckBox("Use ROI From Loop");
 	
 	private static String name = "MoveStage";
 	

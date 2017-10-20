@@ -41,10 +41,12 @@ import java.awt.Font;
 import javax.swing.SwingConstants;
 
 import microscopeControl.MainFrame;
+import editorModulesDefinitions.CaptureWidefieldImageGUI;
 import editorModulesDefinitions.EndLoopGUI;
 import editorModulesDefinitions.IterableInputGUI;
 import editorModulesDefinitions.LaserControl;
 import editorModulesDefinitions.LoopGUI;
+import editorModulesDefinitions.LoopIterableGUI;
 import editorModulesDefinitions.LoopROIsGUI;
 import editorModulesDefinitions.MoveStageGUI;
 import editorModulesDefinitions.StainingRobotCommandGUI;
@@ -113,11 +115,13 @@ public class MainFrameEditor extends JDialog implements Serializable{
 		microscopeComboBoxOptions.add(new StartImageAcquisitionGUI());
 		microscopeComboBoxOptions.add(new MoveStageGUI());
 		microscopeComboBoxOptions.add(new IterableInputGUI());
+		microscopeComboBoxOptions.add(new CaptureWidefieldImageGUI());
 		
 		stainingRobotComboBoxOptions.add(new StainingRobotCommandGUI());
 		
 		loopsComboBoxOptions.add(new LoopGUI());
 		loopsComboBoxOptions.add(new LoopROIsGUI());
+		loopsComboBoxOptions.add(new LoopIterableGUI());
 		//processingComboBoxOptions.add(new CropGUI());
 		
 		File[] listOfFiles = folder.listFiles();		
