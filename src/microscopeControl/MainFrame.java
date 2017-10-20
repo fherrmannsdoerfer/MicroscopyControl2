@@ -38,10 +38,12 @@ public class MainFrame extends JFrame {
 	String pathToPython = "c:\\Program Files\\Anaconda\\python.exe";
 	
 	//name of the hardware set in Micro-Manager
-	private String camName = "IXon Ultra";
-	private String zStage = "PIZStage";
+	private String camName = "iXon Ultra";
+	private String zStageName = "PIZStage";
+	private String xyStageName = "PIXYStage";
+	private String filterWheelName = "Thorlabs Filter Wheel";
 	private String[] filterNames = {"488 no UV", "561 no UV", "660", "561", "488", "free"};
-	private String[] laserNames = {"CoherentCube405","Obis488","Obis561","CoherentCube661"};
+	private String[] laserNames = {"CoherentCube405","CoherentObis488","CoherentObis561","CoherentCube661"};
 	
 	//Wavelengths of the used lasers
 	private String[] laserWavelengths = {"405 nm", "488 nm", "561 nm","661 nm"};
@@ -182,8 +184,8 @@ public class MainFrame extends JFrame {
 	//function calls from ROISettings
 	public int getSelectedChannel(){return roiSet.getSelectedChannel();}
 	
-	public double getZStagePosition() throws NumberFormatException, Exception{return Double.valueOf(core.getProperty(zStage, "Position"));}
-	public void setZStagePosition(double val) throws Exception {core.setProperty(zStage, "Position",val);}
+	public double getZStagePosition() throws NumberFormatException, Exception{return Double.valueOf(core.getProperty(zStageName, "Position"));}
+	public void setZStagePosition(double val) throws Exception {core.setProperty(zStageName, "Position",val);}
 	
 	public void setAction(String action) {currentAction = action;}
 
@@ -193,7 +195,7 @@ public class MainFrame extends JFrame {
 
 	public ImagePlus captureImage(){return camWorker.captureImage();}
 
-	public void setFocusLockState(int state) throws Exception {core.setProperty(zStage, "External sensor", state);}
+	public void setFocusLockState(int state) throws Exception {core.setProperty(zStageName, "External sensor", state);}
 
 	public boolean isROISet() {return roiSet.isCustomROISet();}
 

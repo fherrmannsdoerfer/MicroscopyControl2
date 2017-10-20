@@ -43,6 +43,7 @@ public class CameraParameter extends JPanel{
 	
 	public CameraParameter(MainFrame mf, Dimension minSize, Dimension prefSize, Dimension maxSize){
 		this.mf = mf;
+		core = mf.getCoreObject();
 		setMinimumSize(minSize);
 		setPreferredSize(prefSize);
 		setMaximumSize(maxSize);
@@ -149,7 +150,7 @@ public class CameraParameter extends JPanel{
 				try {
 					mf.setLivePreviewRunning(false);
 					mf.setEnableStartLivePreviewButton(true);
-					core.setProperty("iXon Ultra", "Shutter (Internal)","Open");	
+					core.setProperty(camName, "Shutter (Internal)","Open");	
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -159,7 +160,7 @@ public class CameraParameter extends JPanel{
 				try {
 					mf.setLivePreviewRunning(true);
 					mf.setEnableStartLivePreviewButton(true);
-					core.setProperty("iXon Ultra", "Shutter (Internal)","Closed");
+					core.setProperty(camName, "Shutter (Internal)","Closed");
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
