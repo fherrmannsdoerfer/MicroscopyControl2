@@ -32,8 +32,8 @@ public class LaserControl extends JPanel {
 	 * Create the panel.
 	 */
 	public LaserControl(MainFrame mf) {
-		setPreferredSize(new Dimension(620, 420));
-		setMaximumSize(new Dimension(5000, 5000));
+		setPreferredSize(new Dimension(570, 350));
+		setMaximumSize(new Dimension(570, 350));
 		this.core = mf.getCoreObject();
 		setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		

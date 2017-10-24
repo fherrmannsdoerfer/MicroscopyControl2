@@ -48,6 +48,7 @@ public class LaserPanel extends JPanel {
 	//button to switch the state of the laser
 	JButton btnSwitchLaser;
 	String laserName;
+	
 	/**
 	 * Create the panel.
 	 */
@@ -56,21 +57,13 @@ public class LaserPanel extends JPanel {
 		this.core = mf.getCoreObject();
 		laserName = name;
 
-		//get the minimum and maximum laser powers from Micro-Manager
-		try {
-			minimalLaserPower = Double.parseDouble(core.getProperty(laserName, "Minimum Laser Power"));
-			maximalLaserPower = Double.parseDouble(core.getProperty(laserName, "Maximum Laser Power"));
-		} catch (NumberFormatException e) {
-			System.err.println("The conversion of the minimal or maximal laser power was not successfull");
-			e.printStackTrace();
-		} catch (Exception e) {
-			System.err.println("An unexpected error occurred.");
-			e.printStackTrace();
-		}
+		//get the minimum and maximum laser powers from Micro-Manager does not work since for some lasers no values are available and the unit is sometimes mW and sometimes W 
+		minimalLaserPower = 0.1;
+		maximalLaserPower = 100;
 		
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		//Define size and appearance of the laser panel
-		Dimension d = new Dimension(140,280);
+		Dimension d = new Dimension(140,250);
 		
 		this.setPreferredSize(d);
 		this.setBorder(new TitledBorder(null, "Laser "+ waveLength, TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -210,12 +203,14 @@ public class LaserPanel extends JPanel {
 			try {
 				if (state) {
 					state = false;
+					core.setProperty(laserName, "State", state);
 					btnSwitchLaser.setIcon(new ImageIcon(imgOFF.getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
 					btnSwitchLaser.setText("OFF");
 					core.setProperty(laserName,"PowerSetpoint",minimalLaserPower);
 				}
 				else {
 					state = true;
+					core.setProperty(laserName, "State", state);
 					btnSwitchLaser.setIcon(new ImageIcon(imgON.getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
 					btnSwitchLaser.setText("ON");
 					core.setProperty(laserName,"PowerSetpoint",Double.parseDouble(txtLaserIntensity.getText()));

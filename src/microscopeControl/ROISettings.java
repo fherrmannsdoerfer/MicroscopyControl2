@@ -55,8 +55,8 @@ public class ROISettings extends JPanel{
 
 
 		ArrayList<JTextField> textFieldList = new ArrayList<JTextField>();
-		txtPosX = new JTextField("");
-		txtPosY = new JTextField("");
+		txtPosX = new JTextField("0");
+		txtPosY = new JTextField("0");
 		txtShiftX = new JTextField("256");
 		txtShiftY = new JTextField("0");
 		txtWidth = new JTextField("256");

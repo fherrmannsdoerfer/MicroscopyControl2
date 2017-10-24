@@ -36,6 +36,7 @@ public class OutputControl {
 	public static void writeFile(String filename, String content) {
 		PrintWriter outputStream;
 		try {
+			(new File(filename).getParentFile()).mkdirs();
 			outputStream = new PrintWriter(filename);
 			outputStream.print(content);
 			outputStream.close();

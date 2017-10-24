@@ -1,6 +1,5 @@
 package microscopeControl;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,7 +21,7 @@ import mmcorej.CMMCore;
 
 public class CameraParameter extends JPanel{
 	//boolean used to terminate the TimeLoop thread
-	boolean threadShouldStayRunning;
+	boolean threadShouldStayRunning = true;
 	//object used to control all hardware
 	CMMCore core;
 	//name of the camera set in Micro-Manager
@@ -129,6 +128,9 @@ public class CameraParameter extends JPanel{
 		this.add(lblNumberFrames);
 		this.add(horizontalBoxNumberOfFrames);
 		
+		Thread timeLoopThread = new Thread(new TimeLoop());
+		timeLoopThread.start();
+		
 	}
 	
 	ActionListener txtSetTempActionListener = new ActionListener() {
@@ -196,14 +198,15 @@ public class CameraParameter extends JPanel{
 					String currTemp = core.getProperty(camName, "CCDTemperature");
 					lblCurrTemp.setText(currTemp);
 					if (Integer.parseInt(core.getProperty(camName, "CCDTemperature"))-Integer.parseInt(currTemp) != 0){
-						//lblStatus.setText("Cooling");
+						mf.setCameraStatus("Cooling");
 					}
 					else {
 						//lblStatus.setText("Stand by");
-						//mf.setCameraStatus("Stand by");
+						mf.setCameraStatus("Stand by");
 					}
 					Thread.sleep(1000);
 				} catch (Exception e) {
+					threadShouldStayRunning = false;
 					e.printStackTrace();
 				}
 				

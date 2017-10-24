@@ -68,7 +68,7 @@ public class Display extends JPanel {
 		
 		setMaximumSize(new Dimension(570, 720));
 		setMinimumSize(new Dimension(570, 655));
-		setPreferredSize(new Dimension(600, 655));
+		setPreferredSize(new Dimension(570, 655));
 		setBorder(new TitledBorder(null, "Preview", TitledBorder.LEADING, TitledBorder.TOP, mf.getTitelFont(), null));
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		

@@ -33,7 +33,6 @@ public class CameraControl extends JPanel{
 			setBorder(new TitledBorder(null, "Camera Control", TitledBorder.LEADING, TitledBorder.TOP, mf.getTitelFont(), null));
 			setLayout(new GridLayout(3, 3,40,10));
 			
-			
 			btnStartLivePreview = new JButton("Start Live Preview");
 			btnStartLivePreview.addActionListener(new BtnStartLivePreviewActionListener());
 			
@@ -102,6 +101,7 @@ public class CameraControl extends JPanel{
 		public void actionPerformed(ActionEvent arg0) {
 			ImagePlus img = mf.captureImage();
 			int counter = 0;
+		    mf.createOutputFolder();
     		while(true){
     			counter = counter + 1;
     			File f = new File(mf.getOutputFolder()+"\\widefieldimg_"+counter+"_"+mf.getMeasurementTag()+".tiff");

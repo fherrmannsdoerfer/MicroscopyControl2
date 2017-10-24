@@ -54,7 +54,7 @@ public class PifocPositionAndMonitor extends JPanel{
 		comboBoxStepSize.addActionListener(new ComboBoxStepSizeActionListener());
 				
 		chkBoxFocusLock = new JCheckBox("Focus Lock");
-		chkBoxFocusLock.addActionListener(new FocusLockActinListener());
+		chkBoxFocusLock.addActionListener(new FocusLockActionListener());
 		
 		horizontalBoxZStageControls.add(spinner);
 		horizontalBoxZStageControls.add(Box.createHorizontalGlue());
@@ -95,7 +95,7 @@ public class PifocPositionAndMonitor extends JPanel{
 		}
 	};
 	
-	class FocusLockActinListener implements ActionListener {
+	class FocusLockActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			try {

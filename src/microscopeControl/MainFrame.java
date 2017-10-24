@@ -2,12 +2,14 @@ package microscopeControl;
 import ij.ImagePlus;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.io.File;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
@@ -23,8 +25,6 @@ import org.micromanager.api.MultiStagePosition;
 import org.micromanager.api.PositionList;
 import org.micromanager.api.ScriptInterface;
 import org.micromanager.utils.MMScriptException;
-
-import com.sun.xml.internal.bind.v2.runtime.Coordinator;
 
 import utility.Utility;
 import dataTypes.ROIParameters;
@@ -68,11 +68,9 @@ public class MainFrame extends JFrame {
 	PifocPositionAndMonitor pifocCon;
 	FilterWheelControl filterWheelCon;
 	CommentControl comCon;
+	StatusDisplayControl statusCon;
 	
 	JPanel contentPane;
-	
-	String currentAction = "";
-	String strFrameCount = "";
 	
 	//variables from CameraParameter
 	boolean showMiddleLine = false;
@@ -93,6 +91,7 @@ public class MainFrame extends JFrame {
 	String fontName = new JLabel().getFont().getFontName();
 	int fontSize = new JLabel().getFont().getSize();
 	Font titleFont = new Font(fontName,Font.BOLD,fontSize);
+	JLabel messageLabel = new JLabel(".");
 	
 	private PositionList posList;
 
@@ -103,7 +102,7 @@ public class MainFrame extends JFrame {
 	{
 		this.app = app;
 		this.core = core;
-		this.setBounds(100,00,1000,1090);
+		this.setBounds(100,00,972,1130);
 		this.setResizable(false);
 		contentPane = new JPanel();
 		camWorker = new CameraWorker(this);
@@ -111,6 +110,7 @@ public class MainFrame extends JFrame {
 		camCon = new CameraControl(this, camConDims,camConDims,camConDims);
 		laserCon = new LaserControl(this);
 		disp = new Display(this);
+		statusCon = new StatusDisplayControl(this);
 		outCon = new OutputPathControl(this,outPathDims,outPathDims,outPathDims);
 		roiSet = new ROISettings(this,minSize,prefSize,maxSize);
 		editCon = new EditorControl(this,minSize,prefSize,maxSize);
@@ -138,7 +138,8 @@ public class MainFrame extends JFrame {
 		column1.setLayout(new BoxLayout(column1, BoxLayout.Y_AXIS));
 		column1.add(disp);
 		column1.add(laserCon);
-		
+		column1.add(statusCon);
+				
 		JPanel column2 = new JPanel();
 		column2.setLayout(new BoxLayout(column2, BoxLayout.Y_AXIS));
 		column2.add(comCon);
@@ -179,7 +180,12 @@ public class MainFrame extends JFrame {
 	//function calls from OutputPathControl
 	public String getPath() {return outCon.getPath();}
 	public String getMeasurementTag() {return outCon.getMeasurementTag();}
-	public String getOutputFolder() {return outCon.getPath()+"\\"+outCon.getMeasurementTag();}
+	public String getOutputFolder() {
+		return outCon.getPath()+"\\"+outCon.getMeasurementTag();
+	}
+	public void createOutputFolder(){
+		OutputControl.createFolder(getOutputFolder());
+	}
 	
 	//function calls from ROISettings
 	public int getSelectedChannel(){return roiSet.getSelectedChannel();}
@@ -187,9 +193,9 @@ public class MainFrame extends JFrame {
 	public double getZStagePosition() throws NumberFormatException, Exception{return Double.valueOf(core.getProperty(zStageName, "Position"));}
 	public void setZStagePosition(double val) throws Exception {core.setProperty(zStageName, "Position",val);}
 	
-	public void setAction(String action) {currentAction = action;}
+	public void setAction(String action) {statusCon.setAction(action);}
 
-	public void setFrameCount(String fc) {strFrameCount = fc;}
+	public void setFrameCount(String fc) {statusCon.setFrame(fc);}
 
 	public void sleep(int ms) {core.sleep(ms);}
 
@@ -234,7 +240,14 @@ public class MainFrame extends JFrame {
 	public String getFilterName(int i) {return filterNames[i];}
 
 	public void setFilterWheelPosition(int parseInt) {
-		System.out.println("Yet to be implemented");
+		System.out.println("Yet to be implemented" + parseInt);
+		try {
+			core.setProperty(filterWheelName, "State", parseInt);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Yet to be implemented" + parseInt);
 	}
 
 	public String[] getLaserNames() {return this.laserNames;}
@@ -278,5 +291,7 @@ public class MainFrame extends JFrame {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public void setCameraStatus(String status) {statusCon.setCameraStatus(status);}
 
 }

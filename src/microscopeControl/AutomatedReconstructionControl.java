@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -36,9 +38,12 @@ public class AutomatedReconstructionControl extends JPanel{
 	
 	ReconControll rc = new ReconControll();
 	Runnable t = new Thread(rc);
+	ExecutorService executor = Executors.newFixedThreadPool(7);		
 	
 	public  AutomatedReconstructionControl(MainFrame mf, Dimension minSize, Dimension prefSize, Dimension maxSize){
 		this.mf = mf;
+		executor.execute(t); //start thread that handles reconstruction
+
 		setMinimumSize(minSize);
 		setPreferredSize(prefSize);
 		setMaximumSize(maxSize);
@@ -142,8 +147,9 @@ public class AutomatedReconstructionControl extends JPanel{
 			image = "--ChooseTransmission Image --ColourScheme Grayscale";
 			pixelsize = " --PixelSizeInNM 133,133 ";
 		}
-		
-		String filename = path+"\\"+measurementTag+"\\"+outputPath+"\\PythonSkripts\\"+basename+".py";
+		String scriptPath = path+"\\"+measurementTag+"\\"+outputPath+"\\PythonSkripts\\";
+		OutputControl.createFolder(scriptPath);
+		String filename = scriptPath+basename+".py";
 		String content = "import os\n"+"os.system(\"\\\"C:/Program Files/rapidstorm3/bin/rapidSTORM.exe\\\" "
 				+ "--inputFile "+pathToTiffFile+" --Basename "+outputBasename+pixelsize+image+
 				" --chooseTransmission Table "+fitMethode+" --ThreeD Spline3D --ZCalibration "

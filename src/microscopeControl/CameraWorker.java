@@ -254,45 +254,7 @@ public class CameraWorker {
 	    				   stackLeft = new ImageStack(imgWidth, imgHeight);
 		    			   stackRight = new ImageStack(imgWidth, imgHeight);
 	    			   }
-	    			   Thread saveStackThread = new Thread(new Runnable(){
-	    				   @Override
-	    				   public void run(){
-	    					   int selectedIndex = mf.getSelectedChannel();
-							   
-							   String basename1 = "LeftChannel"+measurementTag+"pt"+String.format("%03d", stackCounter);
-							   String pathTiffFile1 = path+"\\"+measurementTag+"\\LeftChannel\\"+basename1+".tif";
-							
-							   String basename2 = "RightChannel"+measurementTag+"pt"+String.format("%03d", stackCounter);
-							   String pathTiffFile2 = path+"\\"+measurementTag+"\\RightChannel\\"+basename2+".tif";
-	    					   if (selectedIndex == 0){
-	    						   if (useFirstVariableSet){
-	    							   OutputControl.writeStack(stackLeft,pathTiffFile1);
-	    							   OutputControl.writeStack(stackRight, pathTiffFile2);
-	    						   }
-	    						   else{
-	    							   OutputControl.writeStack(stackLeft2,pathTiffFile1);
-		    						   OutputControl.writeStack(stackRight2, pathTiffFile2);
-	    						   }
-									if (mf.isSimulatneousReconstruction()){
-										mf.startReconstruction(pathTiffFile1, basename1);
-										mf.startReconstruction(pathTiffFile2, basename2);
-									}
-	    				    	}
-	    				        else if (selectedIndex == 1){
-	    				        	if (useFirstVariableSet){OutputControl.writeStack(stackLeft,pathTiffFile1);}else{OutputControl.writeStack(stackLeft2,pathTiffFile1);}
-	    							if (mf.isSimulatneousReconstruction()){
-	    								mf.startReconstruction(pathTiffFile1, basename1);
-	    				    		}
-	    				    	}
-	    				        else {
-	    				        	if (useFirstVariableSet){OutputControl.writeStack(stackRight,pathTiffFile2);}else{OutputControl.writeStack(stackRight2,pathTiffFile2);}
-	    							if (mf.isSimulatneousReconstruction()){
-	    								mf.startReconstruction(pathTiffFile2, basename2);
-	    				    		}
-	    				        }		    					   
-	    				   }
-	    			   });
-	    			   saveStackThread.start();
+		    		   saveStack();
 	    			   //writeStacks(comboBoxWhichPart.getSelectedIndex(), stackCounter, measurementTag,stackLeft,stackRight);
 		    		   useFirstVariableSet = !useFirstVariableSet;
 		    	   }
@@ -300,13 +262,57 @@ public class CameraWorker {
 		    	mf.setEnableStartAcquisition(true);
 	
 				core.stopSequenceAcquisition();
+				saveStack();
     		}
 			catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	    }	
+		
+	private void saveStack(){
+		Thread saveStackThread = new Thread(new Runnable(){
+			   @Override
+			   public void run(){
+				   int selectedIndex = mf.getSelectedChannel();
+				   
+				   String basename1 = "LeftChannel"+measurementTag+"pt"+String.format("%03d", stackCounter);
+				   String pathTiffFile1 = path+"\\"+measurementTag+"\\LeftChannel\\"+basename1+".tif";
+				
+				   String basename2 = "RightChannel"+measurementTag+"pt"+String.format("%03d", stackCounter);
+				   String pathTiffFile2 = path+"\\"+measurementTag+"\\RightChannel\\"+basename2+".tif";
+				   if (selectedIndex == 0){
+					   if (useFirstVariableSet){
+						   OutputControl.writeStack(stackLeft,pathTiffFile1);
+						   OutputControl.writeStack(stackRight, pathTiffFile2);
+					   }
+					   else{
+						   OutputControl.writeStack(stackLeft2,pathTiffFile1);
+						   OutputControl.writeStack(stackRight2, pathTiffFile2);
+					   }
+						if (mf.isSimulatneousReconstruction()){
+							mf.startReconstruction(pathTiffFile1, basename1);
+							mf.startReconstruction(pathTiffFile2, basename2);
+						}
+			    	}
+			        else if (selectedIndex == 1){
+			        	if (useFirstVariableSet){OutputControl.writeStack(stackLeft,pathTiffFile1);}else{OutputControl.writeStack(stackLeft2,pathTiffFile1);}
+						if (mf.isSimulatneousReconstruction()){
+							mf.startReconstruction(pathTiffFile1, basename1);
+			    		}
+			    	}
+			        else {
+			        	if (useFirstVariableSet){OutputControl.writeStack(stackRight,pathTiffFile2);}else{OutputControl.writeStack(stackRight2,pathTiffFile2);}
+						if (mf.isSimulatneousReconstruction()){
+							mf.startReconstruction(pathTiffFile2, basename2);
+			    		}
+			        }		    					   
+			   }
+		   });
+		   saveStackThread.start();
+		}
 	}
+	
 	
 	
 	//live preview shows the current camera images but does not save them
@@ -321,6 +327,7 @@ public class CameraWorker {
 			int gain = mf.getEmGain();
 			boolean changeParams = true;
 			int counter = 0;
+			mf.setAction("Live Preview");
 			while (livePreviewRunning) {
 				try {
 					//in case the user changes the exposure or em-gain settings the parameters shall be updated
@@ -343,6 +350,7 @@ public class CameraWorker {
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
+					livePreviewRunning = false;
 				}
 			}
 		}		
@@ -365,9 +373,11 @@ public class CameraWorker {
 
 	public void stopSequenceAcquisition() {
 		acquisitionRunning = false;
+		mf.setAction("");
 	}
 	
 	public void stopLivePreview(){
 		livePreviewRunning = false;
+		mf.setAction("");
 	}
 }
