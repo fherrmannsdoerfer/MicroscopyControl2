@@ -149,24 +149,14 @@ public class CameraParameter extends JPanel{
 	ActionListener comboBoxShutterActionListener =new ActionListener() {
 		public void actionPerformed(ActionEvent arg0) {
 			if (comboBoxShutter.getSelectedItem().toString().equals("open")){
-				try {
-					mf.setLivePreviewRunning(false);
-					mf.setEnableStartLivePreviewButton(true);
-					core.setProperty(camName, "Shutter (Internal)","Open");	
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				mf.setLivePreviewRunning(false);
+				mf.setEnableStartLivePreviewButton(true);
+				mf.openShutter();
 			}
 			else {
-				try {
-					mf.setLivePreviewRunning(true);
-					mf.setEnableStartLivePreviewButton(true);
-					core.setProperty(camName, "Shutter (Internal)","Closed");
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				mf.setLivePreviewRunning(true);
+				mf.setEnableStartLivePreviewButton(true);
+				mf.closeShutter();
 			}
 		}
 	};

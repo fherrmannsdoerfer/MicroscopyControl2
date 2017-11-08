@@ -15,8 +15,20 @@ public class OutputControl {
 	}
 
 	public static void saveSingleImage(ImagePlus img, String fname) {
-		FileSaver fs = new FileSaver(img);
-	    fs.saveAsTiff(fname);
+		int counter = 0;
+		while(true){
+			counter = counter + 1;
+			fname = fname.substring(0,fname.lastIndexOf(".")) +counter+".tif";
+			File file = new File(fname);
+			if (file.exists()){
+				
+			}
+			else{
+				FileSaver fs = new FileSaver(img);
+			    fs.saveAsTiff(fname);
+			}
+		}
+		
 	}
 	
 	public static void createLogFile(String measurementTag, int gain, double exposure, String path, int nbrFrames) {

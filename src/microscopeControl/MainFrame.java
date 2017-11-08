@@ -7,6 +7,9 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 
 import javax.swing.BorderFactory;
@@ -28,6 +31,7 @@ import org.micromanager.utils.MMScriptException;
 
 import utility.Utility;
 import dataTypes.ROIParameters;
+import dataTypes.XYStagePosition;
 import editor.ControlerEditor;
 import editor.MainFrameEditor;
 import mmcorej.CMMCore;
@@ -57,8 +61,10 @@ public class MainFrame extends JFrame {
 	
 	//objects for all widgets
 	CameraWorker camWorker;
+	XYStageWorker xyStageWorker;
 	CameraParameter camParam;
 	CameraControl camCon;
+	StageControl stageCon;
 	LaserControl laserCon;
 	Display disp;
 	OutputPathControl outCon;
@@ -106,6 +112,7 @@ public class MainFrame extends JFrame {
 		this.setResizable(false);
 		contentPane = new JPanel();
 		camWorker = new CameraWorker(this);
+		xyStageWorker = new XYStageWorker(this);
 		camParam = new CameraParameter(this, minSize,prefSize,maxSize);
 		camCon = new CameraControl(this, camConDims,camConDims,camConDims);
 		laserCon = new LaserControl(this);
@@ -118,6 +125,7 @@ public class MainFrame extends JFrame {
 		pifocCon = new PifocPositionAndMonitor(this,minSize,new Dimension(column2PrefWidth,250),maxSize);
 		filterWheelCon = new FilterWheelControl(this, minSize, prefSize, maxSize);
 		comCon = new CommentControl(this, minSize, prefSize, maxSize);
+		stageCon = new StageControl(this,minSize,prefSize,maxSize);
 		this.setContentPane(contentPane);
 		this.setLayout(new BoxLayout(contentPane, BoxLayout.X_AXIS));
 		this.setTitle("Microscope Control V2 Main Window");
@@ -130,6 +138,7 @@ public class MainFrame extends JFrame {
 		tabbedPane.addTab("Camera Param.", camParam);
 		tabbedPane.addTab("ROI Settings", roiSet);
 		tabbedPane.addTab("RapidSTORM", autoRecCon);
+		tabbedPane.addTab("Stage Control", stageCon);
 		tabbedPane.addTab("Z-Calibration", new ZCalibration(this, minSize, prefSize, maxSize));
 		tabbedPane.addTab("Filter Wheel", filterWheelCon);
 		tabbedPane.addTab("Editor", editCon);
@@ -169,6 +178,8 @@ public class MainFrame extends JFrame {
 
 	public void setEnableStartAcquisition(boolean state) {camCon.setStartAcquisitionButtonState(state);}
 	public void setEnableStartLivePreviewButton(boolean state) {camCon.setStartLivePreviewButtonState(state);}
+	public void openShutter() {camWorker.openShutter();}
+	public void closeShutter() {camWorker.closeShutter();}
 	
 	public int getEmGain() {return camParam.getEmGain();}
 	public double getExposureTime() {return camParam.getExposureTime();}
@@ -181,7 +192,7 @@ public class MainFrame extends JFrame {
 	public String getPath() {return outCon.getPath();}
 	public String getMeasurementTag() {return outCon.getMeasurementTag();}
 	public String getOutputFolder() {
-		return outCon.getPath()+"\\"+outCon.getMeasurementTag();
+		return outCon.getPath()+"\\"+outCon.getMeasurementTag()+"\\";
 	}
 	public void createOutputFolder(){
 		OutputControl.createFolder(getOutputFolder());
@@ -293,5 +304,20 @@ public class MainFrame extends JFrame {
 	}
 
 	public void setCameraStatus(String status) {statusCon.setCameraStatus(status);}
+	
+	public String getXYStageName(){
+		return xyStageName;
+	}
 
+	public XYStagePosition getXYStagePosition() {return xyStageWorker.getXYStagePosition();}
+
+	public void moveXYStage(double xPos, double yPos) {xyStageWorker.moveTo(xPos,yPos);}
+	
+	WindowListener main_window_WindowListener =new WindowAdapter() {
+		@Override
+		public void windowClosing(WindowEvent arg0) {
+			laserCon.shutDownAllLasers();
+			camWorker.closeShutter();
+		}
+	};
 }

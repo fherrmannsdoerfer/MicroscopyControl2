@@ -220,4 +220,14 @@ public class LaserPanel extends JPanel {
 			}
 		}
 	};
+	
+	public void turnOffLaser(){
+		try {
+			core.setProperty(laserName, "State", false);
+			core.setProperty(laserName,"PowerSetpoint",minimalLaserPower);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

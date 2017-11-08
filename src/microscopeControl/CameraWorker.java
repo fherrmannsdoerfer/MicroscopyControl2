@@ -333,6 +333,8 @@ public class CameraWorker {
 					//in case the user changes the exposure or em-gain settings the parameters shall be updated
 					if (!(exp==mf.getExposureTime()) | !(gain == mf.getEmGain())) {
 						changeParams = true;
+						exp = mf.getExposureTime();
+						gain = mf.getEmGain();
 					}
 					else {changeParams = false;}
 					if (changeParams){
@@ -379,5 +381,22 @@ public class CameraWorker {
 	public void stopLivePreview(){
 		livePreviewRunning = false;
 		mf.setAction("");
+	}
+
+	public void closeShutter() {
+		try {
+			core.setProperty(cameraName, "Shutter (Internal)","Closed");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public void openShutter() {
+		try {
+			core.setProperty(cameraName, "Shutter (Internal)","Open");	
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

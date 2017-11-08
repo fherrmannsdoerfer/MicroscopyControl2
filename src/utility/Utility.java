@@ -3,6 +3,7 @@ import ij.ImagePlus;
 import ij.plugin.ImageCalculator;
 import ij.plugin.filter.GaussianBlur;
 import ij.plugin.filter.MaximumFinder;
+import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 
 import java.awt.Dimension;
@@ -64,5 +65,22 @@ public class Utility implements Serializable {
 			return maxima.npoints;
 		}
 		return 0;
+	}
+
+	public static ImagePlus stichTileScan(ImagePlus[][] tileScanImages, int numberStepsX, int numberStepsY,
+			int overlapInPixels) {
+		ImageProcessor iP = new FloatProcessor(numberStepsX*256, numberStepsY * 512);
+		ImagePlus completeImage = new ImagePlus();
+		for (int x = 0; x < numberStepsX ;x++){
+			for (int y = 0; y < numberStepsY;y++){
+				for (int xSmall = 0;xSmall < 256;xSmall++){
+					for (int ySmall = 0; ySmall < 512;ySmall++){
+						iP.putPixelValue(xSmall+(x*256-overlapInPixels), ySmall+(y*512-overlapInPixels), (tileScanImages[x][y].getProcessor().getPixelValue(xSmall, ySmall)));
+					}
+				}
+			}
+		}
+		completeImage.setProcessor(iP);
+		return completeImage;
 	}
 }

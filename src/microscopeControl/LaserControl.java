@@ -114,4 +114,10 @@ public class LaserControl extends JPanel {
 	void setBlinkingNumber(int number){
 		aUVLC.setCurrentNumberOfBlinkingEvents(number);
 	}
+	
+	void shutDownAllLasers(){
+		for (int i =0; i< laserPanels.size();i++){
+			laserPanels.get(i).turnOffLaser();
+		}
+	}
 }

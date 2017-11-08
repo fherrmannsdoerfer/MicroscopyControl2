@@ -38,10 +38,10 @@ public class EditorControl extends JPanel{
 		setPreferredSize(prefSize);
 		setMaximumSize(maxSize);
 		setBorder(new TitledBorder(null, "Editor", TitledBorder.LEADING, TitledBorder.TOP, mf.getTitelFont(), null));
-		setLayout(new GridLayout(5, 1,10,5));
+		setLayout(new GridLayout(5, 1,10,15));
 		
 		JPanel upperPart = new JPanel();
-		upperPart.setLayout(new GridLayout(1, 2,10,5));
+		upperPart.setLayout(new GridLayout(1, 2,10,15));
 		
 		JButton btnOpenEditor = new JButton("Open Editor");
 		btnOpenEditor.addActionListener(new btnOpenEditorActionListener());
@@ -61,7 +61,7 @@ public class EditorControl extends JPanel{
 		
 		
 		JPanel lowerPart = new JPanel();
-		lowerPart.setLayout(new GridLayout(1, 2,10,5));
+		lowerPart.setLayout(new GridLayout(1, 2,10,15));
 		
 		JButton btnStartExperiment = new JButton("Start Experiment");
 		btnStartExperiment.addActionListener(new btnStartExperimentActionListener());
