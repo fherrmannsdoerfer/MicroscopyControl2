@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
+import dataTypes.CameraParameters;
 import utility.Utility;
 import mmcorej.CMMCore;
 
@@ -203,9 +204,28 @@ public class CameraParameter extends JPanel{
 			}
 		}
 	}
+	
+	public CameraParameters getCameraParameter(){
+		return new CameraParameters(getExposureTime(), getEmGain(), getFrameNumber(), isShutterOpen());
+	}
 
+	public void setCameraParameters(CameraParameters camParam){
+		setEmGain(camParam.getEmGain());
+		setExposureTime(camParam.getExposureTime());
+		setFrameNumber(camParam.getNbrFrames());
+		setShutter(camParam.isShutterOpen());
+	}
+	
+	public boolean isShutterOpen(){
+		return comboBoxShutter.getSelectedItem().toString().equals("open");
+	}
 	public int getEmGain() {return Integer.valueOf(txtEmGain.getText());}
 	public double getExposureTime() {return Double.valueOf(txtExposureTime.getText());}
 	public boolean isFrameTransferSelected() {return chkboxFrameTransfer.isSelected();}
 	public int getFrameNumber() {return Integer.valueOf(txtNumberFrames.getText());}
+	public void setEmGain(int emGain){txtEmGain.setText(""+emGain);}
+	public void setExposureTime(double exposureTime) {txtExposureTime.setText(""+exposureTime);}
+	public void setFrameNumber(int frameNumber){txtNumberFrames.setText(""+frameNumber);}
+	public void setShutter(boolean isOpen){if (isOpen){comboBoxShutter.setSelectedIndex(0);}else{comboBoxShutter.setSelectedIndex(1);}}
+	
 }

@@ -4,6 +4,8 @@ package editor;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import editorModulesDefinitions.EndLoopGUI;
+
 
 public class ControlerEditor implements Serializable{
 	MainFrameEditor mfe;
@@ -28,15 +30,39 @@ public class ControlerEditor implements Serializable{
 		//	batchprocessingWorkflow(functions);
 		//}
 		//else{
-		normalWorkflow(functions);
+		processModuleList(functions);
 		//}
 		
 		System.out.println("Program finished");
 	}
 
-	private void normalWorkflow(ArrayList<EditorModules> functions) {
-		for (EditorModules psp: functions){
-			psp.perform();
+	private void processModuleList(ArrayList<EditorModules> functions) {
+		for (int i =0; i<functions.size();i++){
+			EditorModules psp = functions.get(i);
+			if (psp instanceof LoopModules){
+				LoopModules thisModule = (LoopModules) psp;
+				thisModule.perform();
+				for (int r= 0;r<thisModule.getNbrIterations();r++){
+					ArrayList<EditorModules> subset = new ArrayList<EditorModules>();
+					int indentCounter = 1;
+					for (int j = i+1;j<functions.size(); j++){//start at i+1 to skip the Loop beginning
+						EditorModules p = functions.get(j);
+						if (p instanceof EndLoopGUI){
+							indentCounter -= 1;
+							if (indentCounter==0){break;}
+						}
+						else if (p instanceof LoopModules){indentCounter += 1;}
+						else {}
+						subset.add(p);
+					}
+					//recursive call only with the functions inside the loop
+					processModuleList(subset);
+					thisModule.nextStep();
+				}
+			}
+			else{
+				psp.perform();
+			}
 		}
 	}
 

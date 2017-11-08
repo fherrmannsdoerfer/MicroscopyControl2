@@ -20,7 +20,7 @@ public class StartEditor {
 	        // Set System L&F
 	    UIManager.setLookAndFeel(
 	        UIManager.getSystemLookAndFeelClassName());
-	    } 
+	    }
 	    catch (UnsupportedLookAndFeelException e) {
 	       // handle exception
 	    }

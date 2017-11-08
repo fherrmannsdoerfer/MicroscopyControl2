@@ -40,9 +40,8 @@ public class LaserControl extends EditorModules{
 
 		JPanel retPanel = new JPanel();
 		retPanel.setLayout(new GridLayout(2, 2,60,15));
-		//MainFrame mf = mfe.getMainFrameReference();
-		//laserSelection = new JComboBox(mf.getLaserNames());
-		laserSelection = new JComboBox(dummyLaserNames);
+		laserSelection = new JComboBox(mfe.getMainFrameReference().getLaserNames());
+		//laserSelection = new JComboBox(dummyLaserNames);
 		retPanel.add(new JLabel("Laser Selection:"));
 		retPanel.add(laserSelection);
 		retPanel.add(new JLabel("Laser Intensity:"));
@@ -86,7 +85,6 @@ public class LaserControl extends EditorModules{
 
 	@Override
 	public void perform() {
-		// TODO Auto-generated method stub
-		
+		mfe.getMainFrameReference().setLaserIntensity(laserSelection.getSelectedIndex(), Double.parseDouble(laserIntensity.getText()));
 	}
 }

@@ -120,4 +120,8 @@ public class LaserControl extends JPanel {
 			laserPanels.get(i).turnOffLaser();
 		}
 	}
+	
+	void setLaserPower(int index, double power){
+		laserPanels.get(index).setLaserPower(power);
+	}
 }

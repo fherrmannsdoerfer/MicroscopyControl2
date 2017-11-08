@@ -15,6 +15,7 @@ import java.io.File;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -30,6 +31,7 @@ import org.micromanager.api.ScriptInterface;
 import org.micromanager.utils.MMScriptException;
 
 import utility.Utility;
+import dataTypes.CameraParameters;
 import dataTypes.ROIParameters;
 import dataTypes.XYStagePosition;
 import editor.ControlerEditor;
@@ -103,6 +105,9 @@ public class MainFrame extends JFrame {
 
 	File experimentFolder = new File(System.getProperty("user.home")+"//ExperimentEditor");
 	final JFileChooser experimentFileChooserLoad = new JFileChooser(experimentFolder);
+	
+	//this variable stores the current position which is defined by the ROILoop
+	private XYStagePosition currentXYPositionFromLoop;
 	
 	public MainFrame(CMMCore core, ScriptInterface app)
 	{
@@ -320,4 +325,44 @@ public class MainFrame extends JFrame {
 			camWorker.closeShutter();
 		}
 	};
+	public void captureAndStoreWidefieldImage(double exposureTime) {
+		double oldExposureTime = this.getExposureTime();
+		camParam.setExposureTime(exposureTime);
+		captureAndStoreWidefieldImage();
+		camParam.setExposureTime(oldExposureTime);
+	}
+	
+	
+	public void captureAndStoreWidefieldImage() {
+		ImagePlus img = captureImage();
+		int counter = 0;
+	    createOutputFolder();
+		while(true){
+			counter = counter + 1;
+			File f = new File(getOutputFolder()+"\\"+getMeasurementTag()+"widefieldimg_"+counter+".tiff");
+			if (f.exists()){}
+			else{
+				System.out.println(getOutputFolder()+"\\"+getMeasurementTag()+"widefieldimg_"+counter+".tiff");
+				OutputControl.saveSingleImage(img, getOutputFolder()+"\\"+getMeasurementTag()+"widefieldimg_"+counter+".tiff");
+				break;
+			}
+		}
+	}
+
+	public XYStagePosition getCurrentXYPositionFromLoop() {
+		return currentXYPositionFromLoop;
+	}
+
+	public void setCurrentXYPositionFromLoop(XYStagePosition currentXYPositionFromLoop) {
+		this.currentXYPositionFromLoop = currentXYPositionFromLoop;
+	}
+
+	public void setLaserIntensity(int index, double power) {laserCon.setLaserPower(index, power);
+	}
+
+	public String[] getFilterNames() {return filterNames;}
+
+	public void setCameraParameter(CameraParameters camParam2) {camParam.setCameraParameters(camParam2);}
+	
+	
 }

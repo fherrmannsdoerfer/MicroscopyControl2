@@ -1,5 +1,7 @@
 package microscopeControl;
 
+import javax.swing.JOptionPane;
+
 import dataTypes.XYStagePosition;
 import mmcorej.CMMCore;
 
@@ -27,11 +29,16 @@ public class XYStageWorker {
 
 	public void moveTo(double xPos, double yPos) {
 		try {
-			core.setXYPosition(xPos, yPos);
-			while (true){ //delay Program until moving has finished
-				Thread.sleep(100);
-				if (Math.abs(core.getXPosition(xyStageName) - xPos) < 2 &&Math.abs(core.getYPosition(xyStageName) - yPos) < 2){
-					break;
+			if (Math.abs(xPos) > 1000 || Math.abs(yPos) > 1000){
+				JOptionPane.showMessageDialog(null, "Parameters would move the stage too far.");
+			}
+			else{
+				core.setXYPosition(xPos, yPos);
+				while (true){ //delay Program until moving has finished
+					Thread.sleep(100);
+					if (Math.abs(core.getXPosition(xyStageName) - xPos) < 2 &&Math.abs(core.getYPosition(xyStageName) - yPos) < 2){
+						break;
+					}
 				}
 			}
 		} catch (Exception e) {

@@ -99,18 +99,7 @@ public class CameraControl extends JPanel{
 	
 	class BtnCaptureSingleImageActionListener implements ActionListener{
 		public void actionPerformed(ActionEvent arg0) {
-			ImagePlus img = mf.captureImage();
-			int counter = 0;
-		    mf.createOutputFolder();
-    		while(true){
-    			counter = counter + 1;
-    			File f = new File(mf.getOutputFolder()+"\\widefieldimg_"+counter+"_"+mf.getMeasurementTag()+".tiff");
-    			if (f.exists()){}
-    			else{
-    				OutputControl.saveSingleImage(img, mf.getOutputFolder()+"\\WidefieldImage_"+counter+"_"+mf.getMeasurementTag()+".tiff");
-    				break;
-    			}
-    		}
+			mf.captureAndStoreWidefieldImage();
 		}
 	};
 

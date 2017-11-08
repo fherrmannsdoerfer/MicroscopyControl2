@@ -166,6 +166,16 @@ public class LaserPanel extends JPanel {
 		}
 	}
 	
+	//set LaserPower to specified power
+	public void setLaserPower(double power){
+		try {
+			core.setProperty(laserName, "PowerSetpoint", power);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	//ActionListener that sets the slider position to the corresponding location whenever
 	//a new laser power is entered in the laser power text field
 	ActionListener txtLaserIntensity_ActionListener = new ActionListener() {

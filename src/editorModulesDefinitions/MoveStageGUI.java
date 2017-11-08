@@ -25,11 +25,12 @@ public class MoveStageGUI extends EditorModules{
 	JTextField yPos = new JTextField("0");
 	JTextField zPos = new JTextField("0");
 	JCheckBox useVariableFromLoop = new JCheckBox("Use ROI From Loop");
-	
+	MainFrameEditor mfe;
 	private static String name = "MoveStage";
 	
 	public MoveStageGUI(MainFrameEditor mfe) {
 		super(mfe);
+		this.mfe = mfe;
 		this.setParameterButtonsName(name);
 		this.setColor(mfe.style.getColorMicroscope());
 		this.setOptionPanel(createOptionPanel());
@@ -108,7 +109,6 @@ public class MoveStageGUI extends EditorModules{
 
 	@Override
 	public void perform() {
-		// TODO Auto-generated method stub
-		
+		mfe.getMainFrameReference().moveXYStage(Double.valueOf(xPos.getText()), Double.valueOf(yPos.getText()));
 	}
 }

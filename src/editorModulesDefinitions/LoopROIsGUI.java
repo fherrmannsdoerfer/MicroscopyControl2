@@ -12,8 +12,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.micromanager.api.MultiStagePosition;
 import org.micromanager.api.PositionList;
 
+import dataTypes.XYStagePosition;
 import microscopeControl.MainFrame;
 import utility.Utility;
 import editor.EditorModules;
@@ -129,8 +131,15 @@ public class LoopROIsGUI extends LoopModules{
 
 	@Override
 	public void perform() {
-		// TODO Auto-generated method stub
+		setNbrIterations(Integer.parseInt(numberRuns.getText()));
 		
+	}
+
+	@Override
+	public void performIncrementalStep() {
+		MultiStagePosition currMSP = mfe.getMainFrameReference().getPositionList().getPosition(this.getCurrentIterationStep());
+		XYStagePosition currentPosition = new XYStagePosition(currMSP.getX(),currMSP.getY());
+		mfe.getMainFrameReference().setCurrentXYPositionFromLoop(currentPosition);
 	}
 
 }

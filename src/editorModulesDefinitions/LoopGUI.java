@@ -83,6 +83,11 @@ public class LoopGUI extends LoopModules{
 
 	@Override
 	public void perform() {
+		setNbrIterations(Integer.parseInt(numberRuns.getText()));
+	}
+
+	@Override
+	public void performIncrementalStep() {
 		// TODO Auto-generated method stub
 		
 	}

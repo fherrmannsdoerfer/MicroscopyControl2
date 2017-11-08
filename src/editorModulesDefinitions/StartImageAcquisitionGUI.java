@@ -23,11 +23,13 @@ public class StartImageAcquisitionGUI extends EditorModules{
 	JTextField exposureTime = new JTextField("30");
 	JTextField numberOfFrames = new JTextField("20000");
 	JCheckBox frameTransfer = new JCheckBox("Frame Transfer");
+	MainFrameEditor mfe;
 	
 	private static String name = "StartImageAcquisition";
 	
 	public StartImageAcquisitionGUI(MainFrameEditor mfe) {
 		super(mfe);
+		this.mfe = mfe;
 		this.setParameterButtonsName(name);
 		this.setColor(mfe.style.getColorMicroscope());
 		this.setOptionPanel(createOptionPanel());
@@ -110,7 +112,6 @@ public class StartImageAcquisitionGUI extends EditorModules{
 
 	@Override
 	public void perform() {
-		// TODO Auto-generated method stub
-		
+		mfe.getMainFrameReference().startSequenceAcquisition();
 	}
 }

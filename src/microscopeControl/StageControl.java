@@ -121,12 +121,8 @@ public class StageControl extends JPanel{
 			try{
 				double xPos = Double.valueOf(txtXPos.getText());
 				double yPos = Double.valueOf(txtYPos.getText());
-				if (Math.abs(xPos)>700 || Math.abs(yPos)>700){//check if stage might be moved to far
-					JOptionPane.showMessageDialog(null, "Parameters would move the stage too far.");
-				}
-				else{
-					mf.moveXYStage(xPos, yPos);
-				}
+				mf.moveXYStage(xPos, yPos);
+				
 				
 			} catch(Exception e){
 				System.out.println("no valid positions inserted;");

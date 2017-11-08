@@ -1,7 +1,8 @@
 package editor;
 
 public abstract class LoopModules extends EditorModules{
-	
+	private int currentIterationStep = 0;
+	private int nbrIterations;
 	public LoopModules(MainFrameEditor mfe){
 		super(mfe);
 	}
@@ -22,6 +23,11 @@ public abstract class LoopModules extends EditorModules{
 	abstract public String getFunctionName();
 
 	abstract public void perform();
+	abstract public void performIncrementalStep();
 	abstract public EditorModules getEndLoopModule(MainFrameEditor mfe);
+	public void nextStep(){currentIterationStep+=1;}
+	public int getCurrentIterationStep(){return currentIterationStep;}
+	public int getNbrIterations(){return nbrIterations;}
+	public void setNbrIterations(int nbrIterations){this.nbrIterations = nbrIterations;}
 
 }

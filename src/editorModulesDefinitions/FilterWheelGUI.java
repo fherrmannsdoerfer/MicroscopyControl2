@@ -12,16 +12,16 @@ import editor.EditorModules;
 import editor.MainFrameEditor;
 
 
-public class CaptureWidefieldImageGUI extends EditorModules{
+public class FilterWheelGUI extends EditorModules{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	JTextField exposureTime = new JTextField("100");
+	JComboBox filterSelection;
 	MainFrameEditor mfe;
-	private static String name = "CaptureWidefieldImageGUI";
-
-	public CaptureWidefieldImageGUI(MainFrameEditor mfe) {
+	private static String name = "Filter Wheel";
+	
+	public FilterWheelGUI(MainFrameEditor mfe) {
 		super(mfe);
 		this.mfe = mfe;
 		this.setParameterButtonsName(name);
@@ -29,41 +29,42 @@ public class CaptureWidefieldImageGUI extends EditorModules{
 		this.setOptionPanel(createOptionPanel());
 	}
 	
-	public CaptureWidefieldImageGUI(){
+	public FilterWheelGUI(){
 		
 	}
 	
 	private JPanel createOptionPanel(){
+		
 		JPanel retPanel = new JPanel();
 		retPanel.setLayout(new GridLayout(1, 2,60,15));
-		//MainFrame mf = mfe.getMainFrameReference();
-		//laserSelection = new JComboBox(mf.getLaserNames());
-		retPanel.add(new JLabel("Exposure Time [ms]:"));
-		retPanel.add(exposureTime);
-
+		filterSelection = new JComboBox(mfe.getMainFrameReference().getFilterNames());
+		//laserSelection = new JComboBox(dummyLaserNames);
+		retPanel.add(new JLabel("Filter Selection:"));
+		retPanel.add(filterSelection);
+		
 		return retPanel;
 	}
 	
 		
 	@Override
 	public EditorModules getFunction(MainFrameEditor mfe) {
-		return new CaptureWidefieldImageGUI(mfe);
+		return new FilterWheelGUI(mfe);
 	}
 
 	public String[] getSettings(){
 		String[] tempString = new String[1];
-		tempString[0] = exposureTime.getText();
+		tempString[0] = String.valueOf(filterSelection.getSelectedIndex());
 		return tempString;
 	}
 	public void setSettings(String[] tempString){
-		exposureTime.setText(tempString[0]);
+		filterSelection.setSelectedIndex(Integer.parseInt(tempString[0]));
 	}
 
 	@Override
 	public EditorModules getEditorModulesObject(
 			EditorModules processingStepsPanelObject, MainFrameEditor mfe) {
-		if (processingStepsPanelObject instanceof CaptureWidefieldImageGUI){
-			CaptureWidefieldImageGUI returnObject = new CaptureWidefieldImageGUI(mfe);
+		if (processingStepsPanelObject instanceof FilterWheelGUI){
+			FilterWheelGUI returnObject = new FilterWheelGUI(mfe);
 			return returnObject;
 		}
 		return null;
@@ -77,6 +78,6 @@ public class CaptureWidefieldImageGUI extends EditorModules{
 
 	@Override
 	public void perform() {
-		mfe.getMainFrameReference().captureAndStoreWidefieldImage(Double.parseDouble(exposureTime.getText()));
+		mfe.getMainFrameReference().setFilterWheelPosition(filterSelection.getSelectedIndex());
 	}
 }

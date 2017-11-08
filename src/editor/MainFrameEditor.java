@@ -41,14 +41,17 @@ import java.awt.Font;
 import javax.swing.SwingConstants;
 
 import microscopeControl.MainFrame;
+import editorModulesDefinitions.CameraParametersGUI;
 import editorModulesDefinitions.CaptureWidefieldImageGUI;
 import editorModulesDefinitions.EndLoopGUI;
+import editorModulesDefinitions.FilterWheelGUI;
 import editorModulesDefinitions.IterableInputGUI;
 import editorModulesDefinitions.LaserControl;
 import editorModulesDefinitions.LoopGUI;
 import editorModulesDefinitions.LoopIterableGUI;
 import editorModulesDefinitions.LoopROIsGUI;
 import editorModulesDefinitions.MoveStageGUI;
+import editorModulesDefinitions.PauseGUI;
 import editorModulesDefinitions.StainingRobotCommandGUI;
 import editorModulesDefinitions.StartImageAcquisitionGUI;
 
@@ -95,34 +98,20 @@ public class MainFrameEditor extends JDialog implements Serializable{
 		
 		//////////////////////////////////////////////////////////////////// set options to choose from for drop-down menus; creates empty GUI class objects with member name
 
-		//outputComboBoxOptions.add(new RenderImage2DGUI());
-		//outputComboBoxOptions.add(new RenderImage3DGUI());
-		//outputComboBoxOptions.add(new RenderDemixingImage());
-		//outputComboBoxOptions.add(new WriteArrayListForVisp());
-		//outputComboBoxOptions.add(new WriteLocalizationsToFile());
-		//outputComboBoxOptions.add(new CreateLogFileGUI());
-		
-		//inputComboBoxOptions.add(new BatchProcessingGUI());
-		//inputComboBoxOptions.add(new SingleFileInputGUI());
-		//inputComboBoxOptions.add(new DualChannelSingleFileInputGUI());
-		//inputComboBoxOptions.add(new MultipleFileInputGUI());
-		//inputComboBoxOptions.add(new DualColorMultipleFileInputGUI());
-		
-		//processingComboBoxOptions.add(new DriftcorrectionGUI());
-		//processingComboBoxOptions.add(new MergePointsGUI());
-		//processingComboBoxOptions.add(new DemixingGUI());
 		microscopeComboBoxOptions.add(new LaserControl());
 		microscopeComboBoxOptions.add(new StartImageAcquisitionGUI());
 		microscopeComboBoxOptions.add(new MoveStageGUI());
 		microscopeComboBoxOptions.add(new IterableInputGUI());
 		microscopeComboBoxOptions.add(new CaptureWidefieldImageGUI());
+		microscopeComboBoxOptions.add(new PauseGUI());
+		microscopeComboBoxOptions.add(new FilterWheelGUI());
+		microscopeComboBoxOptions.add(new CameraParametersGUI());
 		
 		stainingRobotComboBoxOptions.add(new StainingRobotCommandGUI());
 		
 		loopsComboBoxOptions.add(new LoopGUI());
 		loopsComboBoxOptions.add(new LoopROIsGUI());
 		loopsComboBoxOptions.add(new LoopIterableGUI());
-		//processingComboBoxOptions.add(new CropGUI());
 		
 		File[] listOfFiles = folder.listFiles();		
 	    for (int i = 0; i < listOfFiles.length; i++) {
