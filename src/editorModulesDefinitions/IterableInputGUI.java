@@ -23,11 +23,19 @@ import editor.EditorModules;
 import editor.LoopModules;
 import editor.MainFrameEditor;
 import editor.RootPanel;
-
+//the idea behind iterable inputs is that loops can be created that use different parameters for each run
+//For example could different laser intensities as well as different exposure time be useful.
+//In that case the iterationTagLoop can be set to e.g. experiment1. The same tag has to be used in the LoopIterableGUI module.
+//then a second tag like laserInts should be set in the iterationTagParameterFields. 
+//A second IteralbeInputGUI module has to be added also using experiment1 as the iterationTagLoop.
+//Then a LoopIterableGUI module has to be added to the LoopIterable and a laser control module as well as a cameraParameter module.
+//in the intensity field of the laser control gui the laserInts Tag has to be added.
+//it is important that there are the same number of different parameters in all iterableInputGUI modules that share the same iterattionTagLoop value.
 public class IterableInputGUI extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;
-	JTextField iterationTag = new JTextField("Stainings1");
+	JTextField iterationTagLoop = new JTextField("StainingsLoop");
+	JTextField iterationTagParameterFields = new JTextField("StainingsParam");
 	JButton updateButton = new JButton("Update ROI List");
 	MainFrameEditor mfe;
 	JPanel dispList;
@@ -58,9 +66,11 @@ public class IterableInputGUI extends EditorModules{
 	private JPanel createOptionPanel(){
 		JPanel retPanel = new JPanel();
 		JPanel upperPart = new JPanel();
-		upperPart.setLayout(new GridLayout(1, 2,60,15));
-		upperPart.add(new JLabel("Tag For The Iterations:"));
-		upperPart.add(iterationTag);
+		upperPart.setLayout(new GridLayout(2, 2,60,15));
+		upperPart.add(new JLabel("Tag For The IterationLoop:"));
+		upperPart.add(iterationTagLoop);
+		upperPart.add(new JLabel("Tag For The Parameter Fields:"));
+		upperPart.add(iterationTagParameterFields);
 		
 		Box verticalBox = Box.createVerticalBox();
 		retPanel.add(verticalBox);
@@ -114,18 +124,20 @@ public class IterableInputGUI extends EditorModules{
 
 	@Override
 	public String[] getSettings() {
-		String[] tempString = new String[1+parameterList.size()];
-		tempString[0] = iterationTag.getText();
+		String[] tempString = new String[2+parameterList.size()];
+		tempString[0] = iterationTagLoop.getText();
+		tempString[1] = iterationTagParameterFields.getText();
 		for (int i = 0; i<parameterList.size();i++){
-			tempString[i+1] = parameterList.get(i).getParameter();
+			tempString[i+2] = parameterList.get(i).getParameter();
 		}
 		return tempString;
 	}
 
 	@Override
 	public void setSettings(String[] tempString) {
-		iterationTag.setText(tempString[0]);
-		for (int i = 1; i<tempString.length;i++){
+		iterationTagLoop.setText(tempString[0]);
+		iterationTagParameterFields.setText(tempString[1]);
+		for (int i = 2; i<tempString.length;i++){
 			parameterList.add(new ParameterColumn(tempString[i]));
 		}
 		fillScrollPane();

@@ -1,0 +1,5 @@
+Filtersteuerung in Naehe von Lasern (auf einen Bildschirm)
+Fokus bei Start schon auf 25 und wirklich einstellen
+Frames auf 20000 stellen
+Generell Parameter ueberpruerfen (SNR 30 bei RS)
+Warunungen wenn z.B. RoiLoop aber kein Move Stage

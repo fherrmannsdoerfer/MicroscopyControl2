@@ -45,7 +45,7 @@ public class MainFrame extends JFrame {
 	
 	//name of the hardware set in Micro-Manager
 	private String camName = "iXon Ultra";
-	private String zStageName = "PIZStage";
+	private String zObjectiveName = "FocusLocPIZMotorObjective";
 	private String xyStageName = "PIXYStage";
 	private String filterWheelName = "Thorlabs Filter Wheel";
 	private String[] filterNames = {"488 no UV", "561 no UV", "660", "561", "488", "free"};
@@ -111,6 +111,7 @@ public class MainFrame extends JFrame {
 	
 	public MainFrame(CMMCore core, ScriptInterface app)
 	{
+		System.out.println("Central class that handles all interactions between interface and hardware. (MainFrame)");
 		this.app = app;
 		this.core = core;
 		this.setBounds(100,00,972,1130);
@@ -206,8 +207,8 @@ public class MainFrame extends JFrame {
 	//function calls from ROISettings
 	public int getSelectedChannel(){return roiSet.getSelectedChannel();}
 	
-	public double getZStagePosition() throws NumberFormatException, Exception{return Double.valueOf(core.getProperty(zStageName, "Position"));}
-	public void setZStagePosition(double val) throws Exception {core.setProperty(zStageName, "Position",val);}
+	public double getZStagePosition() throws NumberFormatException, Exception{return Double.valueOf(core.getProperty(zObjectiveName, "Position"));}
+	public void setZStagePosition(double val) throws Exception {core.setProperty(zObjectiveName, "Position",val);}
 	
 	public void setAction(String action) {statusCon.setAction(action);}
 
@@ -217,7 +218,7 @@ public class MainFrame extends JFrame {
 
 	public ImagePlus captureImage(){return camWorker.captureImage();}
 
-	public void setFocusLockState(int state) throws Exception {core.setProperty(zStageName, "External sensor", state);}
+	public void setFocusLockState(int state) throws Exception {core.setProperty(zObjectiveName, "External sensor", state);}
 
 	public boolean isROISet() {return roiSet.isCustomROISet();}
 
@@ -363,6 +364,8 @@ public class MainFrame extends JFrame {
 	public String[] getFilterNames() {return filterNames;}
 
 	public void setCameraParameter(CameraParameters camParam2) {camParam.setCameraParameters(camParam2);}
+
+	public void setMeasurementTag(String text) {outCon.setMeasurementTag(text);}
 	
 	
 }

@@ -75,5 +75,7 @@ public class OutputPathControl extends JPanel{
 				path.setText(fc.getSelectedFile().getPath());
 			}
 		}
-	};
+	}
+
+	public void setMeasurementTag(String text) {this.measurementTag.setText(text);};
 }

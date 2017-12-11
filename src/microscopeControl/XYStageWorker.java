@@ -33,6 +33,7 @@ public class XYStageWorker {
 				JOptionPane.showMessageDialog(null, "Parameters would move the stage too far.");
 			}
 			else{
+				mf.setAction("Moving Stage");
 				core.setXYPosition(xPos, yPos);
 				while (true){ //delay Program until moving has finished
 					Thread.sleep(100);
@@ -40,6 +41,7 @@ public class XYStageWorker {
 						break;
 					}
 				}
+				mf.setAction("");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

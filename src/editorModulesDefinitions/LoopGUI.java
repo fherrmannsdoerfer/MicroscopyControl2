@@ -92,4 +92,9 @@ public class LoopGUI extends LoopModules{
 		
 	}
 
+	@Override
+	public String getLoopTag() {
+		return "default Loop";
+	}
+
 }

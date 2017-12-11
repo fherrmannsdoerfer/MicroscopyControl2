@@ -36,7 +36,7 @@ public class MicroscopeControlV2MainClass implements MMPlugin {
 
 	@Override
 	public String getVersion() {
-		return "Version 0.1";
+		return "Version 0.5";
 	}
 
 	@Override
@@ -48,8 +48,9 @@ public class MicroscopeControlV2MainClass implements MMPlugin {
 	//code to start the plugin can be written here
 	@Override
 	public void setApp(ScriptInterface app) {
+		System.out.println("First class that is executed (MicroscopeControlV2MainClass)");
 		core = app.getMMCore();
-		try {
+		/*	try {
 			PositionList list = app.getPositionList();
 			MultiStagePosition[] msps = list.getPositions();
 			System.out.println(msps.length);
@@ -59,7 +60,7 @@ public class MicroscopeControlV2MainClass implements MMPlugin {
 		} catch (MMScriptException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		MainFrame mf = new MainFrame(core,app);
 	}
 

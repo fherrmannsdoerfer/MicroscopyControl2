@@ -142,4 +142,9 @@ public class LoopROIsGUI extends LoopModules{
 		mfe.getMainFrameReference().setCurrentXYPositionFromLoop(currentPosition);
 	}
 
+	@Override
+	public String getLoopTag() {
+		return "roiIteration";
+	}
+
 }

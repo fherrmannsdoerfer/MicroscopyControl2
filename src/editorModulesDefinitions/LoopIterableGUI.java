@@ -36,7 +36,7 @@ public class LoopIterableGUI extends LoopModules{
 	private JPanel createOptionPanel(){
 		JPanel retPanel = new JPanel();
 		retPanel.setLayout(new GridLayout(1, 2,60,15));
-		retPanel.add(new JLabel("Number of iterations:"));
+		retPanel.add(new JLabel("Iteration Tag:"));
 		iterationTag = Utility.setFormatTextFields(iterationTag, 30, 20, 5);
 		retPanel.add(iterationTag);
 		return retPanel;
@@ -90,5 +90,12 @@ public class LoopIterableGUI extends LoopModules{
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public String getLoopTag() {
+		return iterationTag.getText();
+	}
+	
+	
 
 }
