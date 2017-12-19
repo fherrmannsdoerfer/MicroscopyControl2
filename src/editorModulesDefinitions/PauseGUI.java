@@ -15,9 +15,11 @@ public class PauseGUI extends EditorModules{
 	JTextField durationOfPause = new JTextField("");
 	
 	private static String name = "Pause Microscope";
+	MainFrameEditor mfe;
 	
 	public PauseGUI(MainFrameEditor mfe) {
 		super(mfe);
+		this.mfe = mfe;
 		this.setParameterButtonsName(name);
 		this.setColor(mfe.style.getColorStainingRobot());
 		this.setOptionPanel(createOptionPanel());
@@ -81,7 +83,7 @@ public class PauseGUI extends EditorModules{
 	@Override
 	public void perform() {
 		try {
-			Thread.sleep(Long.parseLong(durationOfPause.getText()));
+			Thread.sleep(Long.parseLong(Utility.parseParameter(durationOfPause.getText(),mfe)));
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

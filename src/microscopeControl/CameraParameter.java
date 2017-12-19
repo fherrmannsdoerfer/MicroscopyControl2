@@ -129,7 +129,7 @@ public class CameraParameter extends JPanel{
 		this.add(lblNumberFrames);
 		this.add(horizontalBoxNumberOfFrames);
 		
-		Thread timeLoopThread = new Thread(new TimeLoop());
+		Thread timeLoopThread = new Thread(new TimeLoop(mf));
 		timeLoopThread.start();
 		
 	}
@@ -181,7 +181,8 @@ public class CameraParameter extends JPanel{
 	
 	//Thread that checks and compares the current temperature of the camera 
 	class TimeLoop implements Runnable {
-		public TimeLoop(){}
+		MainFrame mf;
+		public TimeLoop(MainFrame mf){this.mf=mf;}
 		
 		public void run(){
 			while (threadShouldStayRunning) {

@@ -2,6 +2,7 @@ package editorModulesDefinitions;
 
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.util.ArrayList;
 
 import javax.swing.Box;
 import javax.swing.JCheckBox;
@@ -93,8 +94,10 @@ public class LoopGUI extends LoopModules{
 	}
 
 	@Override
-	public String getLoopTag() {
-		return "default Loop";
+	public ArrayList<String> getParameterTags() {
+		ArrayList<String> al = new ArrayList<String>();
+		al.add("default loop");
+		return al;
 	}
 
 }

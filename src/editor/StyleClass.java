@@ -23,7 +23,7 @@ public class StyleClass implements Serializable{
 	private int defaultIndentation = 35;
 	private Dimension dimensionAvailableModules = new Dimension(350,heightEditor);
 	private Dimension dimensionSelectedModules = new Dimension(widthProcessingStepsPanel + 300,heightEditor);
-	private Dimension dimensionParameters = new Dimension(400,heightEditor);
+	private Dimension dimensionParameters = new Dimension(500,heightEditor);
 	
 	public Color getColorMicroscope() {
 		return colorMicroscope;

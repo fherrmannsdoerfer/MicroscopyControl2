@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -143,8 +144,10 @@ public class LoopROIsGUI extends LoopModules{
 	}
 
 	@Override
-	public String getLoopTag() {
-		return "roiIteration";
+	public ArrayList<String> getParameterTags() {
+		ArrayList<String> al = new ArrayList<String>();
+		al.add("roi iteration");
+		return al;
 	}
 
 }

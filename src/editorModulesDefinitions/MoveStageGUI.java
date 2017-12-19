@@ -23,10 +23,9 @@ public class MoveStageGUI extends EditorModules{
 	private static final long serialVersionUID = 1L;
 	JTextField xPos = new JTextField("0");
 	JTextField yPos = new JTextField("0");
-	JTextField zPos = new JTextField("0");
 	JCheckBox useVariableFromLoop = new JCheckBox("Use ROI From Loop");
 	MainFrameEditor mfe;
-	private static String name = "MoveStage";
+	private static String name = "MoveXYStage";
 	
 	public MoveStageGUI(MainFrameEditor mfe) {
 		super(mfe);
@@ -43,7 +42,6 @@ public class MoveStageGUI extends EditorModules{
 	private JPanel createOptionPanel(){
 		xPos = Utility.setFormatTextFields(xPos,30,20,3);
 		yPos = Utility.setFormatTextFields(yPos,30,20,3);
-		zPos = Utility.setFormatTextFields(zPos,30,20,3);
 		
 		JPanel retPanel = new JPanel();
 		retPanel.setLayout(new GridLayout(4, 2,60,15));
@@ -52,8 +50,6 @@ public class MoveStageGUI extends EditorModules{
 		retPanel.add(xPos);
 		retPanel.add(new JLabel("Y Position in nm:"));
 		retPanel.add(yPos);
-		retPanel.add(new JLabel("Z Position in nm:"));
-		retPanel.add(zPos);
 		retPanel.add(new JLabel(""));
 		retPanel.add(useVariableFromLoop);
 		useVariableFromLoop.addActionListener(new chkBoxActionListener());
@@ -67,7 +63,6 @@ public class MoveStageGUI extends EditorModules{
 		public void actionPerformed(ActionEvent arg0) {
 			xPos.setEnabled(!useVariableFromLoop.isSelected());
 			yPos.setEnabled(!useVariableFromLoop.isSelected());
-			zPos.setEnabled(!useVariableFromLoop.isSelected());
 		}
 		
 	}
@@ -79,16 +74,23 @@ public class MoveStageGUI extends EditorModules{
 	}
 
 	public String[] getSettings(){
-		String[] tempString = new String[3];
+		String[] tempString = new String[4];
 		tempString[0] = xPos.getText();
 		tempString[1] = yPos.getText();
-		tempString[2] = zPos.getText();
+		if (useVariableFromLoop.isSelected()){
+			tempString[2] = "selected";
+		}
+		else {
+			tempString[2] = "notSelected";
+		}
 		return tempString;
 	}
 	public void setSettings(String[] tempString){
-		xPos.setText(tempString[1]);
-		yPos.setText(tempString[2]);
-		zPos.setText(tempString[3]);
+		xPos.setText(tempString[0]);
+		yPos.setText(tempString[1]);
+		if (tempString[2].equals("selected")){
+			useVariableFromLoop.setSelected(true);
+		}
 	}
 
 	@Override
@@ -109,6 +111,11 @@ public class MoveStageGUI extends EditorModules{
 
 	@Override
 	public void perform() {
-		mfe.getMainFrameReference().moveXYStage(Double.valueOf(xPos.getText()), Double.valueOf(yPos.getText()));
+		if (useVariableFromLoop.isSelected()){
+			
+		}
+		else{
+			mfe.getMainFrameReference().moveXYStage(Double.valueOf(Utility.parseParameter(xPos.getText(),mfe)), Double.valueOf(Utility.parseParameter(yPos.getText(),mfe)));
+		}
 	}
 }

@@ -102,7 +102,7 @@ public class MainFrameEditor extends JDialog implements Serializable{
 		microscopeComboBoxOptions.add(new LaserControl());
 		microscopeComboBoxOptions.add(new StartImageAcquisitionGUI());
 		microscopeComboBoxOptions.add(new MoveStageGUI());
-		microscopeComboBoxOptions.add(new IterableInputGUI());
+		//microscopeComboBoxOptions.add(new IterableInputGUI());
 		microscopeComboBoxOptions.add(new CaptureWidefieldImageGUI());
 		microscopeComboBoxOptions.add(new PauseGUI());
 		microscopeComboBoxOptions.add(new FilterWheelGUI());
@@ -111,7 +111,7 @@ public class MainFrameEditor extends JDialog implements Serializable{
 		
 		stainingRobotComboBoxOptions.add(new StainingRobotCommandGUI());
 		
-		loopsComboBoxOptions.add(new LoopGUI());
+		//loopsComboBoxOptions.add(new LoopGUI());
 		loopsComboBoxOptions.add(new LoopROIsGUI());
 		loopsComboBoxOptions.add(new LoopIterableGUI());
 		
@@ -420,6 +420,10 @@ public class MainFrameEditor extends JDialog implements Serializable{
 		
 	}
 		
+	public ControlerEditor getControlerEditorReference(){
+		return controlerReference;
+	}
+	
 	private void setupPreselectedTasks() {
 		File[] listOfFiles = folder.listFiles();	
 		preselectionComboBox.removeAllItems();

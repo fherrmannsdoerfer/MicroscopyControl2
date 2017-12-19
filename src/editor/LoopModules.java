@@ -1,5 +1,7 @@
 package editor;
 
+import java.util.ArrayList;
+
 public abstract class LoopModules extends EditorModules{
 	private int currentIterationStep = 0;
 	private int nbrIterations;
@@ -25,7 +27,7 @@ public abstract class LoopModules extends EditorModules{
 	abstract public void perform();
 	abstract public void performIncrementalStep();
 	abstract public EditorModules getEndLoopModule(MainFrameEditor mfe);
-	abstract public String getLoopTag();
+	abstract public ArrayList<String> getParameterTags();
 	public void nextStep(){currentIterationStep+=1;}
 	public int getCurrentIterationStep(){return currentIterationStep;}
 	public int getNbrIterations(){return nbrIterations;}

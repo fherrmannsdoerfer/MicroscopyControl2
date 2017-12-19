@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import javax.swing.JTextField;
 
 import dataTypes.ROIParameters;
+import editor.MainFrameEditor;
 
 
 //some useful general functions
@@ -26,6 +27,16 @@ public class Utility implements Serializable {
 		txtField.setMinimumSize(new Dimension(width, height));
 		txtField.setColumns(nbrColumns);
 		return txtField;
+	}
+	
+	//function that parses the parameter to either return a value or in case of a tag starting with '%' the appropriate value
+	public static String parseParameter(String parameter, MainFrameEditor mfe){
+		if (parameter.startsWith("%")){
+			return mfe.getControlerEditorReference().getIterationValue(parameter);
+		}	
+		else{
+			return parameter;
+		}
 	}
 
 	public static ArrayList<ImagePlus> cropImages(ImageProcessor imp,

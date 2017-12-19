@@ -15,10 +15,12 @@ public class MeasurementTagGUI extends EditorModules{
 	private static final long serialVersionUID = 1L;
 	JTextField measurementTag = new JTextField("");
 	MainFrame mf;
-	private static String name = "Pause Microscope";
+	private static String name = "Measurement Tag";
+	MainFrameEditor mfe;
 	
 	public MeasurementTagGUI(MainFrameEditor mfe) {
 		super(mfe);
+		this.mfe = mfe;
 		this.mf = mfe.getMainFrameReference();
 		this.setParameterButtonsName(name);
 		this.setColor(mfe.style.getColorStainingRobot());
@@ -83,7 +85,9 @@ public class MeasurementTagGUI extends EditorModules{
 	@Override
 	public void perform() {
 		try {
-			mf.setMeasurementTag(measurementTag.getText());
+			//mf.setMeasurementTag(measurementTag.getText());
+			System.out.println(Utility.parseParameter(measurementTag.getText(), mfe));
+			mf.setMeasurementTag(Utility.parseParameter(measurementTag.getText(), mfe));
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

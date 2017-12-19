@@ -47,8 +47,9 @@ public class MainFrame extends JFrame {
 	private String camName = "iXon Ultra";
 	private String zObjectiveName = "FocusLocPIZMotorObjective";
 	private String xyStageName = "PIXYStage";
+	private String mirrorFocuslock = "SmaractZSpiegel";
 	private String filterWheelName = "Thorlabs Filter Wheel";
-	private String[] filterNames = {"488 no UV", "561 no UV", "660", "561", "488", "free"};
+	private String[] filterNames = {"488 no UV", "561 no UV", "660", "488", "561", "free"};
 	private String[] laserNames = {"CoherentCube405","CoherentObis488","CoherentObis561","CoherentCube661"};
 	
 	//Wavelengths of the used lasers
@@ -279,7 +280,8 @@ public class MainFrame extends JFrame {
 		} catch (MMScriptException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return null;
+			
+			return new PositionList();
 		}
 	}
 
@@ -366,6 +368,8 @@ public class MainFrame extends JFrame {
 	public void setCameraParameter(CameraParameters camParam2) {camParam.setCameraParameters(camParam2);}
 
 	public void setMeasurementTag(String text) {outCon.setMeasurementTag(text);}
+
+	public void setMirrorPosition(double d) {try {core.setProperty(mirrorFocuslock, "Position", d);} catch (Exception e) {e.printStackTrace();}}
 	
 	
 }

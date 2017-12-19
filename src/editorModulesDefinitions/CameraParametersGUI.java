@@ -103,10 +103,10 @@ public class CameraParametersGUI extends EditorModules{
 	public void perform() {
 		CameraParameters camParam;
 		if (shutterPosition.getSelectedIndex() == 0){
-			camParam = new CameraParameters(Double.parseDouble(exposureTime.getText()),Integer.parseInt(emGain.getText()), Integer.parseInt(nbrFrames.getText()),true);
+			camParam = new CameraParameters(Double.parseDouble(Utility.parseParameter(exposureTime.getText(), mfe)),Integer.parseInt(Utility.parseParameter(emGain.getText(), mfe)), Integer.parseInt(Utility.parseParameter(nbrFrames.getText(), mfe)),true);
 		}
 		else{
-			camParam = new CameraParameters(Double.parseDouble(exposureTime.getText()),Integer.parseInt(emGain.getText()), Integer.parseInt(nbrFrames.getText()),false);
+			camParam = new CameraParameters(Double.parseDouble(Utility.parseParameter(exposureTime.getText(), mfe)),Integer.parseInt(Utility.parseParameter(emGain.getText(), mfe)), Integer.parseInt(Utility.parseParameter(nbrFrames.getText(), mfe)),false);
 		}
 		mfe.getMainFrameReference().setCameraParameter(camParam);
 	}

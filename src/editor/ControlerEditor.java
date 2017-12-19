@@ -5,6 +5,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import editorModulesDefinitions.EndLoopGUI;
+import editorModulesDefinitions.LoopIterableGUI;
+import editorModulesDefinitions.LoopIterableGUI.ParameterTag;
 
 
 public class ControlerEditor implements Serializable{
@@ -70,13 +72,20 @@ public class ControlerEditor implements Serializable{
 		}
 	}
 	
-	public int getIterationCounter(String loopTag){
+	//not nice but also no time... This finds the right parameter entry for the given tag depending on the iteration step,
+	//only makes sense for LoopIterableGUI objects
+	public String getIterationValue(String parameterTag){
 		for (LoopModules loopModule :loopModules){
-			if (loopModule.getLoopTag().equals(loopTag)){
-				return loopModule.getCurrentIterationStep();
+			if (loopModule instanceof LoopIterableGUI){
+				ArrayList<ParameterTag> pts = ((LoopIterableGUI) loopModule).getParameters();
+				for (int i =0; i<pts.size();i++){
+					if(pts.get(i).getParameterTag().equals(parameterTag)){
+						return pts.get(i).getParameterList().get(loopModule.getCurrentIterationStep());
+					}
+				}
 			}
 		}
-		System.err.println("No loop with the given loop tag:" + loopTag+" could be found.");
-		return -1;
+		System.err.println("No loop with the given parameter tag:" + parameterTag+" could be found.");
+		return "-1";
 	}
 }
