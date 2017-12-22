@@ -22,7 +22,7 @@ import javax.swing.border.TitledBorder;
 import dataTypes.XYStagePosition;
 import utility.Utility;
 
-public class StageControl extends JPanel{
+public class StageControl extends JPanel {
 	
 	double pixelSizeX = .133;
 	double pixelSizeY = .133; //with 3d lense 122 nm
@@ -34,11 +34,14 @@ public class StageControl extends JPanel{
 	JLabel lblUpperLeft;
 	JLabel lblLowerRight;
 	JButton btnStartTileScan;
+	JButton btnStopTileScan;
 	JTextField txtXPos;
 	JTextField txtYPos;
 	JButton btnMoveTo;
 	
-	int[] pixelOverlap = {5,10,20,40,80};
+	boolean tileScanRunning;
+	
+	int[] percentageOverlap = {1,2,5,10,20,40,50};
 	
 	private XYStagePosition upperLeftCorner;
 	private XYStagePosition lowerRightCorner;
@@ -63,9 +66,11 @@ public class StageControl extends JPanel{
 		lblLowerRight = new JLabel("not yet set");
 		btnStartTileScan = new JButton("Start Tile Scan");
 		btnStartTileScan.addActionListener(new BtnStartTileScan_ActionListener());
+		btnStopTileScan = new JButton("Stop Tile Scan");
+		btnStopTileScan.addActionListener(new BtnStopTileScan_ActionListener());
 		comboBoxOverlap = new JComboBox();
-		for (int i = 0; i< pixelOverlap.length; i++){
-			comboBoxOverlap.addItem(pixelOverlap[i]+" Pixel");
+		for (int i = 0; i< percentageOverlap.length; i++){
+			comboBoxOverlap.addItem(percentageOverlap[i]+" Percent");
 		}
 		
 		tileScan.add(btnSetUpperLeft);
@@ -74,8 +79,8 @@ public class StageControl extends JPanel{
 		tileScan.add(lblLowerRight);
 		tileScan.add(new JLabel("Overlap:"));
 		tileScan.add(comboBoxOverlap);
-		tileScan.add(new JLabel());
 		tileScan.add(btnStartTileScan);
+		tileScan.add(btnStopTileScan);
 		
 		JPanel movementControl = new JPanel();
 		movementControl.setBorder(new TitledBorder(null,"Movement Control", TitledBorder.LEADING, TitledBorder.TOP,mf.getTitelFont(),null));
@@ -154,27 +159,45 @@ public class StageControl extends JPanel{
 		
 	};
 	
+	class BtnStopTileScan_ActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			tileScanRunning = false;
+		}
+	};
+	
 	class TileScan implements Runnable{
 		TileScan(){
-			
+			tileScanRunning =true;
 		}
 		@Override
 		public void run() {
 			mf.stopLivePreview();
 			mf.setAction("Tile Scan");
-			int overlapInPixels = pixelOverlap[comboBoxOverlap.getSelectedIndex()]; 
-			int numberStepsX = (int)Math.ceil((lowerRightCorner.getxPos()-upperLeftCorner.getxPos())/pixelSizeX/(256-overlapInPixels));
-			int numberStepsY = (int)Math.ceil((lowerRightCorner.getyPos()-upperLeftCorner.getyPos())/pixelSizeY/(512-overlapInPixels));;
+			//only use large overlap in y direction
+			int overlapInPixelsX = 6;//(int) Math.ceil(percentageOverlap[comboBoxOverlap.getSelectedIndex()]/100.*256);
+			int overlapInPixelsY = (int) Math.ceil(percentageOverlap[comboBoxOverlap.getSelectedIndex()]/100.*512);
+			if (overlapInPixelsX%2!=0){
+				overlapInPixelsX += 1;
+			}
+			if (overlapInPixelsY%2!=0){
+				overlapInPixelsY += 1;
+			}
+			int numberStepsX = (int)Math.ceil((lowerRightCorner.getxPos()-upperLeftCorner.getxPos())/pixelSizeX/(256-overlapInPixelsX))+1;
+			int numberStepsY = (int)Math.ceil((lowerRightCorner.getyPos()-upperLeftCorner.getyPos())/pixelSizeY/(512-overlapInPixelsY))+1;
 			System.out.println(numberStepsX+" "+numberStepsY);
 			ImagePlus[][] tileScanImages = new ImagePlus[numberStepsX][numberStepsY];
 			for (int x = 0; x< numberStepsX ;x++){
 				for (int y =0; y<numberStepsY;y++){
+					if (!tileScanRunning){
+						break;
+					}
 					mf.setFrameCount(numberStepsY*x+y+1+"/"+numberStepsY*numberStepsX);
-					double xPos = upperLeftCorner.getxPos() + x * pixelSizeX * (256-overlapInPixels);
-					double yPos = upperLeftCorner.getyPos() + y * pixelSizeY * (512-overlapInPixels);
+					double xPos = upperLeftCorner.getxPos() + x * pixelSizeX * (256-overlapInPixelsX);
+					double yPos = upperLeftCorner.getyPos() + y * pixelSizeY * (512-overlapInPixelsY);
 					mf.moveXYStage(xPos,yPos);
 					try {
-						Thread.sleep((long) (500+mf.getExposureTime()));
+						Thread.sleep((long) (200+mf.getExposureTime()));
 						ImagePlus temp = mf.captureImage();
 						mf.showCurrentImage(temp);
 						tileScanImages[x][y] = temp;
@@ -182,12 +205,16 @@ public class StageControl extends JPanel{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
+					if (!tileScanRunning){
+						break;
+					}
 				}
 			}
-			ImagePlus stichedImage = Utility.stichTileScan(tileScanImages,numberStepsX, numberStepsY, overlapInPixels);
-			mf.createOutputFolder();
-			OutputControl.saveSingleImage(stichedImage, mf.getOutputFolder()+"stichedImage.tif");
+			if (tileScanRunning){
+				ImagePlus stichedImage = Utility.stichTileScan(tileScanImages,numberStepsX, numberStepsY, overlapInPixelsX, overlapInPixelsY);
+				mf.createOutputFolder();
+				OutputControl.saveSingleImage(stichedImage, mf.getOutputFolder()+"stichedImage.tif");
+			}
 		}
 	}
 }

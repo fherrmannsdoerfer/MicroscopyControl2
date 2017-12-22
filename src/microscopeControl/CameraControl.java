@@ -16,7 +16,7 @@ import javax.swing.border.TitledBorder;
 //Provides buttons to control the camere
 //start, stop image acquisition and live preview
 //and capture Widefield image
-public class CameraControl extends JPanel{
+public class CameraControl extends JPanel {
 
 	MainFrame mf;
 	JButton btnStartLivePreview;

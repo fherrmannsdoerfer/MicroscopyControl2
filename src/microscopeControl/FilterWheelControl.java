@@ -15,7 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 
-public class FilterWheelControl extends JPanel{
+public class FilterWheelControl extends JPanel {
 	MainFrame mf;
 	
 	FilterWheelControl(MainFrame mf, Dimension minSize, Dimension prefSize, Dimension maxSize){

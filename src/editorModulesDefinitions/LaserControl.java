@@ -22,7 +22,7 @@ public class LaserControl extends EditorModules{
 	JComboBox laserSelection;
 	JTextField laserSelectionNumber = new JTextField("");
 	JTextField laserIntensity = new JTextField("0.1");
-	MainFrameEditor mfe;
+	transient MainFrameEditor mfe;
 	private static String name = "LaserControl";
 	String[] dummyLaserNames = {"laser1","laser2","laser3","laser4"};
 	
@@ -112,7 +112,9 @@ public class LaserControl extends EditorModules{
 
 	@Override
 	public void perform() {
-		mfe.getMainFrameReference().setLaserIntensity(laserSelection.getSelectedIndex(), Double.parseDouble(laserIntensity.getText()));
+		//mfe.getMainFrameReference().setLaserIntensity(laserSelection.getSelectedIndex(), Double.parseDouble(laserIntensity.getText()));
 		mfe.getMainFrameReference().setLaserIntensity(Integer.parseInt(Utility.parseParameter(laserSelectionNumber.getText(), mfe))-1, Double.parseDouble(Utility.parseParameter(laserIntensity.getText(),mfe)));
+		System.out.println("index: "+(Integer.parseInt(Utility.parseParameter(laserSelectionNumber.getText(), mfe))-1));
+		System.out.println("intensity: "+Double.parseDouble(Utility.parseParameter(laserIntensity.getText(),mfe)));
 	}
 }

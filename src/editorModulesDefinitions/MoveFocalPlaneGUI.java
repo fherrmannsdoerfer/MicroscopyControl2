@@ -15,7 +15,7 @@ public class MoveFocalPlaneGUI extends EditorModules{
 	JTextField mirrorPosition = new JTextField("");
 	
 	private static String name = "Shift Focal Plane";
-	MainFrameEditor mfe;
+	transient MainFrameEditor mfe;
 	
 	public MoveFocalPlaneGUI(MainFrameEditor mfe) {
 		super(mfe);

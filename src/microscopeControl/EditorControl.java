@@ -23,7 +23,7 @@ import editor.MainFrameEditor;
 import mmcorej.CMMCore;
 
 
-public class EditorControl extends JPanel{
+public class EditorControl extends JPanel {
 	//object used to control all hardware
 	CMMCore core;
 	

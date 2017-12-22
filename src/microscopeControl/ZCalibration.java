@@ -17,7 +17,7 @@ import javax.swing.border.TitledBorder;
 
 import utility.Utility;
 
-public class ZCalibration extends JPanel{
+public class ZCalibration extends JPanel {
 
 	MainFrame mf;
 	

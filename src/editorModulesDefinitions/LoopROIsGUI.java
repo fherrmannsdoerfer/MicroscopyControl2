@@ -1,6 +1,7 @@
 package editorModulesDefinitions;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import org.micromanager.api.MultiStagePosition;
@@ -27,12 +29,17 @@ public class LoopROIsGUI extends LoopModules{
 	
 	private static final long serialVersionUID = 1L;
 	JLabel numberRuns = new JLabel("");
+	JTextField parameterTagForThisLoop = new JTextField();
 	JButton updateButton = new JButton("Update ROI List");
-	MainFrameEditor mfe;
+	JButton addParameterTag = new JButton("Add Parameter Tag");
+	transient MainFrameEditor mfe;
 	JPanel dispList;
 	
 	private static String name = "LoopROIs";
 	EditorModules endLoop = new EndLoopGUI(this);
+	JScrollPane scrollPane2;
+	ArrayList<ParameterTag> parameterTags = new ArrayList<ParameterTag>();
+	Box verticalBox2;
 	
 	public LoopROIsGUI(MainFrameEditor mfe) {
 		super(mfe);
@@ -52,11 +59,15 @@ public class LoopROIsGUI extends LoopModules{
 
 		JPanel retPanel = new JPanel();
 		JPanel upperPart = new JPanel();
-		upperPart.setLayout(new GridLayout(2, 2,60,15));
+		upperPart.setLayout(new GridLayout(4, 2,60,15));
 		upperPart.add(new JLabel("Number of iterations:"));
 		upperPart.add(numberRuns);
+		upperPart.add(new JLabel("Parameter tag for this loop:"));
+		upperPart.add(parameterTagForThisLoop);
 		upperPart.add(new JLabel(""));
 		upperPart.add(updateButton);
+		upperPart.add(new JLabel());
+		upperPart.add(addParameterTag);
 		updateButton.addActionListener(new updateButtonActionListener());
 		
 		dispList = new JPanel();
@@ -65,9 +76,40 @@ public class LoopROIsGUI extends LoopModules{
 		verticalBox.add(upperPart);
 		verticalBox.add(Box.createVerticalStrut(30));
 		verticalBox.add(dispList);
+		
+		verticalBox2 = Box.createVerticalBox();
+		scrollPane2 = new JScrollPane(verticalBox2);
+		scrollPane2.setPreferredSize(new Dimension(400+60,800));
+		scrollPane2.setMinimumSize(new Dimension(400+30,700));
+		scrollPane2.setMaximumSize(new Dimension(400+900,800));
+		
+		verticalBox.add(scrollPane2);
+		
+		
+		addParameterTag.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				addParameterTag();
+			}
+		});
+		
+		
 		retPanel.add(verticalBox);
 		return retPanel;
 	}
+	
+	public void addParameterTag(){
+		ParameterTag pt = new ParameterTag(mfe); 
+		parameterTags.add(pt);
+		verticalBox2.add(pt);
+		verticalBox2.add(Box.createVerticalStrut(15));
+		mfe.repaintOptionPanel();
+	}
+	
+	public ArrayList<ParameterTag> getParameters(){
+		return this.parameterTags;
+	}
+	
 	
 	class updateButtonActionListener implements ActionListener{
 		@Override
@@ -133,14 +175,23 @@ public class LoopROIsGUI extends LoopModules{
 	@Override
 	public void perform() {
 		setNbrIterations(Integer.parseInt(numberRuns.getText()));
-		
+		ParameterTag xVals = new ParameterTag(mfe);
+		ParameterTag yVals = new ParameterTag(mfe);
+		PositionList list = mfe.getMainFrameReference().getPositionList();
+		ArrayList<String> paramsX = new ArrayList<String>();
+		ArrayList<String> paramsY = new ArrayList<String>();
+		for (int i = 0;i<list.getNumberOfPositions(); i++){
+			paramsX.add(String.valueOf(list.getPosition(i).getX()));
+			paramsY.add(String.valueOf(list.getPosition(i).getY()));
+		}
+		xVals.setParameterList(paramsX);
+		yVals.setParameterList(paramsY);
+
 	}
 
 	@Override
 	public void performIncrementalStep() {
-		MultiStagePosition currMSP = mfe.getMainFrameReference().getPositionList().getPosition(this.getCurrentIterationStep());
-		XYStagePosition currentPosition = new XYStagePosition(currMSP.getX(),currMSP.getY());
-		mfe.getMainFrameReference().setCurrentXYPositionFromLoop(currentPosition);
+	
 	}
 
 	@Override

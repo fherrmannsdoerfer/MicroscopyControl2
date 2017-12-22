@@ -29,7 +29,7 @@ public class XYStageWorker {
 
 	public void moveTo(double xPos, double yPos) {
 		try {
-			if (Math.abs(xPos) > 1000 || Math.abs(yPos) > 1000){
+			if (Math.abs(xPos) > 10000 || Math.abs(yPos) > 10000){
 				JOptionPane.showMessageDialog(null, "Parameters would move the stage too far.");
 			}
 			else{

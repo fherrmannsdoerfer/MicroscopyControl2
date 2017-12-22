@@ -1,5 +1,6 @@
 package microscopeControl;
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import ij.ImagePlus;
@@ -17,7 +18,7 @@ import mmcorej.CMMCore;
 
 
 //Class that does all the camera related tasks like image acquisition
-public class CameraWorker {
+public class CameraWorker  {
 	private MainFrame mf;
 	private String cameraName;
 	private CMMCore core;
@@ -66,7 +67,7 @@ public class CameraWorker {
 		
 		//Check if the directory already exists which could indicate that the path or measurement tag was not altered and 
 		//the older measurement will be overwritten
-		if ((new File(path+"\\"+measurementTag+"\\LeftChannel")).exists()||(new File(path+"\\"+measurementTag+"\\RightChannel")).exists()){
+		if ((new File(path+"\\"+"LeftChannel")).exists()||(new File(path+"\\"+"RightChannel")).exists()){
 			int dialogResult = JOptionPane.showConfirmDialog (null, "The directory where you save your movie"
 					+ " does already exist! Do you want to continue?","Warning",JOptionPane.YES_NO_OPTION);
 			if(dialogResult == JOptionPane.NO_OPTION){
@@ -103,6 +104,12 @@ public class CameraWorker {
 	public void startSequenceAcquisition() {
 		if (checkAcquisitionSettings()){
 			livePreviewRunning = false;		
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			//create new Thread. Otherwise the GUI would not be responsive
 			acquisitionThread = new Thread(new AcquisitionThread(mf));
 			acquisitionThread.start();
@@ -187,7 +194,7 @@ public class CameraWorker {
 	            stackLeft2 = new ImageStack(imgWidth, imgHeight);
 	            stackRight2 = new ImageStack(imgWidth, imgHeight);
 	            double bytesPerFrame = imgWidth * imgHeight * 2; // 16 bit images
-	            int maxImagesPerStack = (((int) Math.floor(3.5e9 / bytesPerFrame))/1000) * 1000; // max 3.5 GB per Stack
+	            int maxImagesPerStack = (((int) Math.floor(3.5e9 / bytesPerFrame))/1000) * 1000; // max 3.5 GB per Stack 1000 urspruenglich
 	            int imagesInCurrentStack = 0;
 	            stackCounter = 0;
 	            
@@ -208,6 +215,10 @@ public class CameraWorker {
 		    
 		    	      //both channels
 		    	      if (mf.getSelectedChannel() == 0){
+		    	    	  //if (frame%100 ==0){
+		    	    		  //System.out.println("current Frame: "+ frame);
+		    	    		  //whichStackIsUsed(useFirstVariableSet);
+		    	    	 // }
 		    	    	  if (useFirstVariableSet){
 		    	    		  stackLeft.addSlice(channels.get(0).getProcessor());
 				    	      stackRight.addSlice(channels.get(1).getProcessor());
@@ -221,6 +232,7 @@ public class CameraWorker {
 		    	      else if (mf.getSelectedChannel() == 1){
 			    	      if (useFirstVariableSet){
 		    	    		  stackLeft.addSlice(channels.get(0).getProcessor());
+		    	    		  
 		    	    	  }
 		    	    	  else {
 		    	    		  stackLeft2.addSlice(channels.get(0).getProcessor());
@@ -244,8 +256,9 @@ public class CameraWorker {
 		    	   }
 		    	   // if the current stack is "full"
 		    	   if (imagesInCurrentStack == maxImagesPerStack){
+		    		   System.out.println("Stack size of: "+maxImagesPerStack+" was reached.");
 		    		   imagesInCurrentStack = 0;
-		    		   stackCounter+=1;
+		    		   
 		    		   if (useFirstVariableSet){
 		    			   stackLeft2 = new ImageStack(imgWidth, imgHeight);
 		    			   stackRight2 = new ImageStack(imgWidth, imgHeight);
@@ -257,6 +270,8 @@ public class CameraWorker {
 		    		   saveStack();
 	    			   //writeStacks(comboBoxWhichPart.getSelectedIndex(), stackCounter, measurementTag,stackLeft,stackRight);
 		    		   useFirstVariableSet = !useFirstVariableSet;
+		    		   stackCounter+=1;
+		    		   //whichStackIsUsed(useFirstVariableSet);
 		    	   }
 		    	}			    	
 		    	mf.setEnableStartAcquisition(true);
@@ -268,51 +283,73 @@ public class CameraWorker {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-	    }	
+	    }
+		
+		private void whichStackIsUsed(boolean firstSet){
+			if (firstSet){
+ 			   System.out.println("First Variable Set is currently used");
+ 		   }
+ 		   else{
+ 			   System.out.println("Second Variable Set is currently used");
+ 		   }
+		}
+		
+	private class SavingThread implements Runnable{
+		 ImageStack stack1;
+		 ImageStack stack2;
+		 int selectedIndex;
+		 int stackCounter;
+		 
+		 SavingThread(ImageStack stack1, ImageStack stack2, int selectedIndex, int stackCounter){
+			 this.stack1 = stack1;
+			 this.stack2 = stack2;
+			 this.selectedIndex = selectedIndex;
+			 this.stackCounter = stackCounter;
+		 }
+		 @Override
+		   public void run(){
+			   String basename1 = "LeftChannel"+measurementTag+"pt"+String.format("%03d", stackCounter);
+			   String pathTiffFile1 = path+"\\"+measurementTag+"\\LeftChannel\\"+basename1+".tif";
+			
+			   String basename2 = "RightChannel"+measurementTag+"pt"+String.format("%03d", stackCounter);
+			   String pathTiffFile2 = path+"\\"+measurementTag+"\\RightChannel\\"+basename2+".tif";
+			   if (selectedIndex == 0){
+					OutputControl.writeStack(stack1, pathTiffFile1);
+					OutputControl.writeStack(stack2, pathTiffFile2);
+
+					if (mf.isSimulatneousReconstruction()){
+						mf.startReconstruction(pathTiffFile1, basename1);
+						mf.startReconstruction(pathTiffFile2, basename2);
+					}
+		    	}
+		        else if (selectedIndex == 1){
+		        	OutputControl.writeStack(stack1,pathTiffFile1);
+					if (mf.isSimulatneousReconstruction()){
+						mf.startReconstruction(pathTiffFile1, basename1);
+		    		}
+		    	}
+		        else {
+		        	OutputControl.writeStack(stack2,pathTiffFile2);
+					if (mf.isSimulatneousReconstruction()){
+						mf.startReconstruction(pathTiffFile2, basename2);
+		    		}
+		        }		    					   
+		   }
+
+	}
 		
 	private void saveStack(){
-		Thread saveStackThread = new Thread(new Runnable(){
-			   @Override
-			   public void run(){
-				   int selectedIndex = mf.getSelectedChannel();
-				   
-				   String basename1 = "LeftChannel"+measurementTag+"pt"+String.format("%03d", stackCounter);
-				   String pathTiffFile1 = path+"\\"+measurementTag+"\\LeftChannel\\"+basename1+".tif";
-				
-				   String basename2 = "RightChannel"+measurementTag+"pt"+String.format("%03d", stackCounter);
-				   String pathTiffFile2 = path+"\\"+measurementTag+"\\RightChannel\\"+basename2+".tif";
-				   if (selectedIndex == 0){
-					   if (useFirstVariableSet){
-						   OutputControl.writeStack(stackLeft,pathTiffFile1);
-						   OutputControl.writeStack(stackRight, pathTiffFile2);
-					   }
-					   else{
-						   OutputControl.writeStack(stackLeft2,pathTiffFile1);
-						   OutputControl.writeStack(stackRight2, pathTiffFile2);
-					   }
-						if (mf.isSimulatneousReconstruction()){
-							mf.startReconstruction(pathTiffFile1, basename1);
-							mf.startReconstruction(pathTiffFile2, basename2);
-						}
-			    	}
-			        else if (selectedIndex == 1){
-			        	if (useFirstVariableSet){OutputControl.writeStack(stackLeft,pathTiffFile1);}else{OutputControl.writeStack(stackLeft2,pathTiffFile1);}
-						if (mf.isSimulatneousReconstruction()){
-							mf.startReconstruction(pathTiffFile1, basename1);
-			    		}
-			    	}
-			        else {
-			        	if (useFirstVariableSet){OutputControl.writeStack(stackRight,pathTiffFile2);}else{OutputControl.writeStack(stackRight2,pathTiffFile2);}
-						if (mf.isSimulatneousReconstruction()){
-							mf.startReconstruction(pathTiffFile2, basename2);
-			    		}
-			        }		    					   
-			   }
-		   });
-		   saveStackThread.start();
+		SavingThread saveThread;
+		if (useFirstVariableSet){
+			saveThread = new SavingThread(stackLeft, stackRight,mf.getSelectedChannel(), stackCounter);
 		}
+		else{
+			saveThread = new SavingThread(stackLeft2, stackRight2,mf.getSelectedChannel(), stackCounter);
+		}
+		saveThread.run();
 	}
-	
+
+	}
 	
 	
 	//live preview shows the current camera images but does not save them
@@ -367,8 +404,8 @@ public class CameraWorker {
 		ImageProcessor ipr = ImageUtils.makeProcessor(core,img);
 		//the offset should not be subtracted since no negative values are allowed and the distribution of the background pixels is changed
 	    //ipr.subtract(200); //photo electrons = (digital count - offset)* sensistivity / gain
-	    ipr.multiply(4.81);
-	    ipr.multiply(1./gain); //the image contains now the number of photo electrons.
+	   // ipr.multiply(4.81);
+	    //ipr.multiply(1./gain); //the image contains now the number of photo electrons.
 	    ImagePlus imp = new ImagePlus("",ipr);
 	    return imp;
 	}

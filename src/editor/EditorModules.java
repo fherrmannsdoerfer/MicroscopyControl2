@@ -37,7 +37,7 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 	private int id = 0;
 	public JButton parameterButton;
 	public JButton removeButton;
-	private MainFrameEditor mfe;
+	transient private MainFrameEditor mfe;
 	private EditorModules thisModule;
 	private Color color;
 	private boolean visibilityOptionPanel = false;

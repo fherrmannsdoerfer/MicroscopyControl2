@@ -20,7 +20,7 @@ import dataTypes.ROIParameters;
 import mmcorej.CMMCore;
 
 
-public class ROISettings extends JPanel{
+public class ROISettings extends JPanel {
 	//object used to control all hardware
 	CMMCore core;
 	
@@ -129,11 +129,16 @@ public class ROISettings extends JPanel{
 
 	public boolean isROITooSmall() {return (Integer.parseInt(txtWidth.getText())<50 || Integer.parseInt(txtHeight.getText())<50);}
 
+	public void setROIWidth(int width){txtWidth.setText(width+"");}
+	public void setROIHeight(int height){txtHeight.setText(height+"");}
 	public int getROIWidth() {return Integer.parseInt(txtWidth.getText());}
 	public int getROIHeight() {return Integer.parseInt(txtHeight.getText());}
 	public int getShiftX() {return Integer.parseInt(txtShiftX.getText());}
 	public int getShiftY() {return Integer.parseInt(txtShiftY.getText());}
+	public void setPosX(int posX) {txtPosX.setText(posX+"");}
+	public void setPosY(int posY) {txtPosY.setText(posY+"");}
 	public int getPosX() {return Integer.parseInt(txtPosX.getText());}
 	public int getPosY() {return Integer.parseInt(txtPosY.getText());}
 	public ROIParameters getROIParameters() {return new ROIParameters(getROIWidth(), getROIHeight(),getShiftX(), getShiftY(), getPosX(), getPosY());}
+	public boolean isMiddleLineSelected(){return chckbxShowMiddleLine.isSelected();}
 }

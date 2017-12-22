@@ -15,7 +15,7 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 
-public class OutputPathControl extends JPanel{
+public class OutputPathControl extends JPanel {
 	
 	MainFrame mf;
 	private JTextField path;

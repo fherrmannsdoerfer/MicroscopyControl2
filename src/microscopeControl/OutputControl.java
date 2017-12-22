@@ -47,9 +47,15 @@ public class OutputControl {
 	}
 
 	public static void writeStack(ImageStack stackLeft, String pathTiffFile) {
-		ImagePlus leftStack = new ImagePlus("", stackLeft);
-		FileSaver fs = new FileSaver(leftStack);
-		fs.saveAsTiffStack(pathTiffFile);	
+		try{
+			ImagePlus leftStack = new ImagePlus("", stackLeft);
+			FileSaver fs = new FileSaver(leftStack);
+			fs.saveAsTiffStack(pathTiffFile);	
+		}
+		catch (IllegalArgumentException e){
+			e.printStackTrace();
+			System.out.println("Stack was probably empty!!! For sure something went wrong!");
+		}
 	}
 
 	public static void createOutputFolders(String path, String measurementTag) {

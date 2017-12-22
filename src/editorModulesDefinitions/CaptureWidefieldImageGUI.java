@@ -18,7 +18,7 @@ public class CaptureWidefieldImageGUI extends EditorModules{
 	 */
 	private static final long serialVersionUID = 1L;
 	JTextField exposureTime = new JTextField("100");
-	MainFrameEditor mfe;
+	transient MainFrameEditor mfe;
 	private static String name = "CaptureWidefieldImageGUI";
 
 	public CaptureWidefieldImageGUI(MainFrameEditor mfe) {

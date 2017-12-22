@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 import editorModulesDefinitions.EndLoopGUI;
 import editorModulesDefinitions.LoopIterableGUI;
-import editorModulesDefinitions.LoopIterableGUI.ParameterTag;
 
 
 public class ControlerEditor implements Serializable{
@@ -65,9 +64,11 @@ public class ControlerEditor implements Serializable{
 					thisModule.nextStep();
 				}
 				loopModules.remove(thisModule);
+				break; //this prevents additional execution of the body of the for loop
 			}
 			else{
 				psp.perform();
+				
 			}
 		}
 	}
@@ -76,12 +77,10 @@ public class ControlerEditor implements Serializable{
 	//only makes sense for LoopIterableGUI objects
 	public String getIterationValue(String parameterTag){
 		for (LoopModules loopModule :loopModules){
-			if (loopModule instanceof LoopIterableGUI){
-				ArrayList<ParameterTag> pts = ((LoopIterableGUI) loopModule).getParameters();
-				for (int i =0; i<pts.size();i++){
-					if(pts.get(i).getParameterTag().equals(parameterTag)){
-						return pts.get(i).getParameterList().get(loopModule.getCurrentIterationStep());
-					}
+			ArrayList<editor.LoopModules.ParameterTag> pts = ((LoopIterableGUI) loopModule).getParameters();
+			for (int i =0; i<pts.size();i++){
+				if(pts.get(i).getParameterTag().equals(parameterTag)){
+					return pts.get(i).getParameterList().get(loopModule.getCurrentIterationStep());
 				}
 			}
 		}

@@ -24,7 +24,7 @@ import utility.Utility;
 
 
 
-public class AutomatedReconstructionControl extends JPanel{
+public class AutomatedReconstructionControl extends JPanel {
 	
 	MainFrame mf;
 	

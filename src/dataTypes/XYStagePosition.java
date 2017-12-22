@@ -27,6 +27,6 @@ public class XYStagePosition {
 
 	@Override
 	public String toString(){
-		return "X: "+xPos+ " Y: "+ yPos;
+		return String.format("X: %3.3f Y: %3.3f",xPos, yPos);
 	}
 }

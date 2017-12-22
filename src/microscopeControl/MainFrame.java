@@ -83,6 +83,7 @@ public class MainFrame extends JFrame {
 	
 	//variables from CameraParameter
 	boolean showMiddleLine = false;
+	boolean acquisitionIsRunning= false;
 	int shiftX = 0;
 	int shiftY = 0;
 	//variables from CameraControl
@@ -118,13 +119,13 @@ public class MainFrame extends JFrame {
 		this.setBounds(100,00,972,1130);
 		this.setResizable(false);
 		contentPane = new JPanel();
+		statusCon = new StatusDisplayControl(this);
 		camWorker = new CameraWorker(this);
 		xyStageWorker = new XYStageWorker(this);
 		camParam = new CameraParameter(this, minSize,prefSize,maxSize);
 		camCon = new CameraControl(this, camConDims,camConDims,camConDims);
 		laserCon = new LaserControl(this);
 		disp = new Display(this);
-		statusCon = new StatusDisplayControl(this);
 		outCon = new OutputPathControl(this,outPathDims,outPathDims,outPathDims);
 		roiSet = new ROISettings(this,minSize,prefSize,maxSize);
 		editCon = new EditorControl(this,minSize,prefSize,maxSize);
@@ -172,18 +173,18 @@ public class MainFrame extends JFrame {
 	public String getCamName() {return camName;}
 
 	//getter and setter for CameraParameter
-	public boolean getShowMiddleLine() {return showMiddleLine;}
-	public void setShowMiddleLine(boolean sml){showMiddleLine = sml;}
-	public void setShiftX(int sx){shiftX = sx;}
-	public void setShiftY(int sy){shiftY = sy;}
-	public int getShiftX() {return shiftX;}
-	public int getShiftY() {return shiftY;}
+	public boolean getShowMiddleLine() {return roiSet.isMiddleLineSelected();}
+	public int getShiftX() {return roiSet.getShiftX();}
+	public int getShiftY() {return roiSet.getShiftY();}
 	
 	//getter and setter for CameraControl
 	public boolean getLivePreviewRunning() {return livePreviewRunning;}
 	public void setLivePreviewRunning(boolean lpr) {livePreviewRunning = lpr;}
 
-	public void setEnableStartAcquisition(boolean state) {camCon.setStartAcquisitionButtonState(state);}
+	public void setEnableStartAcquisition(boolean state) {
+			acquisitionIsRunning = !state;
+			camCon.setStartAcquisitionButtonState(state);
+		}
 	public void setEnableStartLivePreviewButton(boolean state) {camCon.setStartLivePreviewButtonState(state);}
 	public void openShutter() {camWorker.openShutter();}
 	public void closeShutter() {camWorker.closeShutter();}
@@ -265,7 +266,6 @@ public class MainFrame extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("Yet to be implemented" + parseInt);
 	}
 
 	public String[] getLaserNames() {return this.laserNames;}
@@ -290,7 +290,7 @@ public class MainFrame extends JFrame {
 		MainFrameEditor mfe = new MainFrameEditor(controler,this);
 		controler.setMainFrameReference(mfe);
 		mfe.setVisible(true);
-		mfe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mfe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 
 	public String loadExperiment() {
@@ -371,5 +371,14 @@ public class MainFrame extends JFrame {
 
 	public void setMirrorPosition(double d) {try {core.setProperty(mirrorFocuslock, "Position", d);} catch (Exception e) {e.printStackTrace();}}
 	
-	
+	public boolean isAcquisitionRunning(){
+		return acquisitionIsRunning;
+	}
+
+	public void setRoiParams(int width, int height, int posX, int posY) {
+		roiSet.setROIWidth(width);
+		roiSet.setROIHeight(height);
+		roiSet.setPosX(posX);
+		roiSet.setPosY(posY);
+	}
 }

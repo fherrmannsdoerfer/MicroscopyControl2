@@ -20,7 +20,7 @@ import javax.swing.event.ChangeListener;
 
 
 
-public class PifocPositionAndMonitor extends JPanel{
+public class PifocPositionAndMonitor extends JPanel {
 	MainFrame mf;
 	JSpinner spinner;
 	JCheckBox chkBoxFocusLock;
@@ -63,6 +63,16 @@ public class PifocPositionAndMonitor extends JPanel{
 		horizontalBoxZStageControls.add(comboBoxStepSize);
 		horizontalBoxZStageControls.add(Box.createHorizontalGlue());
 		horizontalBoxZStageControls.add(chkBoxFocusLock);
+		
+		try {
+			spinner.setValue(mf.getZStagePosition());
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		this.add(horizontalBoxZStageControls);
 		this.add(new ZMonitor(mf));

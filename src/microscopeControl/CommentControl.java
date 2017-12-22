@@ -8,7 +8,7 @@ import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 
 
-public class CommentControl extends JPanel{
+public class CommentControl extends JPanel {
 	MainFrame mf;
 	CommentControl(MainFrame mf, Dimension minSize, Dimension prefSize, Dimension maxSize){
 		this.mf = mf;

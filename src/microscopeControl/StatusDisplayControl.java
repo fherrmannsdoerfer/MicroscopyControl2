@@ -21,7 +21,7 @@ public class StatusDisplayControl extends JPanel {
 	MainFrame mf;
 	JLabel actionLabel = new JLabel();
 	JLabel frameLabel = new JLabel();
-	JLabel cameraStatusLabel = new JLabel();
+	JLabel cameraStatusLabel = new JLabel("not jet set");
 	
 	public StatusDisplayControl(MainFrame mf) {
 		this.mf = mf;

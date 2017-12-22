@@ -24,7 +24,8 @@ public class MoveStageGUI extends EditorModules{
 	JTextField xPos = new JTextField("0");
 	JTextField yPos = new JTextField("0");
 	JCheckBox useVariableFromLoop = new JCheckBox("Use ROI From Loop");
-	MainFrameEditor mfe;
+	transient MainFrameEditor mfe;
+	JTextField tagROILoop = new JTextField();
 	private static String name = "MoveXYStage";
 	
 	public MoveStageGUI(MainFrameEditor mfe) {
@@ -44,7 +45,7 @@ public class MoveStageGUI extends EditorModules{
 		yPos = Utility.setFormatTextFields(yPos,30,20,3);
 		
 		JPanel retPanel = new JPanel();
-		retPanel.setLayout(new GridLayout(4, 2,60,15));
+		retPanel.setLayout(new GridLayout(5, 2,60,15));
 		
 		retPanel.add(new JLabel("X Position in nm:"));
 		retPanel.add(xPos);
@@ -53,6 +54,8 @@ public class MoveStageGUI extends EditorModules{
 		retPanel.add(new JLabel(""));
 		retPanel.add(useVariableFromLoop);
 		useVariableFromLoop.addActionListener(new chkBoxActionListener());
+		retPanel.add(new JLabel("Tag for ROI Loop:"));
+		retPanel.add(tagROILoop);
 
 		return retPanel;
 	}
@@ -112,7 +115,7 @@ public class MoveStageGUI extends EditorModules{
 	@Override
 	public void perform() {
 		if (useVariableFromLoop.isSelected()){
-			
+			mfe.getMainFrameReference().moveXYStage(Double.valueOf(Utility.parseParameter(tagROILoop.getText()+"X", mfe)), Double.valueOf(Utility.parseParameter(tagROILoop.getText()+"Y", mfe)));
 		}
 		else{
 			mfe.getMainFrameReference().moveXYStage(Double.valueOf(Utility.parseParameter(xPos.getText(),mfe)), Double.valueOf(Utility.parseParameter(yPos.getText(),mfe)));

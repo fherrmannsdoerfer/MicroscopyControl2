@@ -85,7 +85,7 @@ public class Display extends JPanel {
 		
 		//create scroll pane in case of zoomed in image
 		JScrollPane scrollPane = new JScrollPane(lblImageLabel);
-		scrollPane.setPreferredSize(new Dimension(570, 530));
+		scrollPane.setPreferredSize(new Dimension(512, 512));
 		verticalBox.add(scrollPane);
 		
 		//Panel that hold all other components, organized in 3 columns and one 4 by 2 matrix
@@ -182,7 +182,6 @@ public class Display extends JPanel {
 		panel1.add(column2);
 		panel1.add(column3);
 		panel1.add(column4);
-		
 		verticalBox.add(panel1);
 		this.add(verticalBox);
 	}
@@ -232,8 +231,7 @@ public class Display extends JPanel {
 	void addRect(ImagePlus imp){
 		try{
 			imp.getProcessor().draw(new Roi(rect.x, rect.y, rect.width, rect.height));
-			imp.getProcessor().drawRoi(new Roi(rect.x+(mf.getShiftX()), (rect.y+mf.getShiftY()), rect.width, rect.height));
-			imp.getProcessor().drawRect(rect.x+(mf.getShiftX()), (rect.y+mf.getShiftY()), rect.width, rect.height);
+			imp.getProcessor().draw(new Roi(rect.x+mf.getShiftX(), rect.y+mf.getShiftY(), rect.width, rect.height));
 		}
 		catch(Error e){System.out.println(e.toString());}
 	}
@@ -377,6 +375,7 @@ public class Display extends JPanel {
 				ImagePlus imp = new ImagePlus("",buImg);
 				imp.getProcessor().setColor(255);
 				imp.getProcessor().draw(new Roi(rect.x, rect.y, rect.width, rect.height));
+				imp.getProcessor().draw(new Roi(rect.x+mf.getShiftX(), rect.y+mf.getShiftY(), rect.width, rect.height));	
 				//imp.draw(rect.x, rect.y, rect.width, rect.height);
 				lblImageLabel.setIcon(new ImageIcon(imp.getBufferedImage()));
 			}
@@ -406,7 +405,7 @@ public class Display extends JPanel {
 		public void mousePressed(MouseEvent arg0) {
 			if (arg0.getX()<256){
 				rect.x = arg0.getX();
-				rect.y = arg0.getY();
+				rect.y = arg0.getY()-6;
 				System.out.println("anfang x:"+rect.x+" y: "+rect.y);
 				isPressed = true;
 			}
@@ -415,8 +414,9 @@ public class Display extends JPanel {
 		public void mouseReleased(MouseEvent arg0) {
 			if (arg0.getX()<256 && isPressed){
 				rect.width = arg0.getX() - rect.x;
-				rect.height = arg0.getY() - rect.y;
+				rect.height = arg0.getY()-6 - rect.y;
 				System.out.println("ende x:"+(rect.x+rect.width)+" y: "+(rect.y+rect.height)+" ende x:"+ arg0.getX()+" y: "+ arg0.getY());
+				mf.setRoiParams(rect.width,rect.height, rect.x, rect.y);
 				isPressed = false;
 			}
 		}

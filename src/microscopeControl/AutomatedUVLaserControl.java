@@ -16,7 +16,7 @@ import utility.Utility;
 import mmcorej.CMMCore;
 
 //Creates the panel to turn the automated UV laser power increment on
-public class AutomatedUVLaserControl extends JPanel{
+public class AutomatedUVLaserControl extends JPanel {
 	JTextField textTargetBlinkingEventsPerFrame;
 	JLabel lblBlinkingEventsPerFrame;
 	CMMCore core;

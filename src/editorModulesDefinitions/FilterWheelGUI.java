@@ -22,7 +22,7 @@ public class FilterWheelGUI extends EditorModules{
 	 */
 	private static final long serialVersionUID = 1L;
 	JComboBox filterSelection;
-	MainFrameEditor mfe;
+	transient MainFrameEditor mfe;
 	private static String name = "Filter Wheel";
 	JTextField filterSelectionNumber = new JTextField("1");
 	
@@ -106,5 +106,11 @@ public class FilterWheelGUI extends EditorModules{
 	@Override
 	public void perform() {
 		mfe.getMainFrameReference().setFilterWheelPosition(Integer.parseInt(Utility.parseParameter(filterSelectionNumber.getText(), mfe))-1);
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

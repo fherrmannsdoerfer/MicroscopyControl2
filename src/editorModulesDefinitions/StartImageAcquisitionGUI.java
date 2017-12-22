@@ -23,7 +23,7 @@ public class StartImageAcquisitionGUI extends EditorModules{
 	JTextField exposureTime = new JTextField("30");
 	JTextField numberOfFrames = new JTextField("20000");
 	JCheckBox frameTransfer = new JCheckBox("Frame Transfer");
-	MainFrameEditor mfe;
+	transient MainFrameEditor mfe;
 	
 	private static String name = "StartImageAcquisition";
 	
@@ -113,5 +113,15 @@ public class StartImageAcquisitionGUI extends EditorModules{
 	@Override
 	public void perform() {
 		mfe.getMainFrameReference().startSequenceAcquisition();
+		System.out.println("Acquisition has started!");
+		while (mfe.getMainFrameReference().isAcquisitionRunning()){
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		System.out.println("Acquisition has stopped!");
 	}
 }

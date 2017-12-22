@@ -20,7 +20,7 @@ import utility.Utility;
 import mmcorej.CMMCore;
 
 
-public class CameraParameter extends JPanel{
+public class CameraParameter extends JPanel {
 	//boolean used to terminate the TimeLoop thread
 	boolean threadShouldStayRunning = true;
 	//object used to control all hardware

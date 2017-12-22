@@ -32,7 +32,7 @@ public class LoopIterableGUI extends LoopModules{
 	
 	private static String name = "LoopIterable";
 	EditorModules endLoop = new EndLoopGUI(this);
-	MainFrameEditor mfe;
+	transient MainFrameEditor mfe;
 	Box verticalBox;
 	JScrollPane scrollPane;
 	ArrayList<ParameterTag> parameterTags = new ArrayList<ParameterTag>();
@@ -69,8 +69,6 @@ public class LoopIterableGUI extends LoopModules{
 		verticalBoxAlles.add(upperPart);
 		verticalBoxAlles.add(Box.createVerticalStrut(30));
 		verticalBoxAlles.add(scrollPane);
-		
-		
 		
 		addParameterTag.addActionListener(new ActionListener(){
 			@Override
@@ -180,132 +178,6 @@ public class LoopIterableGUI extends LoopModules{
 		}
 		return al;
 		//return iterationTag.getText();
-	}
-	
-	public class ParameterTag extends JPanel{
-		JButton addParameterColumn = new JButton("Add New Param");
-		private ArrayList<ParameterColumn> parameterList = new ArrayList<ParameterColumn>();
-		JScrollPane scrollPane;
-		JTextField iterationTagParameterFields = new JTextField();
-		JPanel newLinePanel = new JPanel();
-		JPanel middlePart;
-		MainFrameEditor mfe;
-		
-		public ParameterTag(MainFrameEditor mfe){
-			this.mfe = mfe;
-			this.setBorder(BorderFactory.createLineBorder(Color.black));
-
-			JPanel upperPart = new JPanel();
-			upperPart.setLayout(new GridLayout(1, 2,60,15));
-
-			upperPart.add(new JLabel("Tag For The Parameter Fields:"));
-			upperPart.add(iterationTagParameterFields);
-			
-			Box verticalBox = Box.createVerticalBox();
-			this.add(verticalBox);
-			verticalBox.add(upperPart);
-			
-			middlePart = new JPanel();
-			
-			verticalBox.add(middlePart);
-			middlePart.setLayout(new BoxLayout(middlePart,BoxLayout.Y_AXIS));
-			scrollPane = new JScrollPane(middlePart);
-			scrollPane.setPreferredSize(new Dimension(200+60,400));
-			scrollPane.setMinimumSize(new Dimension(200+30,300));
-			scrollPane.setMaximumSize(new Dimension(200+900,800));
-			
-			Box horizontalBox = Box.createHorizontalBox();
-			horizontalBox.add(Box.createVerticalGlue());
-			JButton buttonAddLine = new JButton("Add New Parameter");
-			buttonAddLine.addActionListener(new ActionListener(){
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					ParameterColumn pc = new ParameterColumn(""); 
-					parameterList.add(pc);
-					fillScrollPane();
-				}
-			});
-			horizontalBox.add(buttonAddLine);
-			newLinePanel.add(horizontalBox);
-			verticalBox.add(Box.createVerticalStrut(20));
-			verticalBox.add(scrollPane);
-			middlePart.add(newLinePanel);
-		}
-		
-		private void fillScrollPane(){
-			middlePart.removeAll();
-			for (ParameterColumn pc:parameterList){
-				middlePart.add(pc);
-				middlePart.add(Box.createVerticalStrut(10));
-			}
-			middlePart.add(newLinePanel);
-			middlePart.add(Box.createVerticalGlue());
-			mfe.repaintOptionPanel();
-		}
-		
-		public void setParameterList(ArrayList<String> parameters){
-			for (int i =0; i<parameters.size(); i++){
-				ParameterColumn pc = new ParameterColumn(parameters.get(i)); 
-				parameterList.add(pc);
-			}
-		}
-		
-		public ArrayList<String> getParameterList(){
-			ArrayList<String> parameters = new ArrayList<String>();
-			for (ParameterColumn pc:parameterList){
-				parameters.add(pc.getParameter());
-			}
-			return parameters;
-		}
-		
-		public String getParameterTag(){
-			return iterationTagParameterFields.getText();
-		}
-		
-		public void setParameterTag(String text){
-			iterationTagParameterFields.setText(text);
-		}
-		
-		class ParameterColumn extends JPanel{
-			ParameterColumn selfReference;
-			JTextField parameter;
-			
-			public ParameterColumn(String string) {
-				selfReference = this;
-				//this.setBorder(BorderFactory.createLineBorder(Color.black));
-				Box horizontalBox = Box.createHorizontalBox();
-				parameter = new JTextField(string);
-				parameter.setMinimumSize(new Dimension(250,20));
-				parameter.setColumns(20);
-				horizontalBox.add(parameter);
-				horizontalBox.add(Box.createHorizontalStrut(20));
-				JButton removeButton = new JButton("X");
-				removeButton.addActionListener(new ActionListener(){
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						removeColumn(selfReference);
-					}
-				});
-				horizontalBox.add(removeButton);
-				this.add(horizontalBox);
-				this.setMaximumSize(new Dimension(300,40));
-			}
-			public String getParameter(){
-				return parameter.getText();
-			}
-			public void setParameter(String parameter){
-				this.parameter.setText(parameter);
-			}
-			
-			
-		}
-		
-		
-		private void removeColumn(ParameterColumn column){
-			parameterList.remove(column);
-			fillScrollPane();
-			mfe.repaintOptionPanel();
-		}
 	}
 	
 	

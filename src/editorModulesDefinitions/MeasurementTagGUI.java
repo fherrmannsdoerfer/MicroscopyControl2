@@ -14,9 +14,9 @@ public class MeasurementTagGUI extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;
 	JTextField measurementTag = new JTextField("");
-	MainFrame mf;
+	transient MainFrame mf;
 	private static String name = "Measurement Tag";
-	MainFrameEditor mfe;
+	transient MainFrameEditor mfe;
 	
 	public MeasurementTagGUI(MainFrameEditor mfe) {
 		super(mfe);

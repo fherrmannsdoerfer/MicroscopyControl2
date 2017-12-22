@@ -78,19 +78,41 @@ public class Utility implements Serializable {
 		return 0;
 	}
 
-	public static ImagePlus stichTileScan(ImagePlus[][] tileScanImages, int numberStepsX, int numberStepsY,
-			int overlapInPixels) {
+	/*
+	public static ImagePlus stichTileScanAlt(ImagePlus[][] tileScanImages, int numberStepsX, int numberStepsY,
+			int overlapInPixelsX, int overlapInPixelsY) {
 		ImageProcessor iP = new FloatProcessor(numberStepsX*256, numberStepsY * 512);
 		ImagePlus completeImage = new ImagePlus();
 		for (int x = 0; x < numberStepsX ;x++){
 			for (int y = 0; y < numberStepsY;y++){
 				for (int xSmall = 0;xSmall < 256;xSmall++){
-					for (int ySmall = 0; ySmall < 512;ySmall++){
-						iP.putPixelValue(xSmall+(x*256-overlapInPixels), ySmall+(y*512-overlapInPixels), (tileScanImages[x][y].getProcessor().getPixelValue(xSmall, ySmall)));
+					for (int ySmall = 511; ySmall >= 0;ySmall--){
+						iP.putPixelValue(xSmall+(x*256-overlapInPixelsX), ySmall+(y*512-overlapInPixelsY), (tileScanImages[x][y].getProcessor().getPixelValue(xSmall, ySmall)));
 					}
 				}
 			}
 		}
+		completeImage.setProcessor(iP);
+		return completeImage;
+	}*/
+	
+	public static ImagePlus stichTileScan(ImagePlus[][] tileScanImages, int numberStepsX, int numberStepsY,
+			int overlapInPixelsX, int overlapInPixelsY) {
+		int heightCoreRegion = 512-overlapInPixelsY;
+		int widthCoreRegion = 256-overlapInPixelsX;
+		int startPixelX = (256-widthCoreRegion)/2;
+		int startPixelY = (512-heightCoreRegion)/2;
+		ImageProcessor iP = new FloatProcessor(numberStepsX*widthCoreRegion, numberStepsY * heightCoreRegion);
+		for (int x = 0; x < numberStepsX ;x++){
+			for (int y = 0; y < numberStepsY;y++){
+				for (int xsmall =startPixelX, xPos = 0;xsmall <(startPixelX+widthCoreRegion);xsmall++, xPos++){
+					for (int ysmall =startPixelY, yPos = 0;ysmall <(startPixelY+heightCoreRegion);ysmall++,yPos++){
+						iP.putPixelValue(xPos+widthCoreRegion*x, yPos+heightCoreRegion*y, tileScanImages[x][y].getProcessor().getPixelValue(xsmall, ysmall));
+					}
+				}
+			}
+		}
+		ImagePlus completeImage = new ImagePlus();
 		completeImage.setProcessor(iP);
 		return completeImage;
 	}
