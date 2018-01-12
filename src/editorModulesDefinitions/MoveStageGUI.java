@@ -120,5 +120,6 @@ public class MoveStageGUI extends EditorModules{
 		else{
 			mfe.getMainFrameReference().moveXYStage(Double.valueOf(Utility.parseParameter(xPos.getText(),mfe)), Double.valueOf(Utility.parseParameter(yPos.getText(),mfe)));
 		}
+		setProgressbarValue(100);
 	}
 }

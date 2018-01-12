@@ -21,7 +21,7 @@ public class MoveFocalPlaneGUI extends EditorModules{
 		super(mfe);
 		this.mfe = mfe;
 		this.setParameterButtonsName(name);
-		this.setColor(mfe.style.getColorStainingRobot());
+		this.setColor(mfe.style.getColorMicroscope());
 		this.setOptionPanel(createOptionPanel());
 	}
 	
@@ -83,6 +83,7 @@ public class MoveFocalPlaneGUI extends EditorModules{
 	@Override
 	public void perform() {
 		mfe.getMainFrameReference().setMirrorPosition(Double.parseDouble(Utility.parseParameter(mirrorPosition.getText(), mfe)));
+		setProgressbarValue(100);
 	}
 
 }

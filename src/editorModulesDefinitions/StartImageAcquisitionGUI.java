@@ -19,11 +19,8 @@ public class StartImageAcquisitionGUI extends EditorModules{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	JTextField emGain = new JTextField("10");
-	JTextField exposureTime = new JTextField("30");
-	JTextField numberOfFrames = new JTextField("20000");
-	JCheckBox frameTransfer = new JCheckBox("Frame Transfer");
 	transient MainFrameEditor mfe;
+	JCheckBox applyChecks = new JCheckBox("Apply Checks For Overwriting, ROI, etc..");
 	
 	private static String name = "StartImageAcquisition";
 	
@@ -40,21 +37,9 @@ public class StartImageAcquisitionGUI extends EditorModules{
 	}
 	
 	private JPanel createOptionPanel(){
-		emGain = Utility.setFormatTextFields(emGain,30,20,3);
-		exposureTime = Utility.setFormatTextFields(exposureTime,30,20,3);
-		numberOfFrames = Utility.setFormatTextFields(numberOfFrames,30,20,3);
 		
 		JPanel retPanel = new JPanel();
-		retPanel.setLayout(new GridLayout(4, 2,60,15));
-		
-		retPanel.add(new JLabel("EM Gain:"));
-		retPanel.add(emGain);
-		retPanel.add(new JLabel("Exposure Time:"));
-		retPanel.add(exposureTime);
-		retPanel.add(new JLabel("Number Of Frames:"));
-		retPanel.add(numberOfFrames);
-		retPanel.add(new JLabel(""));
-		retPanel.add(frameTransfer);
+		retPanel.add(applyChecks);
 		
 		return retPanel;
 	}
@@ -66,32 +51,21 @@ public class StartImageAcquisitionGUI extends EditorModules{
 	}
 
 	public String[] getSettings(){
-		String statusChkBox = "";
-		String statusChkBox2 = "";
-		if (frameTransfer.isSelected()){
-			statusChkBox = "selected";
+		String[] tempString = new String[1];
+		if (applyChecks.isSelected()) {
+			tempString[0] = "selected";
 		}
-		else{
-			statusChkBox = "notSelected";
+		else {
+			tempString[0]="42";
 		}
-		
-		String[] tempString = new String[4];
-		tempString[0] = statusChkBox;
-		tempString[1] = emGain.getText();
-		tempString[2] = exposureTime.getText();
-		tempString[3] = numberOfFrames.getText();
 		return tempString;
 	}
 	public void setSettings(String[] tempString){
-		if (tempString[0].equals("selected")){
-			frameTransfer.setSelected(true);
+		if (tempString[0].contains("selected")) {
+			applyChecks.setSelected(true);
+		} else {
+			applyChecks.setSelected(false);
 		}
-		else{
-			frameTransfer.setSelected(false);
-		}
-		emGain.setText(tempString[1]);
-		exposureTime.setText(tempString[2]);
-		numberOfFrames.setText(tempString[3]);
 	}
 
 	@Override
@@ -112,16 +86,18 @@ public class StartImageAcquisitionGUI extends EditorModules{
 
 	@Override
 	public void perform() {
-		mfe.getMainFrameReference().startSequenceAcquisition();
+		mfe.getMainFrameReference().startSequenceAcquisition(applyChecks.isSelected());
 		System.out.println("Acquisition has started!");
 		while (mfe.getMainFrameReference().isAcquisitionRunning()){
 			try {
 				Thread.sleep(100);
+				setProgressbarValue((int) (mfe.getMainFrameReference().getCurrentFrame()/(1.*mfe.getMainFrameReference().getNumberFramesForCurrentAcquisition())*100));
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+		setProgressbarValue(100);
 		System.out.println("Acquisition has stopped!");
 	}
 }

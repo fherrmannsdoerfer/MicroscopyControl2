@@ -109,5 +109,6 @@ public class CameraParametersGUI extends EditorModules{
 			camParam = new CameraParameters(Double.parseDouble(Utility.parseParameter(exposureTime.getText(), mfe)),Integer.parseInt(Utility.parseParameter(emGain.getText(), mfe)), Integer.parseInt(Utility.parseParameter(nbrFrames.getText(), mfe)),false);
 		}
 		mfe.getMainFrameReference().setCameraParameter(camParam);
+		setProgressbarValue(100);
 	}
 }

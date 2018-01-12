@@ -108,6 +108,7 @@ public class FilterWheelGUI extends EditorModules{
 		mfe.getMainFrameReference().setFilterWheelPosition(Integer.parseInt(Utility.parseParameter(filterSelectionNumber.getText(), mfe))-1);
 		try {
 			Thread.sleep(5000);
+			setProgressbarValue(100);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -6,6 +6,9 @@ import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import ch.qos.logback.core.net.SyslogOutputStream;
+
 import javax.swing.JRadioButton;
 
 import java.awt.GridBagLayout;
@@ -17,9 +20,12 @@ import java.awt.event.ActionListener;
 
 public class FilterWheelControl extends JPanel {
 	MainFrame mf;
+	String filterWheelName;
+	JRadioButton[] radioButtons = new JRadioButton[6];
 	
 	FilterWheelControl(MainFrame mf, Dimension minSize, Dimension prefSize, Dimension maxSize){
 		this.mf = mf;
+		this.filterWheelName = mf.getFilterWheelName();
 		setMinimumSize(minSize);
 		setPreferredSize(prefSize);
 		setMaximumSize(maxSize);
@@ -98,24 +104,41 @@ public class FilterWheelControl extends JPanel {
 		rdbtnPos6.addActionListener(new rdbtnActionListener());
 		add(rdbtnPos6, gbc_rdbtnNewRadioButton_4);
 		
+		radioButtons[0] = rdbtnPos1;
+		radioButtons[1] = rdbtnPos2;
+		radioButtons[2] = rdbtnPos3;
+		radioButtons[3] = rdbtnPos4;
+		radioButtons[4] = rdbtnPos5;
+		radioButtons[5] = rdbtnPos6;
+		
 		ButtonGroup group = new ButtonGroup();
-		group.add(rdbtnPos1);
-		group.add(rdbtnPos2);
-		group.add(rdbtnPos3);
-		group.add(rdbtnPos4);
-		group.add(rdbtnPos5);
-		group.add(rdbtnPos6);
+		for (int i = 0 ;i<6;i++) {
+			group.add(radioButtons[i]);
+		}
+	}
+	
+	public void setFilterInitially(int index) {
+		radioButtons[index].setSelected(true);
+		setFilterWheelPosition(index);
 	}
 	
 	class rdbtnActionListener implements ActionListener{
-
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			// TODO Auto-generated method stub
 			System.out.println(arg0.getActionCommand());
-			mf.setFilterWheelPosition(Integer.parseInt(arg0.getActionCommand()));
+			setFilterWheelPosition(Integer.parseInt(arg0.getActionCommand()));
 		}
+	}
 
-		
+	public void setFilterWheelPosition(int index) {
+		try {
+			System.out.println("filter wheel should move!!!");
+			mf.getCoreObject().setProperty(filterWheelName, "State", index);
+			radioButtons[index].setSelected(true);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

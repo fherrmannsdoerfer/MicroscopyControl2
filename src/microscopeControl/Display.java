@@ -27,6 +27,9 @@ import javax.swing.BoxLayout;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import ch.qos.logback.core.net.SyslogOutputStream;
+
 import javax.swing.SwingConstants;
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
@@ -295,11 +298,16 @@ public class Display extends JPanel {
 	
 	//applies the set ranges for the contrast to the image
 	ImagePlus setRange(ImagePlus imp) {
-		if (Integer.parseInt(txtMinRange.getText()) == -1) {
-			txtMinRange.setText("" + (int) imp.getStatistics().min);
+		try {
+			if (Integer.parseInt(txtMinRange.getText()) == -1) {
+				txtMinRange.setText("" + (int) imp.getStatistics().min);
+			}
+			if (Integer.parseInt(txtMaxRange.getText()) == -1) {
+				txtMaxRange.setText("" + (int) imp.getStatistics().max);
+			}
 		}
-		if (Integer.parseInt(txtMaxRange.getText()) == -1) {
-			txtMaxRange.setText("" + (int) imp.getStatistics().max);
+		catch (NumberFormatException e) {
+			System.out.println("Display class threw NumberFormatException txtMinRange.getText(): "+ txtMinRange.getText()+" txtMaxRange.getText(): "+ txtMaxRange.getText());
 		}
 		if (slrMaxRange.getValue() == 50){ //happens for first frame
 			slrMaxRange.setMaximum((int) (1.1*imp.getStatistics().max));

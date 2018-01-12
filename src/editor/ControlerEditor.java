@@ -48,6 +48,7 @@ public class ControlerEditor implements Serializable{
 				thisModule.perform();
 				for (int r= 0;r<thisModule.getNbrIterations();r++){
 					ArrayList<EditorModules> subset = new ArrayList<EditorModules>();
+					resetProgressBar(subset);
 					int indentCounter = 1;
 					for (int j = i+1;j<functions.size(); j++){//start at i+1 to skip the Loop beginning
 						EditorModules p = functions.get(j);
@@ -67,6 +68,9 @@ public class ControlerEditor implements Serializable{
 				break; //this prevents additional execution of the body of the for loop
 			}
 			else{
+				if (!mfe.getEditorShouldBeRunning()) {
+					return;
+				}
 				psp.perform();
 				
 			}

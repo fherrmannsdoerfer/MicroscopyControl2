@@ -2,12 +2,7 @@ package microscopeControl;
 import mmcorej.CMMCore;
 
 import org.micromanager.api.MMPlugin;
-import org.micromanager.api.MultiStagePosition;
-import org.micromanager.api.PositionList;
 import org.micromanager.api.ScriptInterface;
-import org.micromanager.utils.MMScriptException;
-
-import ch.qos.logback.core.net.SyslogOutputStream;
 
 
 public class MicroscopeControlV2MainClass implements MMPlugin {

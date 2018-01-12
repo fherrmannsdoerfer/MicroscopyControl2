@@ -13,11 +13,12 @@ public class StainingRobotCommandGUI extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;
 	JTextField pathInstructionList = new JTextField("");
-	
+	transient MainFrameEditor mfe;
 	private static String name = "StainingRobotCommand";
 	
 	public StainingRobotCommandGUI(MainFrameEditor mfe) {
 		super(mfe);
+		this.mfe = mfe;
 		this.setParameterButtonsName(name);
 		this.setColor(mfe.style.getColorStainingRobot());
 		this.setOptionPanel(createOptionPanel());
@@ -80,8 +81,8 @@ public class StainingRobotCommandGUI extends EditorModules{
 
 	@Override
 	public void perform() {
-		// TODO Auto-generated method stub
-		
+		Utility.startChronosPlugin(mfe.getMainFrameReference().getPathToExchangeFolder(), pathInstructionList.getText());
+		setProgressbarValue(100);
 	}
 
 }

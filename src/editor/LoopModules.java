@@ -43,7 +43,10 @@ public abstract class LoopModules extends EditorModules{
 	abstract public void performIncrementalStep();
 	abstract public EditorModules getEndLoopModule(MainFrameEditor mfe);
 	abstract public ArrayList<String> getParameterTags();
-	public void nextStep(){currentIterationStep+=1;}
+	public void nextStep(){
+		currentIterationStep+=1;
+		setProgressbarValue(currentIterationStep*100/nbrIterations);	
+	}
 	public int getCurrentIterationStep(){return (currentIterationStep%nbrIterations);}//the modulo is needed in case the for loop lies within a forloop to "reset" the counter
 	public int getNbrIterations(){return nbrIterations;}
 	public void setNbrIterations(int nbrIterations){this.nbrIterations = nbrIterations;}

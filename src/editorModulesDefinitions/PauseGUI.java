@@ -21,7 +21,7 @@ public class PauseGUI extends EditorModules{
 		super(mfe);
 		this.mfe = mfe;
 		this.setParameterButtonsName(name);
-		this.setColor(mfe.style.getColorStainingRobot());
+		this.setColor(mfe.style.getColorMicroscope());
 		this.setOptionPanel(createOptionPanel());
 	}
 	
@@ -83,7 +83,17 @@ public class PauseGUI extends EditorModules{
 	@Override
 	public void perform() {
 		try {
-			Thread.sleep(Long.parseLong(Utility.parseParameter(durationOfPause.getText(),mfe)));
+			double duration = Long.parseLong(Utility.parseParameter(durationOfPause.getText(),mfe));
+			double interval = 100; //in ms
+			double elapsedTime = 0;
+			while (elapsedTime< duration - interval) {
+				Thread.sleep((long) interval);
+				elapsedTime += interval;
+				setProgressbarValue((int) (elapsedTime/duration*100));
+			}
+			Thread.sleep((long) (duration-elapsedTime));
+			setProgressbarValue(100);
+			//Thread.sleep(Long.parseLong(Utility.parseParameter(durationOfPause.getText(),mfe)));
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

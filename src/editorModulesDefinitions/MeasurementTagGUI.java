@@ -23,7 +23,7 @@ public class MeasurementTagGUI extends EditorModules{
 		this.mfe = mfe;
 		this.mf = mfe.getMainFrameReference();
 		this.setParameterButtonsName(name);
-		this.setColor(mfe.style.getColorStainingRobot());
+		this.setColor(mfe.style.getColorMicroscope());
 		this.setOptionPanel(createOptionPanel());
 	}
 	
@@ -92,6 +92,7 @@ public class MeasurementTagGUI extends EditorModules{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		setProgressbarValue(100);
 	}
 
 }

@@ -43,6 +43,9 @@ public class MainFrame extends JFrame {
 	//Path to the python executable
 	String pathToPython = "c:\\Program Files\\Anaconda\\python.exe";
 	
+	//Path to the exchange folder monitored by the Chronos plugin
+	private String pathToExchangeFolder ="C:\\Users\\Public\\Folder For Chronos\\ExchangeFolder";
+	
 	//name of the hardware set in Micro-Manager
 	private String camName = "iXon Ultra";
 	private String zObjectiveName = "FocusLocPIZMotorObjective";
@@ -104,7 +107,9 @@ public class MainFrame extends JFrame {
 	JLabel messageLabel = new JLabel(".");
 	
 	private PositionList posList;
-
+	private int currentFrame = 0;
+	private int numberFramesForCurrentAcquisition = 0;
+	
 	File experimentFolder = new File(System.getProperty("user.home")+"//ExperimentEditor");
 	final JFileChooser experimentFileChooserLoad = new JFileChooser(experimentFolder);
 	
@@ -166,7 +171,14 @@ public class MainFrame extends JFrame {
 		column2.add(pifocCon);		
 		
 		add(column1);
-		add(column2);			
+		add(column2);
+		//function that sets settings like the exposure time for the first time
+		setUp();
+	}
+	
+	private void setUp() {
+		camWorker.setExposureTime(camParam.getExposureTime());
+		filterWheelCon.setFilterInitially(2);
 	}
 	
 	//getter for device names
@@ -233,7 +245,7 @@ public class MainFrame extends JFrame {
 	public int getROIWidth() {return roiSet.getROIWidth();}
 	public int getROIHeight() {return roiSet.getROIHeight();}
 
-	public void startSequenceAcquisition() {camWorker.startSequenceAcquisition();}
+	public void startSequenceAcquisition(boolean applyChecks) {camWorker.startSequenceAcquisition(applyChecks);}
 
 	public boolean isFrameTransferSelected() { return camParam.isFrameTransferSelected();}
 
@@ -258,16 +270,21 @@ public class MainFrame extends JFrame {
 
 	public String getFilterName(int i) {return filterNames[i];}
 
-	public void setFilterWheelPosition(int parseInt) {
-		System.out.println("Yet to be implemented" + parseInt);
+	public void setFilterWheelPosition(int index) {
+		filterWheelCon.setFilterWheelPosition(index);
+		setFilterWheelPositionMF(index);
+	}
+
+	public void setFilterWheelPositionMF(int index) {
 		try {
-			core.setProperty(filterWheelName, "State", parseInt);
+			System.out.println("filter wheel should move!!!!!!");
+			core.setProperty(filterWheelName, "State", index);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
+	
 	public String[] getLaserNames() {return this.laserNames;}
 
 	public String[] getLaserWavelengths() {return this.laserWavelengths;}
@@ -328,6 +345,7 @@ public class MainFrame extends JFrame {
 			camWorker.closeShutter();
 		}
 	};
+
 	public void captureAndStoreWidefieldImage(double exposureTime) {
 		double oldExposureTime = this.getExposureTime();
 		camParam.setExposureTime(exposureTime);
@@ -374,11 +392,39 @@ public class MainFrame extends JFrame {
 	public boolean isAcquisitionRunning(){
 		return acquisitionIsRunning;
 	}
+	
+	public void setCurrentFrame(int currFrame) {
+		this.currentFrame = currFrame;
+	}
+	
+	public int getCurrentFrame() {
+		return this.currentFrame;
+	}
 
 	public void setRoiParams(int width, int height, int posX, int posY) {
 		roiSet.setROIWidth(width);
 		roiSet.setROIHeight(height);
 		roiSet.setPosX(posX);
 		roiSet.setPosY(posY);
+	}
+
+	public int getNumberFramesForCurrentAcquisition() {
+		return numberFramesForCurrentAcquisition;
+	}
+
+	public void setNumberFramesForCurrentAcquisition(int numberFramesForCurrentAcquisition) {
+		this.numberFramesForCurrentAcquisition = numberFramesForCurrentAcquisition;
+	}
+
+	public String getPathToExchangeFolder() {
+		return pathToExchangeFolder;
+	}
+
+	public void setPathToExchangeFolder(String pathToExchangeFolder) {
+		this.pathToExchangeFolder = pathToExchangeFolder;
+	}
+
+	public String getFilterWheelName() {
+		return this.filterWheelName;
 	}
 }

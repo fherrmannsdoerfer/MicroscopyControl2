@@ -59,7 +59,7 @@ public class CameraControl extends JPanel {
 	class BtnStartAcquisitionActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			mf.startSequenceAcquisition();
+			mf.startSequenceAcquisition(true);
 		}
 	};
 

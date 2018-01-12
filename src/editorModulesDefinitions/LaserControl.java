@@ -116,5 +116,6 @@ public class LaserControl extends EditorModules{
 		mfe.getMainFrameReference().setLaserIntensity(Integer.parseInt(Utility.parseParameter(laserSelectionNumber.getText(), mfe))-1, Double.parseDouble(Utility.parseParameter(laserIntensity.getText(),mfe)));
 		System.out.println("index: "+(Integer.parseInt(Utility.parseParameter(laserSelectionNumber.getText(), mfe))-1));
 		System.out.println("intensity: "+Double.parseDouble(Utility.parseParameter(laserIntensity.getText(),mfe)));
+		setProgressbarValue(100);
 	}
 }

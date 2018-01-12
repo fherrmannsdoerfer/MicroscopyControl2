@@ -21,6 +21,7 @@ public class EndLoopGUI extends EditorModules{
 		this.setParameterButtonsName(name);
 		this.setColor(mfe.style.getColorLoop());
 		this.setOptionPanel(createOptionPanel());
+		setProgressBarInvisible();
 	}
 	
 	public EndLoopGUI(EditorModules beginLoop){

@@ -5,15 +5,18 @@ import ij.plugin.filter.GaussianBlur;
 import ij.plugin.filter.MaximumFinder;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
+import microscopeControl.OutputControl;
 
 import java.awt.Dimension;
 import java.awt.Polygon;
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.swing.JTextField;
 
 import dataTypes.ROIParameters;
+import dataTypes.XYStagePosition;
 import editor.MainFrameEditor;
 
 
@@ -115,5 +118,103 @@ public class Utility implements Serializable {
 		ImagePlus completeImage = new ImagePlus();
 		completeImage.setProcessor(iP);
 		return completeImage;
+	}
+	
+	private static Pair calculateShifts(double targetShiftX, double targetShiftY,XYStagePosition xyStagePosition) {
+		double stageX = -xyStagePosition.getxPos()/1000;
+		double stageY = xyStagePosition.getyPos()/1000;
+		//intended point is left border with 1 mm safty margin
+		int xShift = (int) (stageX+targetShiftX);
+		int yShift = (int) (stageY+targetShiftY);
+		
+		if (xShift%2 == 0) {
+			xShift +=1;
+		}
+		if (yShift%2 == 0) {
+			yShift +=1;
+		}
+		
+		while (true) {
+			if ((Math.sqrt((xShift-stageX)*(xShift-stageX)+(yShift-stageY)*(yShift-stageY)))>6) {
+				System.err.println("warning syringe to close to border!");
+				xShift = xShift +2;
+			}
+			else {
+				break;
+			}
+		}
+		
+		String stringX;
+		String stringY;
+		if (yShift>=0) {
+			stringY = "+"+yShift;
+		}
+		else {
+			stringY = ""+yShift;
+		}
+		if (xShift>=0) {
+			stringX = "+"+xShift;
+		}
+		else {
+			stringX = ""+xShift;
+		}
+		Pair retVal = new Pair(stringX,stringY);
+		return retVal;
+	}
+
+	//This method chooses the right sample list based on the position of the stage. 
+	//The left border is preferred. A grid with 2 mm spacing is used.
+	//Sample lists ranging from x = -13 mm; y = -5 mm up to x = 5 mm; y = 5 mm are provided
+	//filename of the sample list files is for example AspirateFromCenterOfGlassBottomDishDisposeInWaste+5-5 in case of x=5 mm; y=-5 mm
+	//The diameter of the inner circle is 14 mm, therefore for stage position 0,0 the file with x=-5; y = +-1 is selected
+	public static String ChooseSampleListBasedOnStagePositionForRemovalOfSolution(XYStagePosition xyStagePosition) {
+		Pair shifts = calculateShifts(-5.5, 0, xyStagePosition);
+		String fname = String.format("AspirateFromCenterOfGlassBottomDishDisposeInWaste%s%s.csl", shifts.xShift, shifts.yShift);
+		return fname;
+	}
+
+	public static String ChooseSampleListBasedOnStagePositionForAddingSolution(XYStagePosition xyStagePosition) {
+		Pair shifts = calculateShifts(0, 0, xyStagePosition);
+		String fname = String.format("SyringeToSample%s%s.csl", shifts.xShift, shifts.yShift);
+		return fname;
+	}
+	
+	private static class Pair{
+		public String xShift;
+		public String yShift;
+		public Pair (String xShift, String yShift) {
+			this.xShift = xShift;
+			this.yShift = yShift;
+		}
+	}
+	
+	public static void startChronosPlugin(String pathToExchangeFolder, String pathToSampleList) {
+		//first check if there are files in the Chronos folder
+		File[] contentOfExchangeFolder = (new File(pathToExchangeFolder)).listFiles();
+		if (contentOfExchangeFolder.length>1) {
+			System.out.println("There are to many files in the exchange folder!");
+		}
+		else {
+			if (contentOfExchangeFolder.length ==0 || contentOfExchangeFolder[0].toString().contains("SampleListProcessed")) { //this hints to a successful execution of the last sample list presented to the Chronos software
+				if (contentOfExchangeFolder.length== 1) {
+					contentOfExchangeFolder[0].delete(); //delete the file
+				}
+				OutputControl.writeFileContainingSampleListPathToExchangeFolder(pathToExchangeFolder, pathToSampleList); //write a new file to the exchange folder containing the specified sample list
+				while (true) {
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					File[] newContentOfExchangeFolder = (new File(pathToExchangeFolder)).listFiles();
+					if (newContentOfExchangeFolder[0].toString().contains("SampleListProcessed")) { //when Chronos is finished it replaces the File containing the path to the sample list with a file called SampleListProcessed the program can proceed then
+						break;
+					}
+				}
+			} else { //some other file is in the folder maybe from an other instance maybe a sample list that is currently processed, dont do anything
+				
+			}
+		}
 	}
 }

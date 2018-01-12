@@ -4,6 +4,7 @@ import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 
 import mmcorej.CMMCore;
 
@@ -11,6 +12,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -18,20 +21,18 @@ import javax.swing.border.TitledBorder;
 
 public class LaserControl extends JPanel {
 	CMMCore core;
-	//LaserPanel lp1;
-	//LaserPanel lp2;
-	//LaserPanel lp3;
-	//LaserPanel lp4;
+
 	ArrayList<LaserPanel> laserPanels = new ArrayList<LaserPanel>();
 	int indexOfUVLaser;
 	AutomatedUVLaserControl aUVLC;
+	JComboBox filterSelection;
 	//needed to keep track of the number of blinking events per frame
 	//to decide whether or not to increase the laser power of the UV laser
 	ArrayList<Integer> lastBlinkingEventsPerFrame = new ArrayList<Integer>();
 	/**
 	 * Create the panel.
 	 */
-	public LaserControl(MainFrame mf) {
+	public LaserControl(final MainFrame mf) {
 		setPreferredSize(new Dimension(570, 350));
 		setMaximumSize(new Dimension(570, 350));
 		this.core = mf.getCoreObject();
@@ -61,10 +62,20 @@ public class LaserControl extends JPanel {
 			horizontalBox.add(horizontalGlue);
 		}
 		
+		filterSelection = new JComboBox(mf.getFilterNames());
+		filterSelection.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mf.setFilterWheelPosition(filterSelection.getSelectedIndex());
+			}
+		});
+		
+		
 		Box horizontalBox2 = Box.createHorizontalBox();
 		aUVLC = new AutomatedUVLaserControl(core);
 		horizontalBox2.add(aUVLC);
 		horizontalBox2.add(horizontalGlue);
+		horizontalBox2.add(filterSelection);
 		
 		verticalBox.add(horizontalBox);
 		verticalBox.add(horizontalBox2);

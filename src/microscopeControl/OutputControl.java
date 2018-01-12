@@ -63,4 +63,20 @@ public class OutputControl {
 		(new File(path+"\\"+measurementTag+"\\LeftChannel")).mkdirs();
 		(new File(path+"\\"+measurementTag+"\\RightChannel")).mkdirs();
 	}
+	
+	public static void writeFileContainingSampleListPathToExchangeFolder(String pathToExchangeFolder, String pathToSampleList) {
+		String fname = pathToExchangeFolder+"\\pathToSampleList.txt";
+		PrintWriter outputStream;
+		try {
+			outputStream = new PrintWriter(new FileWriter(fname));
+			outputStream.print(pathToSampleList);
+			outputStream.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
 }

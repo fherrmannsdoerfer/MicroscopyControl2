@@ -101,8 +101,8 @@ public class CameraWorker  {
 		livePreviewThread.start();
 	}
 
-	public void startSequenceAcquisition() {
-		if (checkAcquisitionSettings()){
+	public void startSequenceAcquisition(boolean applyChecks) {
+		if (checkAcquisitionSettings()&& applyChecks){
 			livePreviewRunning = false;		
 			try {
 				Thread.sleep(200);
@@ -159,6 +159,7 @@ public class CameraWorker  {
 				}
 			
 				core.setProperty(cameraName,"Gain", mf.getEmGain());
+				mf.setNumberFramesForCurrentAcquisition(nbrFrames);
 	
 				core.setCircularBufferMemoryFootprint(2000);
 	
@@ -171,7 +172,7 @@ public class CameraWorker  {
 		    	int frame = 0;
 		    	mf.setAction("Acquisition");
 		    	mf.setFrameCount(" / "+String.valueOf(nbrFrames));
-	
+		    	
 	    		OutputControl.createLogFile(measurementTag, gain, exposure, path, nbrFrames);	
 	
 	            core.getBytesPerPixel();
@@ -202,6 +203,7 @@ public class CameraWorker  {
 		    	while (frame<nbrFrames && acquisitionRunning){//for whatever reason a few frames are always missing, so the loop will not exit...
 		    	   if (core.getRemainingImageCount() > 0) {
 		    		  mf.setFrameCount(String.valueOf(frame+1)+" / "+String.valueOf(nbrFrames));
+		    		  mf.setCurrentFrame(frame);
 	    		  
 		    	      img = core.popNextImage();
 		    	     
@@ -431,6 +433,15 @@ public class CameraWorker  {
 	public void openShutter() {
 		try {
 			core.setProperty(cameraName, "Shutter (Internal)","Open");	
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void setExposureTime(double expTime) {
+		try {
+			core.setProperty(cameraName,"Exposure", expTime);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

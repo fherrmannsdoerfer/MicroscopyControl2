@@ -78,5 +78,6 @@ public class CaptureWidefieldImageGUI extends EditorModules{
 	@Override
 	public void perform() {
 		mfe.getMainFrameReference().captureAndStoreWidefieldImage(Double.parseDouble(Utility.parseParameter(exposureTime.getText(), mfe)));
+		setProgressbarValue(100);
 	}
 }

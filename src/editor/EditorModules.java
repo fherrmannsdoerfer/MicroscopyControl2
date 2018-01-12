@@ -275,4 +275,8 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 		     return null;
 		}
 	}
+	
+	public void setProgressBarInvisible() {
+		progressbar.setVisible(false);
+	}
 }

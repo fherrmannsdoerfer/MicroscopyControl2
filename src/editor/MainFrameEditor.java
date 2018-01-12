@@ -41,6 +41,7 @@ import java.awt.Font;
 import javax.swing.SwingConstants;
 
 import microscopeControl.MainFrame;
+import editorModulesDefinitions.AddSolutionToSampleGUI;
 import editorModulesDefinitions.CameraParametersGUI;
 import editorModulesDefinitions.CaptureWidefieldImageGUI;
 import editorModulesDefinitions.EndLoopGUI;
@@ -53,6 +54,7 @@ import editorModulesDefinitions.LoopROIsGUI;
 import editorModulesDefinitions.MeasurementTagGUI;
 import editorModulesDefinitions.MoveStageGUI;
 import editorModulesDefinitions.PauseGUI;
+import editorModulesDefinitions.RemoveSolutionFromSampleGUI;
 import editorModulesDefinitions.StainingRobotCommandGUI;
 import editorModulesDefinitions.StartImageAcquisitionGUI;
 
@@ -74,6 +76,7 @@ public class MainFrameEditor extends JDialog implements Serializable{
 	private final ArrayList<String> optionsPreselectedTasksComboBoxAuto = new ArrayList<String>();
 	public StyleClass style = new StyleClass();
 	ButtonGroup bg = new ButtonGroup();
+	private boolean editorShouldBeRunning = true;
 		
 	File folder = new File(System.getProperty("user.home")+"//ExperimentEditor"); //Folder of savedPresettings
 	private final ArrayList<EditorModules> stainingRobotComboBoxOptions = new ArrayList<EditorModules>();
@@ -110,6 +113,8 @@ public class MainFrameEditor extends JDialog implements Serializable{
 		microscopeComboBoxOptions.add(new MeasurementTagGUI());
 		
 		stainingRobotComboBoxOptions.add(new StainingRobotCommandGUI());
+		stainingRobotComboBoxOptions.add(new RemoveSolutionFromSampleGUI());
+		stainingRobotComboBoxOptions.add(new AddSolutionToSampleGUI());
 		
 		//loopsComboBoxOptions.add(new LoopGUI());
 		loopsComboBoxOptions.add(new LoopROIsGUI());
@@ -218,12 +223,24 @@ public class MainFrameEditor extends JDialog implements Serializable{
 					@Override
 					public 
 					void run(){
+						editorShouldBeRunning = true;
 						controler.resetData();
 						controler.resetProgressBar(getListProcessingStepPanels());
 						controler.startProcessing(getListProcessingStepPanels());
 					}
 				};
 				t.start();
+			}			
+		});
+		
+		JButton stopButton = new JButton("Stop Processing");
+		stopButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		menuBar.add(stopButton);
+		
+		stopButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				stopEditor();
 			}			
 		});
 		
@@ -422,6 +439,14 @@ public class MainFrameEditor extends JDialog implements Serializable{
 		
 	public ControlerEditor getControlerEditorReference(){
 		return controlerReference;
+	}
+	
+	public void stopEditor() {
+		editorShouldBeRunning = false;
+	}
+	
+	public boolean getEditorShouldBeRunning() {
+		return editorShouldBeRunning;
 	}
 	
 	private void setupPreselectedTasks() {
