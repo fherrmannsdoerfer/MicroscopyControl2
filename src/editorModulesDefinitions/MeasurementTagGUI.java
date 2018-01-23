@@ -1,5 +1,7 @@
 package editorModulesDefinitions;
 
+import java.awt.GridLayout;
+
 import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -14,8 +16,9 @@ public class MeasurementTagGUI extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;
 	JTextField measurementTag = new JTextField("");
+	JTextField pathField = new JTextField("");
 	transient MainFrame mf;
-	private static String name = "Measurement Tag";
+	private static String name = "Output Control";
 	transient MainFrameEditor mfe;
 	
 	public MeasurementTagGUI(MainFrameEditor mfe) {
@@ -25,6 +28,7 @@ public class MeasurementTagGUI extends EditorModules{
 		this.setParameterButtonsName(name);
 		this.setColor(mfe.style.getColorMicroscope());
 		this.setOptionPanel(createOptionPanel());
+		this.pathField.setText(mf.getPath());
 	}
 	
 	public MeasurementTagGUI(){
@@ -33,18 +37,12 @@ public class MeasurementTagGUI extends EditorModules{
 	
 	private JPanel createOptionPanel(){
 		JPanel retPanel = new JPanel();
-		Box verticalBox = Box.createVerticalBox();
+		retPanel.setLayout(new GridLayout(4, 1,60,15));
+		retPanel.add(new JLabel("Path:"));
+		retPanel.add(pathField);
 		
-		Box horizontalBox2 = Box.createHorizontalBox();
-		horizontalBox2.add(new JLabel("Measurement tag:"));
-		horizontalBox2.add(Box.createHorizontalGlue());
-		verticalBox.add(horizontalBox2);
-		verticalBox.add(Box.createVerticalStrut(20));
-		Box horizontalBox = Box.createHorizontalBox();
-		//horizontalBox.add(Box.createHorizontalStrut(20));
-		horizontalBox.add(measurementTag);
-		verticalBox.add(horizontalBox);
-		retPanel.add(verticalBox);
+		retPanel.add(new JLabel("Measurement tag:"));
+		retPanel.add(measurementTag);
 		
 		return retPanel;
 	}
@@ -57,14 +55,16 @@ public class MeasurementTagGUI extends EditorModules{
 
 	@Override
 	public String[] getSettings() {
-		String[] tempString = new String[1];
-		tempString[0] = measurementTag.getText();
+		String[] tempString = new String[2];
+		tempString[0] = pathField.getText();
+		tempString[1] = measurementTag.getText();
 		return tempString;
 	}
 
 	@Override
 	public void setSettings(String[] tempString) {
-		measurementTag.setText(tempString[0]);
+		pathField.setText(tempString[0]);
+		measurementTag.setText(tempString[1]);
 	}
 
 	@Override
@@ -87,6 +87,7 @@ public class MeasurementTagGUI extends EditorModules{
 		try {
 			//mf.setMeasurementTag(measurementTag.getText());
 			System.out.println(Utility.parseParameter(measurementTag.getText(), mfe));
+			mf.setPathForMeasurment(Utility.parseParameter(pathField.getText(), mfe));
 			mf.setMeasurementTag(Utility.parseParameter(measurementTag.getText(), mfe));
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block

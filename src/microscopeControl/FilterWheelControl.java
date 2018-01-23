@@ -136,6 +136,7 @@ public class FilterWheelControl extends JPanel {
 			System.out.println("filter wheel should move!!!");
 			mf.getCoreObject().setProperty(filterWheelName, "State", index);
 			radioButtons[index].setSelected(true);
+			mf.setFilterWheelPositionCombobox(index);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

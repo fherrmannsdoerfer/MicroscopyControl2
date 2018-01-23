@@ -69,18 +69,26 @@ public class LaserControl extends JPanel {
 				mf.setFilterWheelPosition(filterSelection.getSelectedIndex());
 			}
 		});
+		Box filterSelectionVerticalBox = Box.createVerticalBox();
+		filterSelectionVerticalBox.add(new JLabel("Select Filter:"));
+		filterSelectionVerticalBox.add(Box.createVerticalGlue());
+		filterSelectionVerticalBox.add(filterSelection);
 		
 		
 		Box horizontalBox2 = Box.createHorizontalBox();
 		aUVLC = new AutomatedUVLaserControl(core);
 		horizontalBox2.add(aUVLC);
 		horizontalBox2.add(horizontalGlue);
-		horizontalBox2.add(filterSelection);
+		horizontalBox2.add(filterSelectionVerticalBox);
 		
 		verticalBox.add(horizontalBox);
 		verticalBox.add(horizontalBox2);
 		add(verticalBox);
 	
+	}
+	
+	public void setFilterSelectionToIndex(int index) {
+		filterSelection.setSelectedIndex(index);
 	}
 	
 	//whenever a new number of blinking events was estimated

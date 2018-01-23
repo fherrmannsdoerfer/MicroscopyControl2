@@ -41,7 +41,7 @@ import mmcorej.CMMCore;
 //MainFrame is the parent window for all control elements
 public class MainFrame extends JFrame {
 	//Path to the python executable
-	String pathToPython = "c:\\Program Files\\Anaconda\\python.exe";
+	String pathToPython = "C:\\ProgramData\\Anaconda3\\python.exe";
 	
 	//Path to the exchange folder monitored by the Chronos plugin
 	private String pathToExchangeFolder ="C:\\Users\\Public\\Folder For Chronos\\ExchangeFolder";
@@ -50,6 +50,8 @@ public class MainFrame extends JFrame {
 	private String camName = "iXon Ultra";
 	private String zObjectiveName = "FocusLocPIZMotorObjective";
 	private String xyStageName = "PIXYStage";
+	//Stage directly mounted on the xy stage
+	private String zStageName = "PIZStage";
 	private String mirrorFocuslock = "SmaractZSpiegel";
 	private String filterWheelName = "Thorlabs Filter Wheel";
 	private String[] filterNames = {"488 no UV", "561 no UV", "660", "488", "561", "free"};
@@ -179,6 +181,13 @@ public class MainFrame extends JFrame {
 	private void setUp() {
 		camWorker.setExposureTime(camParam.getExposureTime());
 		filterWheelCon.setFilterInitially(2);
+		//set zstage (the large on on top of the xy stage) by default to 100
+		try {
+			core.setProperty(zStageName, "Position",100);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	//getter for device names
@@ -272,17 +281,6 @@ public class MainFrame extends JFrame {
 
 	public void setFilterWheelPosition(int index) {
 		filterWheelCon.setFilterWheelPosition(index);
-		setFilterWheelPositionMF(index);
-	}
-
-	public void setFilterWheelPositionMF(int index) {
-		try {
-			System.out.println("filter wheel should move!!!!!!");
-			core.setProperty(filterWheelName, "State", index);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	public String[] getLaserNames() {return this.laserNames;}
@@ -426,5 +424,11 @@ public class MainFrame extends JFrame {
 
 	public String getFilterWheelName() {
 		return this.filterWheelName;
+	}
+
+	public void setFilterWheelPositionCombobox(int index) {laserCon.setFilterSelectionToIndex(index);}
+
+	public void setPathForMeasurment(String pathToOutputFolder) {
+		outCon.setPathOutputFolder(pathToOutputFolder);
 	}
 }

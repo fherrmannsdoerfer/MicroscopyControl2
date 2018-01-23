@@ -45,6 +45,7 @@ public class MicroscopeControlV2MainClass implements MMPlugin {
 	public void setApp(ScriptInterface app) {
 		System.out.println("First class that is executed (MicroscopeControlV2MainClass)");
 		core = app.getMMCore();
+		
 		/*	try {
 			PositionList list = app.getPositionList();
 			MultiStagePosition[] msps = list.getPositions();

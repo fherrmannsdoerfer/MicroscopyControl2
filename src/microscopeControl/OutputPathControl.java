@@ -27,12 +27,13 @@ public class OutputPathControl extends JPanel {
 		setMinimumSize(minSize);
 		setPreferredSize(prefSize);
 		setMaximumSize(maxSize);
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 
 		setBorder(new TitledBorder(null, "Output Path", TitledBorder.LEADING, TitledBorder.TOP, mf.getTitelFont(), null));
 		setLayout(new GridLayout(2, 1,10,10));
 		
 		Box horizontalBoxOutputPath = Box.createHorizontalBox();
-		path = new JTextField("D:\\Measurements\\");
+		path = new JTextField("D:\\Measurements\\"+dateFormat.format(new Date()));
 		
 		
 		btnSelectSavePath = new JButton("Set path");
@@ -45,9 +46,9 @@ public class OutputPathControl extends JPanel {
 		Box horizontalBoxMeasurementTag = Box.createHorizontalBox();
 		
 		measurementTag = new JTextField();
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 		
-		measurementTag.setText(dateFormat.format(new Date()));
+		
+		measurementTag.setText("Measurement01");
 		//Utility.setFormatTextFields(measurementTag, 200, 20, 100);
 		horizontalBoxMeasurementTag.add(new JLabel("Measurement Tag: "));
 		horizontalBoxMeasurementTag.add(Box.createHorizontalStrut(20));
@@ -77,5 +78,9 @@ public class OutputPathControl extends JPanel {
 		}
 	}
 
-	public void setMeasurementTag(String text) {this.measurementTag.setText(text);};
+	public void setMeasurementTag(String text) {this.measurementTag.setText(text);}
+
+	public void setPathOutputFolder(String pathToOutputFolder) {
+		path.setText(pathToOutputFolder);
+	};
 }

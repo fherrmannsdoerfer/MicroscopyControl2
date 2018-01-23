@@ -40,6 +40,7 @@ public class ControlerEditor implements Serializable{
 	}
 
 	private void processModuleList(ArrayList<EditorModules> functions) {
+		int endOfLoop = 0;
 		for (int i =0; i<functions.size();i++){
 			EditorModules psp = functions.get(i);
 			if (psp instanceof LoopModules){
@@ -48,24 +49,25 @@ public class ControlerEditor implements Serializable{
 				thisModule.perform();
 				for (int r= 0;r<thisModule.getNbrIterations();r++){
 					ArrayList<EditorModules> subset = new ArrayList<EditorModules>();
-					resetProgressBar(subset);
 					int indentCounter = 1;
 					for (int j = i+1;j<functions.size(); j++){//start at i+1 to skip the Loop beginning
 						EditorModules p = functions.get(j);
 						if (p instanceof EndLoopGUI){
 							indentCounter -= 1;
-							if (indentCounter==0){break;}
+							if (indentCounter==0){endOfLoop = j;break;}
 						}
 						else if (p instanceof LoopModules){indentCounter += 1;}
 						else {}
 						subset.add(p);
 					}
+					resetProgressBar(subset);
 					//recursive call only with the functions inside the loop
 					processModuleList(subset);
 					thisModule.nextStep();
 				}
 				loopModules.remove(thisModule);
-				break; //this prevents additional execution of the body of the for loop
+				i = endOfLoop;
+				//break; //this prevents additional execution of the body of the for loop
 			}
 			else{
 				if (!mfe.getEditorShouldBeRunning()) {
