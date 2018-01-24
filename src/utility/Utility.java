@@ -33,9 +33,15 @@ public class Utility implements Serializable {
 	}
 	
 	//function that parses the parameter to either return a value or in case of a tag starting with '%' the appropriate value
+	//if multiple tags are used the output is concatenated
 	public static String parseParameter(String parameter, MainFrameEditor mfe){
 		if (parameter.startsWith("%")){
-			return mfe.getControlerEditorReference().getIterationValue(parameter);
+			String[] tagNames = parameter.split("%");
+			String returnString ="";
+			for (int i = 1; i<tagNames.length; i++) {
+				returnString = returnString + mfe.getControlerEditorReference().getIterationValue("%"+tagNames[i]);
+			}
+			return returnString;
 		}	
 		else{
 			return parameter;
