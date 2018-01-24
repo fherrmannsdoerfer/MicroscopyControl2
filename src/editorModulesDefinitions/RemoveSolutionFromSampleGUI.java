@@ -23,7 +23,8 @@ public class RemoveSolutionFromSampleGUI extends EditorModules{
 	JTextField pathInstructionListLowerLeft = new JTextField("");
 	JTextField pathInstructionListLow = new JTextField("");
 	JTextField pathInstructionListLowerRight = new JTextField("");
-	JTextField[] textFields= {pathInstructionListUpperLeft,pathInstructionListUp,pathInstructionListUpperRight,pathInstructionListLeft,pathInstructionListMiddle,pathInstructionListRight,pathInstructionListLowerLeft,pathInstructionListLow,pathInstructionListLowerRight};
+	//JTextField[] textFields= {pathInstructionListUpperLeft,pathInstructionListUp,pathInstructionListUpperRight,pathInstructionListLeft,pathInstructionListMiddle,pathInstructionListRight,pathInstructionListLowerLeft,pathInstructionListLow,pathInstructionListLowerRight};
+	JTextField[] textFields= {};
 	JLabel lblUl = new JLabel("Upper Left:");
 	JLabel lblU = new JLabel("Up:");
 	JLabel lblUr = new JLabel("Upper Right:");
@@ -33,7 +34,8 @@ public class RemoveSolutionFromSampleGUI extends EditorModules{
 	JLabel lblLl = new JLabel("Lower Left:");
 	JLabel lblLow = new JLabel("Down:");
 	JLabel lblLR = new JLabel("Lower Right:");
-	JLabel[] labels = {lblUl,lblU,lblUr,lblL,lblM,lblR,lblLl,lblLow,lblLR};
+	//JLabel[] labels = {lblUl,lblU,lblUr,lblL,lblM,lblR,lblLl,lblLow,lblLR};
+	JLabel[] labels = {};
 	MainFrameEditor mfe;
 	private static String name = "RemoveSolutionFromSample";
 	
@@ -51,7 +53,7 @@ public class RemoveSolutionFromSampleGUI extends EditorModules{
 	
 	private JPanel createOptionPanel(){
 		JPanel retPanel = new JPanel();
-		retPanel.setLayout(new GridLayout(10, 2,60,15));
+		retPanel.setLayout(new GridLayout(2+textFields.length, 2,60,15));
 		retPanel.add(new JLabel("Path to Samplelists:"));
 		retPanel.add(new JLabel(""));
 		for (int i =0; i<labels.length; i++) {
