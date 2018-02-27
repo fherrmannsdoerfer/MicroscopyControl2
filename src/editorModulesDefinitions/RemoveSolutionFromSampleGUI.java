@@ -14,29 +14,8 @@ import editor.MainFrameEditor;
 public class RemoveSolutionFromSampleGUI extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;
-	JTextField pathInstructionListUpperLeft = new JTextField("");
-	JTextField pathInstructionListUp = new JTextField("");
-	JTextField pathInstructionListUpperRight = new JTextField("");
-	JTextField pathInstructionListLeft = new JTextField("");
-	JTextField pathInstructionListMiddle = new JTextField("");
-	JTextField pathInstructionListRight = new JTextField("");
-	JTextField pathInstructionListLowerLeft = new JTextField("");
-	JTextField pathInstructionListLow = new JTextField("");
-	JTextField pathInstructionListLowerRight = new JTextField("");
-	//JTextField[] textFields= {pathInstructionListUpperLeft,pathInstructionListUp,pathInstructionListUpperRight,pathInstructionListLeft,pathInstructionListMiddle,pathInstructionListRight,pathInstructionListLowerLeft,pathInstructionListLow,pathInstructionListLowerRight};
-	JTextField[] textFields= {};
-	JLabel lblUl = new JLabel("Upper Left:");
-	JLabel lblU = new JLabel("Up:");
-	JLabel lblUr = new JLabel("Upper Right:");
-	JLabel lblL = new JLabel("Left:");
-	JLabel lblM = new JLabel("Middle:");
-	JLabel lblR = new JLabel("Right:");
-	JLabel lblLl = new JLabel("Lower Left:");
-	JLabel lblLow = new JLabel("Down:");
-	JLabel lblLR = new JLabel("Lower Right:");
-	//JLabel[] labels = {lblUl,lblU,lblUr,lblL,lblM,lblR,lblLl,lblLow,lblLR};
-	JLabel[] labels = {};
-	MainFrameEditor mfe;
+	JTextField volumePerSpot = new JTextField("200");
+	transient MainFrameEditor mfe;
 	private static String name = "RemoveSolutionFromSample";
 	
 	public RemoveSolutionFromSampleGUI(MainFrameEditor mfe) {
@@ -53,13 +32,9 @@ public class RemoveSolutionFromSampleGUI extends EditorModules{
 	
 	private JPanel createOptionPanel(){
 		JPanel retPanel = new JPanel();
-		retPanel.setLayout(new GridLayout(2+textFields.length, 2,60,15));
-		retPanel.add(new JLabel("Path to Samplelists:"));
-		retPanel.add(new JLabel(""));
-		for (int i =0; i<labels.length; i++) {
-			retPanel.add(labels[i]);
-			retPanel.add(textFields[i]);
-		}
+		retPanel.setLayout(new GridLayout(1, 2,60,15));
+		retPanel.add(new JLabel("Volume Per Spot [Microliter]:"));
+		retPanel.add(volumePerSpot);
 		return retPanel;
 	}
 	
@@ -71,18 +46,14 @@ public class RemoveSolutionFromSampleGUI extends EditorModules{
 
 	@Override
 	public String[] getSettings() {
-		String[] tempString = new String[labels.length];
-		for (int i=0;i<labels.length;i++) {
-			tempString[i] = textFields[i].getText();
-		}
+		String[] tempString = new String[1];
+		tempString[0] = volumePerSpot.getText();
 		return tempString;
 	}
 
 	@Override
 	public void setSettings(String[] tempString) {
-		for (int i=0;i<labels.length;i++) {
-			textFields[i].setText(tempString[i]);
-		}
+		volumePerSpot.setText(tempString[0]);
 	}
 
 	@Override
@@ -100,11 +71,18 @@ public class RemoveSolutionFromSampleGUI extends EditorModules{
 		return name;
 	}
 
+	private int getVolumePerSpot() {
+		int volume = Integer.parseInt(volumePerSpot.getText());
+		if (volume<1 || volume>250) {
+			System.err.println("Volume per spot must be in range of 1 to 250!");
+			return -1;
+		} else {
+			return volume;
+		}
+	}
 	@Override
 	public void perform() {
-		// TODO Auto-generated method stub
-		String fname = Utility.ChooseSampleListBasedOnStagePositionForRemovalOfSolution(mfe.getMainFrameReference().getXYStagePosition());
-		System.out.println(fname);
+		Utility.createSampleListForSolutionRemoval(getVolumePerSpot(), mfe.getMainFrameReference().getXYStagePosition(),mfe.getMainFrameReference().getPathToExchangeFolder());
 		setProgressbarValue(100);
 	}
 

@@ -41,7 +41,9 @@ import java.awt.Font;
 import javax.swing.SwingConstants;
 
 import microscopeControl.MainFrame;
-import editorModulesDefinitions.AddSolutionToSampleGUI;
+import editorModulesDefinitions.AddSolutionFromVialToSampleGUI;
+import editorModulesDefinitions.AddWashingSolutionToSampleGUI;
+import editorModulesDefinitions.AddWashingSolutionToVialGUI;
 import editorModulesDefinitions.CameraParametersGUI;
 import editorModulesDefinitions.CaptureWidefieldImageGUI;
 import editorModulesDefinitions.EndLoopGUI;
@@ -57,6 +59,8 @@ import editorModulesDefinitions.PauseGUI;
 import editorModulesDefinitions.RemoveSolutionFromSampleGUI;
 import editorModulesDefinitions.StainingRobotCommandGUI;
 import editorModulesDefinitions.StartImageAcquisitionGUI;
+import editorModulesDefinitions.Wash3TimesWithPBSLS2GUI;
+import editorModulesDefinitions.WashSyringeGUI;
 
 public class MainFrameEditor extends JDialog implements Serializable{
 	
@@ -114,7 +118,11 @@ public class MainFrameEditor extends JDialog implements Serializable{
 		
 		stainingRobotComboBoxOptions.add(new StainingRobotCommandGUI());
 		stainingRobotComboBoxOptions.add(new RemoveSolutionFromSampleGUI());
-		stainingRobotComboBoxOptions.add(new AddSolutionToSampleGUI());
+		stainingRobotComboBoxOptions.add(new AddSolutionFromVialToSampleGUI());
+		stainingRobotComboBoxOptions.add(new Wash3TimesWithPBSLS2GUI());
+		stainingRobotComboBoxOptions.add(new AddWashingSolutionToSampleGUI());
+		stainingRobotComboBoxOptions.add(new AddWashingSolutionToVialGUI());
+		stainingRobotComboBoxOptions.add(new WashSyringeGUI());
 		
 		//loopsComboBoxOptions.add(new LoopGUI());
 		loopsComboBoxOptions.add(new LoopROIsGUI());

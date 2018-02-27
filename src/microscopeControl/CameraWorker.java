@@ -178,7 +178,7 @@ public class CameraWorker  {
 	            core.getBytesPerPixel();
 	            int imgWidth, imgHeight;
 	            
-	            if (mf.isROISet()) {
+	            if (mf.isROIApplied()) {
 	            	imgWidth = mf.getROIWidth();
 	            	imgHeight = mf.getROIHeight();
 	            }

@@ -12,6 +12,7 @@ import java.awt.Polygon;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import javax.swing.JTextField;
 
@@ -153,16 +154,16 @@ public class Utility implements Serializable {
 		String stringX;
 		String stringY;
 		if (yShift>=0) {
-			stringY = "+"+yShift;
+			stringY = String.format("%02d", yShift);
 		}
 		else {
-			stringY = ""+yShift;
+			stringY = String.format("%03d", yShift);
 		}
 		if (xShift>=0) {
-			stringX = "+"+xShift;
+			stringX = String.format("%02d", xShift);
 		}
 		else {
-			stringX = ""+xShift;
+			stringX = String.format("%03d", xShift);
 		}
 		Pair retVal = new Pair(stringX,stringY);
 		return retVal;
@@ -178,11 +179,17 @@ public class Utility implements Serializable {
 		String fname = String.format("AspirateFromCenterOfGlassBottomDishDisposeInWaste%s%s.csl", shifts.xShift, shifts.yShift);
 		return fname;
 	}
+	
+	public static String ChooseSampleListForAspirationBasedOnStagePosition(XYStagePosition xyStagePosition) {
+		Pair shifts = calculateShifts(0, 0, xyStagePosition);
+		String inputSamplelists =String.format("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\SampleListsForAspiration\\CombinedSampleLists\\CombinedAspirationMoveRelativeX%smmY%smm.csl", shifts.xShift, shifts.yShift);
+		return inputSamplelists;
+	}
 
 	public static String ChooseSampleListBasedOnStagePositionForAddingSolution(XYStagePosition xyStagePosition) {
 		Pair shifts = calculateShifts(0, 0, xyStagePosition);
-		String fname = String.format("SyringeToSample%s%s.csl", shifts.xShift, shifts.yShift);
-		return fname;
+		String inputSamplelists = String.format("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\SampleListsForSolutionPlacement\\CombinedSampleLists\\CombinedSolutionPlacementMoveRelativeX%smmY%smm.csl", shifts.xShift, shifts.yShift);
+		return inputSamplelists;
 	}
 	
 	private static class Pair{
@@ -208,7 +215,7 @@ public class Utility implements Serializable {
 				OutputControl.writeFileContainingSampleListPathToExchangeFolder(pathToExchangeFolder, pathToSampleList); //write a new file to the exchange folder containing the specified sample list
 				while (true) {
 					try {
-						Thread.sleep(2000);
+						Thread.sleep(500);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -223,4 +230,144 @@ public class Utility implements Serializable {
 			}
 		}
 	}
+
+	public static void createSampleListForSolutionAdding(int vialNumber, int volume, XYStagePosition xyStagePosition, String pathToExchangeFolder) {
+		String template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromVialTokenVialPositionVolumeShiftXShiftYLS2.csl");
+		String toReplaceVialNumber = "tokenVial";
+		String replacementVialNumber = String.format("%d",vialNumber);
+		String toReplaceVolume = "tokenVolume";
+		String replacementVolume = String.format("%d",volume);
+		
+		String toReplacementShiftX = "tokenShiftX";
+		String toReplacementShiftY = "tokenShiftY";
+		//x gets minus since only one axis is inverted relative to the coordinate system of the staining robot
+		String replacementShiftX = String.format(Locale.US,"%.1f", -xyStagePosition.getxPos()/1000);
+		String replacementShiftY = String.format(Locale.US,"%.1f", xyStagePosition.getyPos()/1000);
+		
+		String outputXMLFileContent = template.replace(toReplaceVialNumber, replacementVialNumber);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceVolume, replacementVolume);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplacementShiftX, replacementShiftX);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplacementShiftY, replacementShiftY);
+		OutputControl.writeFile("C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl", outputXMLFileContent);
+		startChronosPlugin(pathToExchangeFolder, "C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl");
+	}
+	
+	
+	
+	public static void createSampleListForSolutionRemoval(int volumePerSpot, XYStagePosition xyStagePosition, String pathToExchangeFolder) {
+		String template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionRemovalFromSampleTokenVolumePerSpotShiftXShiftYLS2.csl");
+		String toReplaceVialNumber = "tokenVolume";
+		String replacementVialNumber = String.format("%d",volumePerSpot);
+				
+		String toReplacementShiftX = "tokenShiftX";
+		String toReplacementShiftY = "tokenShiftY";
+		//x gets minus since only one axis is inverted relative to the coordinate system of the staining robot
+		String replacementShiftX = String.format(Locale.US,"%.1f", -xyStagePosition.getxPos()/1000);
+		String replacementShiftY = String.format(Locale.US,"%.1f", xyStagePosition.getyPos()/1000);
+		
+		String outputXMLFileContent = template.replace(toReplaceVialNumber, replacementVialNumber);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplacementShiftX, replacementShiftX);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplacementShiftY, replacementShiftY);
+		OutputControl.writeFile("C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl", outputXMLFileContent);
+		startChronosPlugin(pathToExchangeFolder, "C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl");
+	}
+
+	public static void createSampleListForWashing3Times(int injectionVolume, int volumePerSpot, int waitTime,boolean removeSolutionFirst, boolean leaveSolutionLast,
+			XYStagePosition xyStagePosition, String pathToExchangeFolder) {
+		String template;
+		if (removeSolutionFirst & leaveSolutionLast) {
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\Washing\\TemplateWashThreeTimesFindPBSLeavePBSTokenInjectionVolumeShiftXShiftYVolumePerSpotTimeLS2.csl");	
+		} else if(removeSolutionFirst & !leaveSolutionLast) {
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\Washing\\TemplateWashThreeTimesFindPBSLeaveDryTokenInjectionVolumeShiftXShiftYVolumePerSpotTimeLS2.csl");
+		} else if(!removeSolutionFirst & !leaveSolutionLast) {
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\Washing\\TemplateWashThreeTimesFindDryLeaveDryTokenInjectionVolumeShiftXShiftYVolumePerSpotTimeLS2.csl");
+		} else {
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\Washing\\TemplateWashThreeTimesFindDryLeavePBSTokenInjectionVolumeShiftXShiftYVolumePerSpotTimeLS2.csl");
+		}
+		
+		String toReplaceInjection = "tokenInjection";
+		String replacementInjection = String.format("%d",injectionVolume);
+		String toReplaceVolume = "tokenVolume";
+		String replacementVolume = String.format("%d",volumePerSpot);
+		String toReplaceTime = "tokenTime";
+		String replacementTime = String.format("%d", waitTime);
+		
+		String toReplacementShiftX = "tokenShiftX";
+		String toReplacementShiftY = "tokenShiftY";
+		//x gets minus since only one axis is inverted relative to the coordinate system of the staining robot
+		String replacementShiftX = String.format(Locale.US,"%.1f", -xyStagePosition.getxPos()/1000);
+		String replacementShiftY = String.format(Locale.US,"%.1f", xyStagePosition.getyPos()/1000);
+		
+		String outputXMLFileContent = template.replace(toReplaceInjection, replacementInjection);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceVolume, replacementVolume);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceTime, replacementTime);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplacementShiftX, replacementShiftX);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplacementShiftY, replacementShiftY);
+		OutputControl.writeFile("C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl", outputXMLFileContent);
+		startChronosPlugin(pathToExchangeFolder, "C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl");
+		
+	}
+
+	public static void createSampleListForSolutionAddingFromWashingStation(int index, int volume,
+			XYStagePosition xyStagePosition, String pathToExchangeFolder) {
+		String template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromWashingStationTokenVolumeIndexShiftXShiftYLS2.csl");
+		String toReplaceIndex = "tokenIndex";
+		String replacementIndex = String.format("%d",index);
+		String toReplaceVolume = "tokenVolume";
+		String replacementVolume = String.format("%d",volume);
+		
+		String toReplacementShiftX = "tokenShiftX";
+		String toReplacementShiftY = "tokenShiftY";
+		//x gets minus since only one axis is inverted relative to the coordinate system of the staining robot
+		String replacementShiftX = String.format(Locale.US,"%.1f", -xyStagePosition.getxPos()/1000);
+		String replacementShiftY = String.format(Locale.US,"%.1f", xyStagePosition.getyPos()/1000);
+		
+		String outputXMLFileContent = template.replace(toReplaceIndex, replacementIndex);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceVolume, replacementVolume);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplacementShiftX, replacementShiftX);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplacementShiftY, replacementShiftY);
+		OutputControl.writeFile("C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl", outputXMLFileContent);
+		startChronosPlugin(pathToExchangeFolder, "C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl");
+	}
+
+	public static void createSampleListForSolutionAddingFromWashingStationToVial(int index, int volume, int vialNumber, String pathToExchangeFolder) {
+		String template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromWashingStationToVialTokenVolumeIndexVialNbrLS2.csl");
+		String toReplaceVialNumber = "tokenVial";
+		String replacementVialNumber = String.format("%d",vialNumber);
+		String toReplaceIndex = "tokenIndex";
+		String replacementIndex = String.format("%d",index);
+		String toReplaceVolume = "tokenVolume";
+		String replacementVolume = String.format("%d",volume);
+		
+		String outputXMLFileContent = template.replace(toReplaceVialNumber, replacementVialNumber);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceVolume, replacementVolume);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceIndex, replacementIndex);
+
+		OutputControl.writeFile("C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl", outputXMLFileContent);
+		startChronosPlugin(pathToExchangeFolder, "C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl");
+	}
+
+	public static void createSampleListForWashingSyringe(int index, int repetitions, boolean useLS2,
+			String pathToExchangeFolder) {
+		String template;
+		if (useLS2) {
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\WashSyringe\\WashSyringeTokenIndexRepetitionsLS2.csl");
+		} else {
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\WashSyringe\\WashSyringeTokenIndexRepetitionsLS1.csl");
+		}
+		String toReplaceRepetition = "tokenReps";
+		String replacementRepetition = String.format("%d",repetitions);
+		String toReplaceIndex = "tokenIndex";
+		String replacementIndex = String.format("%d",index);
+
+		
+		String outputXMLFileContent = template.replace(toReplaceRepetition, replacementRepetition);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceIndex, replacementIndex);
+
+		OutputControl.writeFile("C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl", outputXMLFileContent);
+		startChronosPlugin(pathToExchangeFolder, "C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl");
+		
+	}
+	
+	
 }

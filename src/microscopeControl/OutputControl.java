@@ -3,11 +3,14 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.io.FileSaver;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+
 
 public class OutputControl {
 	public static boolean createFolder(String folderName){
@@ -72,6 +75,42 @@ public class OutputControl {
 			outputStream.print(pathToSampleList);
 			outputStream.close();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public static String readFile(String filePath)
+    {
+		try {
+		FileReader fileReader = new FileReader(filePath);
+		String fileContents = "";
+		int i ;
+		try {
+			while((i =  fileReader.read())!=-1){
+				char ch = (char)i;
+			    fileContents = fileContents + ch; 
+			  }
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return fileContents;
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+    }
+	
+	private static void writeStringToFile(String string, String filename) {
+		PrintWriter out;
+		try {
+			out = new PrintWriter(filename);
+			out.println(string);
+			out.close();
+		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
