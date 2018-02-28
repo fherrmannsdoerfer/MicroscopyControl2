@@ -46,6 +46,7 @@ import editorModulesDefinitions.AddWashingSolutionToSampleGUI;
 import editorModulesDefinitions.AddWashingSolutionToVialGUI;
 import editorModulesDefinitions.CameraParametersGUI;
 import editorModulesDefinitions.CaptureWidefieldImageGUI;
+import editorModulesDefinitions.CommentaryBarGUI;
 import editorModulesDefinitions.EndLoopGUI;
 import editorModulesDefinitions.FilterWheelGUI;
 import editorModulesDefinitions.IterableInputGUI;
@@ -59,6 +60,8 @@ import editorModulesDefinitions.PauseGUI;
 import editorModulesDefinitions.RemoveSolutionFromSampleGUI;
 import editorModulesDefinitions.StainingRobotCommandGUI;
 import editorModulesDefinitions.StartImageAcquisitionGUI;
+import editorModulesDefinitions.TransfereSolutionsFromVialToVial;
+import editorModulesDefinitions.VortexVialGUI;
 import editorModulesDefinitions.Wash3TimesWithPBSLS2GUI;
 import editorModulesDefinitions.WashSyringeGUI;
 
@@ -115,6 +118,8 @@ public class MainFrameEditor extends JDialog implements Serializable{
 		microscopeComboBoxOptions.add(new FilterWheelGUI());
 		microscopeComboBoxOptions.add(new CameraParametersGUI());
 		microscopeComboBoxOptions.add(new MeasurementTagGUI());
+		microscopeComboBoxOptions.add(new CommentaryBarGUI());
+		
 		
 		stainingRobotComboBoxOptions.add(new StainingRobotCommandGUI());
 		stainingRobotComboBoxOptions.add(new RemoveSolutionFromSampleGUI());
@@ -123,6 +128,8 @@ public class MainFrameEditor extends JDialog implements Serializable{
 		stainingRobotComboBoxOptions.add(new AddWashingSolutionToSampleGUI());
 		stainingRobotComboBoxOptions.add(new AddWashingSolutionToVialGUI());
 		stainingRobotComboBoxOptions.add(new WashSyringeGUI());
+		stainingRobotComboBoxOptions.add(new VortexVialGUI());
+		stainingRobotComboBoxOptions.add(new TransfereSolutionsFromVialToVial());
 		
 		//loopsComboBoxOptions.add(new LoopGUI());
 		loopsComboBoxOptions.add(new LoopROIsGUI());

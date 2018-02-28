@@ -8,6 +8,7 @@ public class StyleClass implements Serializable{
 	private Color colorMicroscope = new Color(171,65,152);
 	private Color colorStainingRobot = new Color(101,194,148);
 	private Color colorLoop = new Color(88,197,199);
+	private Color colorComment = new Color(0,0,0);
 	private Color batchProcessing = new Color(180,180,180);
 	private int widthProcessingStepsPanel = 300;
 	private int heightProcessingStepsPanel = 60;
@@ -25,6 +26,9 @@ public class StyleClass implements Serializable{
 	private Dimension dimensionSelectedModules = new Dimension(widthProcessingStepsPanel + 300,heightEditor);
 	private Dimension dimensionParameters = new Dimension(500,heightEditor);
 	
+	public Color getColorComment() {
+		return colorComment;
+	}
 	public Color getColorMicroscope() {
 		return colorMicroscope;
 	}

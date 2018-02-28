@@ -48,7 +48,9 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 	//jpanel containing the buttons and progressbar but not the possible right shift
 	private JPanel module = new JPanel();
 	Component indent;
-	
+	Dimension dimensionWholeBox;
+	Dimension dimensionModule;
+	boolean useFullWidth = false;
 	public EditorModules(){};
 	
 	public EditorModules(final MainFrameEditor mfe){
@@ -102,12 +104,13 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 		Box horizontalBox = Box.createHorizontalBox();
 		Box verticalBox = Box.createVerticalBox();
 		
-		final Dimension dimensionWholeBox = new Dimension(mfe.style.getWidthEditorModules()+indentation*mfe.style.getDefaultIndentation(),mfe.style.getHeightProcessingStepsPanel());
-		final Dimension dimensionModule = new Dimension(mfe.style.getWidthEditorModules(),mfe.style.getHeightProcessingStepsPanel());
 		
 		
 		Component ui = Box.createVerticalStrut(mfe.style.getUpperIndent());
 		indent = Box.createHorizontalStrut(indentation*mfe.style.getDefaultIndentation());
+		if (useFullWidth) {
+			indent = Box.createHorizontalStrut(0*mfe.style.getDefaultIndentation());
+		}
 		verticalBox.setPreferredSize(dimensionModule);
 		verticalBox.add(ui);
 		verticalBox.add(horizontalBox);
@@ -115,6 +118,13 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 		outerHorizontalBox.add(indent);
 		outerHorizontalBox.add(module);
 		
+		if (useFullWidth) {
+			dimensionWholeBox = new Dimension(mfe.style.getDimensionSelectedModules().width-30,mfe.style.getHeightProcessingStepsPanel());
+			dimensionModule = new Dimension(mfe.style.getDimensionSelectedModules().width-50,mfe.style.getHeightProcessingStepsPanel());
+		} else {
+			dimensionWholeBox = new Dimension(mfe.style.getWidthEditorModules()+indentation*mfe.style.getDefaultIndentation(),mfe.style.getHeightProcessingStepsPanel());
+			dimensionModule = new Dimension(mfe.style.getWidthEditorModules(),mfe.style.getHeightProcessingStepsPanel());
+		}
 		Component ls = Box.createHorizontalStrut(mfe.style.getLeftIndent());
 		horizontalBox.add(ls);
 		horizontalBox.add(Box.createHorizontalGlue());
@@ -278,5 +288,17 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 	
 	public void setProgressBarInvisible() {
 		progressbar.setVisible(false);
+	}
+	
+	public void setButtonText(String text) {
+		parameterButton.setText(text);
+	}
+
+	public void setModuleToFullWidth() {
+		useFullWidth = true;
+	}
+
+	public boolean isFullWidth() {
+		return useFullWidth;
 	}
 }

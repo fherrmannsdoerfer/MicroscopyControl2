@@ -368,6 +368,51 @@ public class Utility implements Serializable {
 		startChronosPlugin(pathToExchangeFolder, "C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl");
 		
 	}
+
+	public static void createSampleListForVortexingVial(int index, int repetitions, boolean useLS2,
+			String pathToExchangeFolder) {
+		String template;
+		if (useLS2) {
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateVortexVialTokenIndexRepetitionsLS2.csl");
+		} else {
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateVortexVialTokenIndexRepetitionsLS1.csl");
+		}
+		String toReplaceRepetition = "tokenReps";
+		String replacementRepetition = String.format("%d",repetitions);
+		String toReplaceIndex = "tokenIndex";
+		String replacementIndex = String.format("%d",index);
+
+		
+		String outputXMLFileContent = template.replace(toReplaceRepetition, replacementRepetition);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceIndex, replacementIndex);
+
+		OutputControl.writeFile("C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl", outputXMLFileContent);
+		startChronosPlugin(pathToExchangeFolder, "C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl");
+	}
+
+	public static void createSampleListForTransfereFromVialToVial(int indexSource, int indexDest, int volume,
+			boolean useLS2, String pathToExchangeFolder) {
+		String template;
+		if (useLS2) {
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateTransfereSolutionFromVialToVialTokensVolumeVialSourceVialDestLS2.csl");
+		} else {
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateTransfereSolutionFromVialToVialTokensVolumeVialSourceVialDestLS1.csl");
+		}
+		String toReplaceVolume = "tokenVolume";
+		String replacementVolume = String.format("%d",volume);
+		String toReplaceIndexSource = "tokenIndexSource";
+		String replacementIndexSource = String.format("%d",indexSource);
+		String toReplaceIndexDest = "tokenIndexDest";
+		String replacementIndexDest = String.format("%d",indexDest);
+
+		
+		String outputXMLFileContent = template.replace(toReplaceVolume, replacementVolume);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceIndexSource, replacementIndexSource);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceIndexDest, replacementIndexDest);
+
+		OutputControl.writeFile("C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl", outputXMLFileContent);
+		startChronosPlugin(pathToExchangeFolder, "C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl");
+	}
 	
 	
 }
