@@ -86,4 +86,10 @@ public class MoveFocalPlaneGUI extends EditorModules{
 		setProgressbarValue(100);
 	}
 
+	@Override
+	public boolean checkForValidity() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

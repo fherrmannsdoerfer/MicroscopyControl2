@@ -4,6 +4,7 @@ package editorModulesDefinitions;
 import java.awt.GridLayout;
 
 import javax.swing.Box;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -19,6 +20,7 @@ public class AddSolutionFromVialToSampleGUI extends EditorModules{
 	private static String name = "AddSolutionToSample";
 	private JTextField vialNumber = new JTextField("-1");
 	private JTextField volume = new JTextField("300");
+	private JCheckBox useLS2 = new JCheckBox("Use LS 2");
 	
 	public AddSolutionFromVialToSampleGUI(MainFrameEditor mfe) {
 		super(mfe);
@@ -34,11 +36,14 @@ public class AddSolutionFromVialToSampleGUI extends EditorModules{
 	
 	private JPanel createOptionPanel(){
 		JPanel retPanel = new JPanel();
-		retPanel.setLayout(new GridLayout(2, 2,60,15));
+		retPanel.setLayout(new GridLayout(3, 2,60,15));
 		retPanel.add(new JLabel("Vial Number From Rack 3:"));
 		retPanel.add(vialNumber);
 		retPanel.add(new JLabel("Volume [Microliter]:"));
 		retPanel.add(volume);
+		retPanel.add(new JLabel(""));
+		retPanel.add(useLS2);
+		useLS2.setSelected(true);
 		return retPanel;
 	}
 	
@@ -50,9 +55,12 @@ public class AddSolutionFromVialToSampleGUI extends EditorModules{
 
 	@Override
 	public String[] getSettings() {
-		String[] tempString = new String[2];
+		String[] tempString = new String[3];
 		tempString[0] = vialNumber.getText();
 		tempString[1] = volume.getText();
+		if (useLS2.isSelected()){
+			tempString[2] = "selected";
+		}
 		return tempString;
 	}
 
@@ -60,6 +68,9 @@ public class AddSolutionFromVialToSampleGUI extends EditorModules{
 	public void setSettings(String[] tempString) {
 		vialNumber.setText(tempString[0]);
 		volume.setText(tempString[1]);
+		if (tempString[2].equals("selected")){
+			useLS2.setSelected(true);
+		}
 	}
 
 	@Override
@@ -77,35 +88,25 @@ public class AddSolutionFromVialToSampleGUI extends EditorModules{
 		return name;
 	}
 	
-	private int getVialNumber() {
-		int intVialNumber = Integer.parseInt(vialNumber.getText());
-		if (intVialNumber<1 || intVialNumber>54) {
-			System.err.println("Vial Number is not within limits of 1 to 54!");
-			return -1;
-		} else {
-			return intVialNumber;
-		}
-		
-	}
 	
-	private int getVolume() {
-		int intVolume = Integer.parseInt(volume.getText());
-		if (intVolume<1 || intVolume>1000) {
-			System.err.println("Volume is not within limits of 1 to 1000!");
-			return -1;
-		} else {
-			return intVolume;
-		}
-		
-	}
+	
+	
 	
 	
 
 	@Override
 	public void perform() {
 		// TODO Auto-generated method stub
-		Utility.createSampleListForSolutionAdding(getVialNumber(), getVolume(),mfe.getMainFrameReference().getXYStagePosition(),mfe.getMainFrameReference().getPathToExchangeFolder());
+		Utility.createSampleListForSolutionAdding(getVialNumber(vialNumber), getVolume(volume,useLS2.isSelected()), useLS2.isSelected() ,mfe.getMainFrameReference().getXYStagePosition(),mfe.getMainFrameReference().getPathToExchangeFolder());
 		setProgressbarValue(100);
+	}
+
+	@Override
+	public boolean checkForValidity() {
+		if (getVialNumber(vialNumber) == -1 || getVolume(volume, useLS2.isSelected()) == -1) {
+			return false;
+		}
+		return true;
 	}
 
 }

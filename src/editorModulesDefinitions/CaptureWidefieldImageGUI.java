@@ -80,4 +80,13 @@ public class CaptureWidefieldImageGUI extends EditorModules{
 		mfe.getMainFrameReference().captureAndStoreWidefieldImage(Double.parseDouble(Utility.parseParameter(exposureTime.getText(), mfe)));
 		setProgressbarValue(100);
 	}
+
+	@Override
+	public boolean checkForValidity() {
+		
+		if (exposureTime.getText().isEmpty()) {
+			return false;
+		} else {return true;}
+		
+	}
 }

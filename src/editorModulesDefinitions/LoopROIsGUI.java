@@ -201,4 +201,10 @@ public class LoopROIsGUI extends LoopModules{
 		return al;
 	}
 
+	@Override
+	public boolean checkForValidity() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

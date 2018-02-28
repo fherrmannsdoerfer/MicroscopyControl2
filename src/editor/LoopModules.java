@@ -101,6 +101,10 @@ public abstract class LoopModules extends EditorModules{
 			middlePart.add(newLinePanel);
 		}
 		
+		public int getNumberOfColumns() {
+			return parameterList.size();
+		}
+		
 		public void fillScrollPane(){
 			middlePart.removeAll();
 			for (ParameterColumn pc:parameterList){
@@ -136,6 +140,10 @@ public abstract class LoopModules extends EditorModules{
 		}
 		
 		class ParameterColumn extends JPanel implements Serializable{
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 			ParameterColumn selfReference;
 			JTextField parameter;
 			

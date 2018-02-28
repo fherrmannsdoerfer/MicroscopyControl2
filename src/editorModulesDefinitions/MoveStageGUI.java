@@ -122,4 +122,20 @@ public class MoveStageGUI extends EditorModules{
 		}
 		setProgressbarValue(100);
 	}
+
+	@Override
+	public boolean checkForValidity() {
+		if (useVariableFromLoop.isSelected()){
+			if (tagROILoop.getText().isEmpty()) {
+				return false;
+			}
+			return true;
+		}
+		else{
+			if(xPos.getText().isEmpty()||yPos.getText().isEmpty()) {
+				return false;
+			}
+			else {return true;}
+		}
+	}
 }

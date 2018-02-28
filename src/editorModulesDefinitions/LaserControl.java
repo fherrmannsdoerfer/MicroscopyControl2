@@ -118,4 +118,11 @@ public class LaserControl extends EditorModules{
 		System.out.println("intensity: "+Double.parseDouble(Utility.parseParameter(laserIntensity.getText(),mfe)));
 		setProgressbarValue(100);
 	}
+
+	@Override
+	public boolean checkForValidity() {
+		if (laserIntensity.getText().isEmpty()|| laserIntensity.getText().isEmpty()){
+			return false;
+		} else {return true;}
+	}
 }

@@ -92,46 +92,24 @@ public class TransfereSolutionsFromVialToVial extends EditorModules{
 		return name;
 	}
 	
-	private int getIndexSource() {
-		int index = Integer.parseInt(indexVialSource.getText());
-		if (index<1 || index>54) {
-			System.err.println("Vial Number is not within limits of 1 to 54!");
-			return -1;
-		} else {
-			return index;
-		}
-		
-	}
 	
-	private int getIndexDest() {
-		int index = Integer.parseInt(indexVialDest.getText());
-		if (index<1 || index>54) {
-			System.err.println("Vial Number is not within limits of 1 to 54!");
-			return -1;
-		} else {
-			return index;
-		}
-		
-	}
 	
-	private int getVolume() {
-		int reps = Integer.parseInt(volume.getText());
-		if (reps<1 || reps>1000) {
-			System.err.println("Volume is not within limits of 1 to 1000!");
-			return -1;
-		} else {
-			return reps;
-		}
-		
-	}
 	
 	
 
 	@Override
 	public void perform() {
 		// TODO Auto-generated method stub
-		Utility.createSampleListForTransfereFromVialToVial(getIndexSource(), getIndexDest(), getVolume(), useLS2.isSelected(),mfe.getMainFrameReference().getPathToExchangeFolder());
+		Utility.createSampleListForTransfereFromVialToVial(getVialNumber(indexVialSource), getVialNumber(indexVialDest), getVolume(volume, useLS2.isSelected()), useLS2.isSelected(),mfe.getMainFrameReference().getPathToExchangeFolder());
 		setProgressbarValue(100);
+	}
+
+	@Override
+	public boolean checkForValidity() {
+		if (getVialNumber(indexVialSource)==-1 || getVialNumber(indexVialDest)==-1|| getVolume(volume, useLS2.isSelected())==-1) {
+			return false;
+		}
+		return true;
 	}
 
 }

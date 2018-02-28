@@ -79,4 +79,10 @@ public class EndLoopGUI extends EditorModules{
 		
 	}
 
+	@Override
+	public boolean checkForValidity() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

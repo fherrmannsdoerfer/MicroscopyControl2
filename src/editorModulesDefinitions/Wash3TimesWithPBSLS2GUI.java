@@ -106,28 +106,6 @@ public class Wash3TimesWithPBSLS2GUI extends EditorModules{
 		return name;
 	}
 	
-	private int getInjectionVolume() {
-		int injVol = Integer.parseInt(injectionVolume.getText());
-		if (injVol<1 || injVol>1000) {
-			System.err.println("Vial Number is not within limits of 1 to 1000!");
-			return -1;
-		} else {
-			return injVol;
-		}
-		
-	}
-	
-	private int getVolumePerSpot() {
-		int volPerSpot = Integer.parseInt(volumePerSpot.getText());
-		if (volPerSpot<1 || volPerSpot>250) {
-			System.err.println("Volume is not within limits of 1 to 250!");
-			return -1;
-		} else {
-			return volPerSpot;
-		}
-		
-	}
-	
 	private int getWaitTime() {
 		int wait = Integer.parseInt(waitTimeSeks.getText());
 		if (wait<1 || wait>7200) {
@@ -141,8 +119,16 @@ public class Wash3TimesWithPBSLS2GUI extends EditorModules{
 
 	@Override
 	public void perform() {
-		Utility.createSampleListForWashing3Times(getInjectionVolume(), getVolumePerSpot(), getWaitTime(), removeSolutionFirst.isSelected(), leaveSolutionLast.isSelected(),mfe.getMainFrameReference().getXYStagePosition(),mfe.getMainFrameReference().getPathToExchangeFolder());
+		Utility.createSampleListForWashing3Times(getVolume(injectionVolume,true), getVolumePerSpot(volumePerSpot), getWaitTime(), removeSolutionFirst.isSelected(), leaveSolutionLast.isSelected(),mfe.getMainFrameReference().getXYStagePosition(),mfe.getMainFrameReference().getPathToExchangeFolder());
 		setProgressbarValue(100);
+	}
+
+	@Override
+	public boolean checkForValidity() {
+		if (getVolume(injectionVolume,true)==-1||getVolumePerSpot(volumePerSpot)==-1||getWaitTime()==-1) {
+			return false;
+		}
+		return true;
 	}
 
 }

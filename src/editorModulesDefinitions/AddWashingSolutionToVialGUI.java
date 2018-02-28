@@ -3,6 +3,7 @@ package editorModulesDefinitions;
 import java.awt.GridLayout;
 
 import javax.swing.Box;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -19,6 +20,7 @@ public class AddWashingSolutionToVialGUI extends EditorModules{
 	private JTextField washingStationIndex = new JTextField("1");
 	private JTextField volume = new JTextField("300");
 	private JTextField targetVial = new JTextField("-1");
+	private JCheckBox useLS2 = new JCheckBox("Use LS2");
 	
 	public AddWashingSolutionToVialGUI(MainFrameEditor mfe) {
 		super(mfe);
@@ -34,13 +36,16 @@ public class AddWashingSolutionToVialGUI extends EditorModules{
 	
 	private JPanel createOptionPanel(){
 		JPanel retPanel = new JPanel();
-		retPanel.setLayout(new GridLayout(3, 2,60,15));
+		retPanel.setLayout(new GridLayout(4, 2,60,15));
 		retPanel.add(new JLabel("Index Washing Station (1: PBS, 2: H2O):"));
 		retPanel.add(washingStationIndex);
 		retPanel.add(new JLabel("Volume [Microliter]:"));
 		retPanel.add(volume);
 		retPanel.add(new JLabel("Vial Number From Rack 3:"));
 		retPanel.add(targetVial);
+		retPanel.add(new JLabel(""));
+		retPanel.add(useLS2);
+		useLS2.setSelected(true);
 		return retPanel;
 	}
 	
@@ -52,10 +57,13 @@ public class AddWashingSolutionToVialGUI extends EditorModules{
 
 	@Override
 	public String[] getSettings() {
-		String[] tempString = new String[3];
+		String[] tempString = new String[4];
 		tempString[0] = washingStationIndex.getText();
 		tempString[1] = volume.getText();
 		tempString[2] = targetVial.getText();
+		if (useLS2.isSelected()){
+			tempString[3] = "selected";
+		}
 		return tempString;
 	}
 
@@ -64,6 +72,9 @@ public class AddWashingSolutionToVialGUI extends EditorModules{
 		washingStationIndex.setText(tempString[0]);
 		volume.setText(tempString[1]);
 		targetVial.setText(tempString[2]);
+		if (tempString[3].equals("selected")){
+			useLS2.setSelected(true);
+		}
 	}
 
 	@Override
@@ -81,46 +92,21 @@ public class AddWashingSolutionToVialGUI extends EditorModules{
 		return name;
 	}
 	
-	private int getIndex() {
-		int index = Integer.parseInt(washingStationIndex.getText());
-		if (index<1 || index>2) {
-			System.err.println("Index of Washing Station must be 1 or 2!");
-			return -1;
-		} else {
-			return index;
-		}
 		
-	}
-	
-	private int getVolume() {
-		int intVolume = Integer.parseInt(volume.getText());
-		if (intVolume<1 || intVolume>1000) {
-			System.err.println("Volume is not within limits of 1 to 1000!");
-			return -1;
-		} else {
-			return intVolume;
-		}
-		
-	}
-	
-	private int getVialNumber() {
-		int intVialNumber = Integer.parseInt(targetVial.getText());
-		if (intVialNumber<1 || intVialNumber>54) {
-			System.err.println("Vial Number is not within limits of 1 to 54!");
-			return -1;
-		} else {
-			return intVialNumber;
-		}
-		
-	}
-	
-	
 
 	@Override
 	public void perform() {
 		// TODO Auto-generated method stub
-		Utility.createSampleListForSolutionAddingFromWashingStationToVial(getIndex(), getVolume(), getVialNumber(),mfe.getMainFrameReference().getPathToExchangeFolder());
+		Utility.createSampleListForSolutionAddingFromWashingStationToVial(getIndex(washingStationIndex), getVolume(volume,useLS2.isSelected()), getVialNumber(targetVial),mfe.getMainFrameReference().getPathToExchangeFolder());
 		setProgressbarValue(100);
+	}
+
+	@Override
+	public boolean checkForValidity() {
+		if (getIndex(washingStationIndex)==-1|| getVolume(volume,useLS2.isSelected())==-1|| getVialNumber(targetVial)==-1) {
+			return false;
+		}
+		return true;
 	}
 
 }

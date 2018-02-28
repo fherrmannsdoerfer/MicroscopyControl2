@@ -87,35 +87,19 @@ public class VortexVialGUI extends EditorModules{
 		return name;
 	}
 	
-	private int getIndex() {
-		int index = Integer.parseInt(vialIndex.getText());
-		if (index<1 || index>54) {
-			System.err.println("Vial Number is not within limits of 1 to 54!");
-			return -1;
-		} else {
-			return index;
-		}
-		
-	}
-	
-	private int getRepetitions() {
-		int reps = Integer.parseInt(repetitions.getText());
-		if (reps<1 || reps>100) {
-			System.err.println("Repetitions are not within limits of 1 to 100!");
-			return -1;
-		} else {
-			return reps;
-		}
-		
-	}
-	
-	
-
 	@Override
 	public void perform() {
 		// TODO Auto-generated method stub
-		Utility.createSampleListForVortexingVial(getIndex(), getRepetitions(), useLS2.isSelected(),mfe.getMainFrameReference().getPathToExchangeFolder());
+		Utility.createSampleListForVortexingVial(getVialNumber(vialIndex), getNbrCycles(repetitions), useLS2.isSelected(),mfe.getMainFrameReference().getPathToExchangeFolder());
 		setProgressbarValue(100);
+	}
+
+	@Override
+	public boolean checkForValidity() {
+		if(getVialNumber(vialIndex)==-1||getNbrCycles(repetitions)==-1) {
+			return false;
+		}
+		return true;
 	}
 
 }

@@ -1,6 +1,8 @@
 package editorModulesDefinitions;
 
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -20,6 +22,7 @@ public class CameraParametersGUI extends EditorModules{
 	 */
 	private static final long serialVersionUID = 1L;
 	JComboBox shutterPosition;
+	JTextField shutterSelectionNumber = new JTextField("0");
 	JTextField emGain = new JTextField("10");
 	JTextField exposureTime = new JTextField("100");
 	JTextField nbrFrames = new JTextField("20000");
@@ -45,7 +48,7 @@ public class CameraParametersGUI extends EditorModules{
 		nbrFrames = Utility.setFormatTextFields(nbrFrames,30,20,3);
 
 		JPanel retPanel = new JPanel();
-		retPanel.setLayout(new GridLayout(4, 2,60,15));
+		retPanel.setLayout(new GridLayout(5, 2,60,15));
 		shutterPosition = new JComboBox();
 		shutterPosition.addItem("open");
 		shutterPosition.addItem("close");
@@ -56,8 +59,29 @@ public class CameraParametersGUI extends EditorModules{
 		retPanel.add(emGain);
 		retPanel.add(new JLabel("Shutter State:"));
 		retPanel.add(shutterPosition);
+		retPanel.add(new JLabel("Shutter Selection Number:"));
+		retPanel.add(shutterSelectionNumber);
 		retPanel.add(new JLabel("Number Frames:"));
 		retPanel.add(nbrFrames);
+		
+		shutterPosition.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				shutterSelectionNumber.setText((shutterPosition.getSelectedIndex()+1)+"");
+			}
+		});
+		
+		shutterSelectionNumber.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try{
+					shutterPosition.setSelectedIndex(Integer.parseInt(shutterSelectionNumber.getText())-1);
+				}
+				catch (Exception e){
+					
+				}
+			}	
+		});
 		
 		return retPanel;
 	}
@@ -69,11 +93,12 @@ public class CameraParametersGUI extends EditorModules{
 	}
 
 	public String[] getSettings(){
-		String[] tempString = new String[4];
+		String[] tempString = new String[5];
 		tempString[0] = String.valueOf(shutterPosition.getSelectedIndex());
 		tempString[1] = exposureTime.getText();
 		tempString[2] = emGain.getText();
 		tempString[3] = nbrFrames.getText();
+		tempString[4] = shutterSelectionNumber.getText();
 		return tempString;
 	}
 	public void setSettings(String[] tempString){
@@ -81,6 +106,7 @@ public class CameraParametersGUI extends EditorModules{
 		exposureTime.setText(tempString[1]);
 		emGain.setText(tempString[2]);
 		nbrFrames.setText(tempString[3]);
+		shutterSelectionNumber.setText(tempString[4]);
 	}
 
 	@Override
@@ -102,7 +128,7 @@ public class CameraParametersGUI extends EditorModules{
 	@Override
 	public void perform() {
 		CameraParameters camParam;
-		if (shutterPosition.getSelectedIndex() == 0){
+		if (Integer.parseInt(Utility.parseParameter(shutterSelectionNumber.getText(), mfe))-1 == 0){
 			camParam = new CameraParameters(Double.parseDouble(Utility.parseParameter(exposureTime.getText(), mfe)),Integer.parseInt(Utility.parseParameter(emGain.getText(), mfe)), Integer.parseInt(Utility.parseParameter(nbrFrames.getText(), mfe)),true);
 		}
 		else{
@@ -110,5 +136,13 @@ public class CameraParametersGUI extends EditorModules{
 		}
 		mfe.getMainFrameReference().setCameraParameter(camParam);
 		setProgressbarValue(100);
+	}
+
+	@Override
+	public boolean checkForValidity() {
+		if(exposureTime.getText().isEmpty()||emGain.getText().isEmpty()||nbrFrames.getText().isEmpty()) {
+			return false;
+		}
+		return true;
 	}
 }

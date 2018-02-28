@@ -231,8 +231,14 @@ public class Utility implements Serializable {
 		}
 	}
 
-	public static void createSampleListForSolutionAdding(int vialNumber, int volume, XYStagePosition xyStagePosition, String pathToExchangeFolder) {
-		String template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromVialTokenVialPositionVolumeShiftXShiftYLS2.csl");
+	public static void createSampleListForSolutionAdding(int vialNumber, int volume, boolean useLS2, XYStagePosition xyStagePosition, String pathToExchangeFolder) {
+		String template;
+		if (useLS2) {
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\WashSyringe\\TemplateSolutionPlacementFromVialTokenVialPositionVolumeShiftXShiftYLS2.csl");
+		} else {
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\WashSyringe\\TemplateSolutionPlacementFromVialTokenVialPositionVolumeShiftXShiftYLS1.csl");
+		}
+	
 		String toReplaceVialNumber = "tokenVial";
 		String replacementVialNumber = String.format("%d",vialNumber);
 		String toReplaceVolume = "tokenVolume";
@@ -308,9 +314,14 @@ public class Utility implements Serializable {
 		
 	}
 
-	public static void createSampleListForSolutionAddingFromWashingStation(int index, int volume,
+	public static void createSampleListForSolutionAddingFromWashingStation(int index, int volume, boolean useLS2,
 			XYStagePosition xyStagePosition, String pathToExchangeFolder) {
-		String template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromWashingStationTokenVolumeIndexShiftXShiftYLS2.csl");
+		String template;
+		if (useLS2) {
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\WashSyringe\\TemplateSolutionPlacementFromWashingStationTokenVolumeIndexShiftXShiftYLS2.csl");
+		} else {
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\WashSyringe\\TemplateSolutionPlacementFromWashingStationTokenVolumeIndexShiftXShiftYLS1.csl");
+		}
 		String toReplaceIndex = "tokenIndex";
 		String replacementIndex = String.format("%d",index);
 		String toReplaceVolume = "tokenVolume";
@@ -416,7 +427,7 @@ public class Utility implements Serializable {
 
 	public static void createSampleListForPreparationOfMEA(int volumePBSForStock, int indexVialMeaStock,
 			int indexVialMeaFinal, int volumePBSForFinal, int volumeMEAStockForFinal, int volumeNaOHForFinal,
-			int indexVialNaOH, String pathToExchangeFolder, boolean createStock) {
+			int indexVialNaOH, int nbrVortexCycles, int nbrWashingCycles, String pathToExchangeFolder, boolean createStock) {
 		String template;
 		if (createStock) {
 			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplatePrepareBufferAndMEATokenVolumesVialsLS1AndLS2.csl");
@@ -433,10 +444,14 @@ public class Utility implements Serializable {
 		String replacementVolumePBSForFinal = String.format("%d",volumePBSForFinal);
 		String toReplaceVolumeMeaStockForFinal = "tokenMEAStockForFinal";
 		String replacementVolumeMeaStockForFinal = String.format("%d",volumeMEAStockForFinal);
-		String toReplaceVolumeNaOHForFinal = "tokenNaOHForFial";
+		String toReplaceVolumeNaOHForFinal = "tokenNaOHForFinal";
 		String replacementIndexDest = String.format("%d",volumeNaOHForFinal);
 		String toReplaceIndexVialNaOH = "tokenIndexNaOH";
 		String replacementIndexVialNaOH = String.format("%d",indexVialNaOH);
+		String toReplaceNbrVortexCycles = "tokenRepsVortex";
+		String replacementNbrVortexCycles = String.format("%d",nbrVortexCycles);
+		String toReplaceNbrWashingCycles = "tokenRepsWash";
+		String replacementNbrWashingCycles = String.format("%d",nbrWashingCycles);
 	
 		String outputXMLFileContent = template.replace(toReplaceVolPBSForStock, replacementVolPBSForStock);
 		outputXMLFileContent = outputXMLFileContent.replace(toReplaceIndexVialMeaStock, replacementIndexVialMeaStock);
@@ -445,6 +460,8 @@ public class Utility implements Serializable {
 		outputXMLFileContent = outputXMLFileContent.replace(toReplaceVolumeMeaStockForFinal, replacementVolumeMeaStockForFinal);
 		outputXMLFileContent = outputXMLFileContent.replace(toReplaceVolumeNaOHForFinal, replacementIndexDest);
 		outputXMLFileContent = outputXMLFileContent.replace(toReplaceIndexVialNaOH, replacementIndexVialNaOH);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceNbrVortexCycles, replacementNbrVortexCycles);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceNbrWashingCycles, replacementNbrWashingCycles);
 
 		OutputControl.writeFile("C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl", outputXMLFileContent);
 		startChronosPlugin(pathToExchangeFolder, "C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl");

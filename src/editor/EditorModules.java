@@ -272,6 +272,7 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 	abstract public EditorModules getEditorModulesObject(EditorModules processingStepsPanelObject, MainFrameEditor mfe);
 	abstract public String getFunctionName();
 	abstract public void perform();
+	abstract public boolean checkForValidity();
 	
 	
 	/** Returns an ImageIcon, or null if the path was invalid. */
@@ -300,5 +301,59 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 
 	public boolean isFullWidth() {
 		return useFullWidth;
+	}
+	
+	protected int getVolume(JTextField textfield, boolean useLS2) {
+		int intVolume = Integer.parseInt(textfield.getText());
+		int limit = 100;
+		if (useLS2) {
+			limit = 1000;
+		}
+		if (intVolume<1 || intVolume>limit) {
+			System.err.println("Volume is not within limits of 1 to "+limit+"!");
+			return -1;
+		} else {
+			return intVolume;
+		}	
+	}
+	
+	protected int getVialNumber(JTextField vialNumber) {
+		int intVialNumber = Integer.parseInt(vialNumber.getText());
+		if (intVialNumber<1 || intVialNumber>54) {
+			System.err.println("Vial Number is not within limits of 1 to 54!");
+			return -1;
+		} else {
+			return intVialNumber;
+		}
+		
+	}
+	
+	protected int getIndex(JTextField washingStationIndex) {
+		int index = Integer.parseInt(washingStationIndex.getText());
+		if (index<1 || index>2) {
+			System.err.println("Index of Washing Station must be 1 or 2!");
+			return -1;
+		} else {
+			return index;
+		}
+		
+	}
+	protected int getNbrCycles(JTextField cycles) {
+		int index = Integer.parseInt(cycles.getText());
+		if (index<1 || index>100) {
+			System.err.println("Number vortex-cycles must be between 1 and 100!");
+			return -1;
+		} else {
+			return index;
+		}
+	}
+	protected int getVolumePerSpot(JTextField volumePerSpot) {
+		int volume = Integer.parseInt(volumePerSpot.getText());
+		if (volume<1 || volume>250) {
+			System.err.println("Volume per spot must be in range of 1 to 250!");
+			return -1;
+		} else {
+			return volume;
+		}
 	}
 }

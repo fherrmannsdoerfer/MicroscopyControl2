@@ -22,7 +22,6 @@ import utility.Utility;
 import editor.EditorModules;
 import editor.LoopModules;
 import editor.MainFrameEditor;
-import editorModulesDefinitions.IterableInputGUI.ParameterColumn;
 
 public class LoopIterableGUI extends LoopModules{
 	
@@ -178,6 +177,16 @@ public class LoopIterableGUI extends LoopModules{
 		}
 		return al;
 		//return iterationTag.getText();
+	}
+
+	@Override
+	public boolean checkForValidity() {
+		for (int i= 0;i<parameterTags.size();i++) {
+			if (parameterTags.get(i).getNumberOfColumns()!= Integer.parseInt(numberRuns.getText())) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	

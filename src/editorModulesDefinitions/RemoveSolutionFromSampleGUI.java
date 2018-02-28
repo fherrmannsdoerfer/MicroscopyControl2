@@ -71,19 +71,19 @@ public class RemoveSolutionFromSampleGUI extends EditorModules{
 		return name;
 	}
 
-	private int getVolumePerSpot() {
-		int volume = Integer.parseInt(volumePerSpot.getText());
-		if (volume<1 || volume>250) {
-			System.err.println("Volume per spot must be in range of 1 to 250!");
-			return -1;
-		} else {
-			return volume;
-		}
-	}
+	
 	@Override
 	public void perform() {
-		Utility.createSampleListForSolutionRemoval(getVolumePerSpot(), mfe.getMainFrameReference().getXYStagePosition(),mfe.getMainFrameReference().getPathToExchangeFolder());
+		Utility.createSampleListForSolutionRemoval(getVolumePerSpot(volumePerSpot), mfe.getMainFrameReference().getXYStagePosition(),mfe.getMainFrameReference().getPathToExchangeFolder());
 		setProgressbarValue(100);
+	}
+
+	@Override
+	public boolean checkForValidity() {
+		if (getVolumePerSpot(volumePerSpot)==-1) {
+			return false;
+		}
+		return true;
 	}
 
 }

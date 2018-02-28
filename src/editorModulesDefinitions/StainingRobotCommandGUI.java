@@ -85,4 +85,12 @@ public class StainingRobotCommandGUI extends EditorModules{
 		setProgressbarValue(100);
 	}
 
+	@Override
+	public boolean checkForValidity() {
+		if (pathInstructionList.getText().isEmpty()) {
+			return false;
+		}
+		return true;
+	}
+
 }

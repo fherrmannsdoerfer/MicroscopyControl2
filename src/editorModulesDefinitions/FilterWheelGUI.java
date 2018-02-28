@@ -114,4 +114,10 @@ public class FilterWheelGUI extends EditorModules{
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public boolean checkForValidity() {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

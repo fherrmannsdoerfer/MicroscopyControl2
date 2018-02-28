@@ -87,35 +87,20 @@ public class WashSyringeGUI extends EditorModules{
 		return name;
 	}
 	
-	private int getIndex() {
-		int index = Integer.parseInt(washingStationIndex.getText());
-		if (index<1 || index>2) {
-			System.err.println("Index of Washing Station must be 1 or 2!");
-			return -1;
-		} else {
-			return index;
-		}
-		
-	}
-	
-	private int getRepetitions() {
-		int reps = Integer.parseInt(repetitions.getText());
-		if (reps<1 || reps>100) {
-			System.err.println("Repetitions are not within limits of 1 to 100!");
-			return -1;
-		} else {
-			return reps;
-		}
-		
-	}
-	
-	
 
 	@Override
 	public void perform() {
 		// TODO Auto-generated method stub
-		Utility.createSampleListForWashingSyringe(getIndex(), getRepetitions(), useLS2.isSelected(),mfe.getMainFrameReference().getPathToExchangeFolder());
+		Utility.createSampleListForWashingSyringe(getIndex(washingStationIndex), getNbrCycles(repetitions), useLS2.isSelected(),mfe.getMainFrameReference().getPathToExchangeFolder());
 		setProgressbarValue(100);
+	}
+
+	@Override
+	public boolean checkForValidity() {
+		if (getIndex(washingStationIndex)==-1||getNbrCycles(repetitions)==-1) {
+			return false;
+		}
+		return true;
 	}
 
 }

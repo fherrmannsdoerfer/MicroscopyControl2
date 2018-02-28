@@ -96,4 +96,12 @@ public class MeasurementTagGUI extends EditorModules{
 		setProgressbarValue(100);
 	}
 
+	@Override
+	public boolean checkForValidity() {
+		if (measurementTag.getText().isEmpty() || pathField.getText().isEmpty()) {
+			return false;
+		}
+		return true;
+	}
+
 }

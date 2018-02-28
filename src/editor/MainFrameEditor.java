@@ -1,13 +1,10 @@
 package editor;
 
-import javax.swing.JFrame;
 import javax.swing.Box;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,7 +18,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -30,6 +26,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;
@@ -37,8 +34,6 @@ import javax.swing.JComboBox;
 import javax.swing.border.TitledBorder;
 
 import java.awt.Font;
-
-import javax.swing.SwingConstants;
 
 import microscopeControl.MainFrame;
 import editorModulesDefinitions.AddSolutionFromVialToSampleGUI;
@@ -49,9 +44,8 @@ import editorModulesDefinitions.CaptureWidefieldImageGUI;
 import editorModulesDefinitions.CommentaryBarGUI;
 import editorModulesDefinitions.EndLoopGUI;
 import editorModulesDefinitions.FilterWheelGUI;
-import editorModulesDefinitions.IterableInputGUI;
+import editorModulesDefinitions.FocusLockStateGUI;
 import editorModulesDefinitions.LaserControl;
-import editorModulesDefinitions.LoopGUI;
 import editorModulesDefinitions.LoopIterableGUI;
 import editorModulesDefinitions.LoopROIsGUI;
 import editorModulesDefinitions.MeasurementTagGUI;
@@ -120,6 +114,7 @@ public class MainFrameEditor extends JDialog implements Serializable{
 		microscopeComboBoxOptions.add(new CameraParametersGUI());
 		microscopeComboBoxOptions.add(new MeasurementTagGUI());
 		microscopeComboBoxOptions.add(new CommentaryBarGUI());
+		microscopeComboBoxOptions.add(new FocusLockStateGUI());
 		
 		
 		stainingRobotComboBoxOptions.add(new StainingRobotCommandGUI());
@@ -258,6 +253,17 @@ public class MainFrameEditor extends JDialog implements Serializable{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				stopEditor();
+			}			
+		});
+		
+		JButton checkValidity = new JButton("Check Validity");
+		checkValidity.setAlignmentX(Component.CENTER_ALIGNMENT);
+		menuBar.add(checkValidity);
+		
+		checkValidity.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				checkValidity();
 			}			
 		});
 		
@@ -454,6 +460,35 @@ public class MainFrameEditor extends JDialog implements Serializable{
 		
 	}
 		
+	protected void checkValidity() {
+		boolean valid = true;
+		ArrayList<Integer> positionList = new ArrayList<Integer>();
+		ArrayList<String> nameList = new ArrayList<String>();
+		int counter = 0; 
+		for (EditorModules em:listProcessingStepPanels) {
+			counter = counter +1;
+			if (em.checkForValidity()==false) {
+				valid =false;
+				positionList.add(counter);
+				nameList.add(em.getFunctionName());
+			}
+		}
+		if (valid) {
+			JOptionPane.showMessageDialog(null, "No obvious error detected!");
+		} else {
+			String message;
+			message = "Errors in modulenbr: ";
+			for (int i=0;i<positionList.size();i++) {
+				message = message +positionList.get(i)+", ";
+			}
+			message = message+"\n\nFunction Names:\n";
+			for (int i=0;i<nameList.size();i++) {
+				message = message +nameList.get(i)+"\n";
+			}
+			JOptionPane.showMessageDialog(null, message);
+		}
+	}
+
 	public ControlerEditor getControlerEditorReference(){
 		return controlerReference;
 	}

@@ -103,4 +103,14 @@ public class PauseGUI extends EditorModules{
 		}
 	}
 
+	@Override
+	public boolean checkForValidity() {
+		if (durationOfPause.getText().isEmpty()) {
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+
 }

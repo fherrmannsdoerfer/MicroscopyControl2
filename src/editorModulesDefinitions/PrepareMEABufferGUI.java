@@ -29,6 +29,8 @@ public class PrepareMEABufferGUI extends EditorModules{
 	JTextField volumeMEAStockForFinal = new JTextField("100");
 	JTextField volumeNaOHForFinal = new JTextField("20");
 	JTextField indexVialNaOH = new JTextField("-1");
+	JTextField nbrVortex = new JTextField("3");
+	JTextField nbrWashingCycles = new JTextField("3");
 	transient MainFrameEditor mfe;
 	JTextField tagROILoop = new JTextField();
 	private static String name = "Prepare MEA Buffer";
@@ -48,7 +50,7 @@ public class PrepareMEABufferGUI extends EditorModules{
 	private JPanel createOptionPanel(){
 		
 		JPanel retPanel = new JPanel();
-		retPanel.setLayout(new GridLayout(8, 2,60,15));
+		retPanel.setLayout(new GridLayout(10, 2,60,15));
 		
 		retPanel.add(new JLabel("Volume Of PBS For Stock Solution [Microliter]:"));
 		retPanel.add(volumePBSForStock);
@@ -57,6 +59,7 @@ public class PrepareMEABufferGUI extends EditorModules{
 		retPanel.add(new JLabel("Vial Number From Rack 3 (MEA Stock):"));
 		retPanel.add(indexVialMeaPowder);
 		createStockSolution.addActionListener(new chkBoxActionListener());
+		createStockSolution.setSelected(true);
 		retPanel.add(new JLabel("Vial Number From Rack 3 (Final MEA):"));
 		retPanel.add(indexVialMeaFinal);
 		retPanel.add(new JLabel("Vial Number From Rack 3 (NaOH):"));
@@ -67,7 +70,10 @@ public class PrepareMEABufferGUI extends EditorModules{
 		retPanel.add(volumePBSForFinal);
 		retPanel.add(new JLabel("Volume NaOH For Final MEA [Microliters]:"));
 		retPanel.add(volumeNaOHForFinal);
-
+		retPanel.add(new JLabel("Number Of Vortex-Cycles:"));
+		retPanel.add(nbrVortex);
+		retPanel.add(new JLabel("Number Of Washing Cycles (Syringe):"));
+		retPanel.add(nbrWashingCycles);
 		return retPanel;
 	}
 	
@@ -75,7 +81,7 @@ public class PrepareMEABufferGUI extends EditorModules{
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			volumePBSForStock.setEnabled(!createStockSolution.isSelected());
+			volumePBSForStock.setEnabled(createStockSolution.isSelected());
 		}
 		
 	}
@@ -87,7 +93,7 @@ public class PrepareMEABufferGUI extends EditorModules{
 	}
 
 	public String[] getSettings(){
-		String[] tempString = new String[8];
+		String[] tempString = new String[10];
 		tempString[0] = volumePBSForStock.getText();
 		tempString[1] = indexVialMeaPowder.getText();
 		tempString[2] = indexVialMeaFinal.getText();
@@ -95,11 +101,13 @@ public class PrepareMEABufferGUI extends EditorModules{
 		tempString[4] = volumeMEAStockForFinal.getText();
 		tempString[5] = volumePBSForFinal.getText();
 		tempString[6] = volumeNaOHForFinal.getText();
+		tempString[7] = nbrVortex.getText();
+		tempString[8] = nbrWashingCycles.getText();
 		if (createStockSolution.isSelected()){
-			tempString[7] = "selected";
+			tempString[9] = "selected";
 		}
 		else {
-			tempString[7] = "notSelected";
+			tempString[9] = "notSelected";
 		}
 		return tempString;
 	}
@@ -111,7 +119,9 @@ public class PrepareMEABufferGUI extends EditorModules{
 		volumeMEAStockForFinal.setText(tempString[4]);
 		volumePBSForFinal.setText(tempString[5]);
 		volumeNaOHForFinal.setText(tempString[6]);
-		if (tempString[7].equals("selected")){
+		nbrVortex.setText(tempString[7]);
+		nbrWashingCycles.setText(tempString[8]);
+		if (tempString[9].equals("selected")){
 			createStockSolution.setSelected(true);
 		}
 	}
@@ -131,77 +141,37 @@ public class PrepareMEABufferGUI extends EditorModules{
 		return name;
 	}
 	
-	private int getVolumePBSForStock() {
-		int reps = Integer.parseInt(volumePBSForStock.getText());
-		if (reps<1 || reps>1000) {
-			System.err.println("Volume is not within limits of 1 to 1000!");
-			return -1;
-		} else {
-			return reps;
-		}
-	}
-	
-	private int getIndexVialMeaStock() {
-		int index = Integer.parseInt(indexVialMeaPowder.getText());
-		if (index<1 || index>54) {
-			System.err.println("Vial Number is not within limits of 1 to 54!");
+	private int getNbrVortexCycles() {
+		int index = Integer.parseInt(nbrVortex.getText());
+		if (index<1 || index>100) {
+			System.err.println("Number vortex-cycles must be between 1 and 100!");
 			return -1;
 		} else {
 			return index;
 		}
 	}
-	private int getIndexVialMeaFinal() {
-		int index = Integer.parseInt(indexVialMeaFinal.getText());
-		if (index<1 || index>54) {
-			System.err.println("Vial Number is not within limits of 1 to 54!");
+	private int getNbrWashingCycles() {
+		int index = Integer.parseInt(nbrWashingCycles.getText());
+		if (index<1 || index>100) {
+			System.err.println("Number washing-cycles must be between 1 and 100!");
 			return -1;
 		} else {
 			return index;
 		}
 	}
-	private int getVolumePBSForFinal() {
-		int reps = Integer.parseInt(volumePBSForFinal.getText());
-		if (reps<1 || reps>1000) {
-			System.err.println("Volume is not within limits of 1 to 1000!");
-			return -1;
-		} else {
-			return reps;
-		}
-	}
-	private int getVolumeMEAStockForFinal() {
-		int reps = Integer.parseInt(volumeMEAStockForFinal.getText());
-		if (reps<1 || reps>1000) {
-			System.err.println("Volume is not within limits of 1 to 1000!");
-			return -1;
-		} else {
-			return reps;
-		}
-	}
-	private int getVolumeNaOHForFinal() {
-		int reps = Integer.parseInt(volumeNaOHForFinal.getText());
-		if (reps<1 || reps>100) {
-			System.err.println("Volume is not within limits of 1 to 100!");
-			return -1;
-		} else {
-			return reps;
-		}
-	}
-	private int getIndexVialNaOH() {
-		int index = Integer.parseInt(indexVialNaOH.getText());
-		if (index<1 || index>54) {
-			System.err.println("Vial Number is not within limits of 1 to 54!");
-			return -1;
-		} else {
-			return index;
-		}
-	}
-	
-	
 
 
 	@Override
 	public void perform() {
-		Utility.createSampleListForPreparationOfMEA(getVolumePBSForStock(), getIndexVialMeaStock(), getIndexVialMeaFinal(), getVolumePBSForFinal(),getVolumeMEAStockForFinal(),getVolumeNaOHForFinal(),getIndexVialNaOH(),mfe.getMainFrameReference().getPathToExchangeFolder(), createStockSolution.isSelected());
+		Utility.createSampleListForPreparationOfMEA(getVolume(volumePBSForStock,true), getVialNumber(indexVialMeaPowder), getVialNumber(indexVialMeaFinal), getVolume(volumePBSForFinal,true),getVolume(volumeMEAStockForFinal,true),getVolume(volumeNaOHForFinal,false),getVialNumber(indexVialNaOH),getNbrCycles(nbrVortex), getNbrCycles(nbrWashingCycles),mfe.getMainFrameReference().getPathToExchangeFolder(), createStockSolution.isSelected());
 		setProgressbarValue(100);
+	}
+
+	@Override
+	public boolean checkForValidity() {
+		if (getVolume(volumePBSForStock,true)==-1||getVialNumber(indexVialMeaPowder)==-1||getVialNumber(indexVialMeaFinal)==-1|| getVolume(volumePBSForFinal,true)==-1|| getVolume(volumeMEAStockForFinal,true)==-1||getVolume(volumeNaOHForFinal,false)==-1||getVialNumber(indexVialNaOH)==-1||getNbrCycles(nbrVortex)==-1||getNbrCycles(nbrWashingCycles)==-1) {
+			return false;
+		}
+		return true;
 	}
 }

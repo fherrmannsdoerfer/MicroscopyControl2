@@ -100,4 +100,10 @@ public class StartImageAcquisitionGUI extends EditorModules{
 		setProgressbarValue(100);
 		System.out.println("Acquisition has stopped!");
 	}
+
+	@Override
+	public boolean checkForValidity() {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

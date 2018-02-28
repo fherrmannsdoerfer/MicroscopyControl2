@@ -8,7 +8,7 @@ public class StyleClass implements Serializable{
 	private Color colorMicroscope = new Color(171,65,152);
 	private Color colorStainingRobot = new Color(101,194,148);
 	private Color colorLoop = new Color(88,197,199);
-	private Color colorComment = new Color(0,0,0);
+	private Color colorComment = new Color(100,100,100);
 	private Color batchProcessing = new Color(180,180,180);
 	private int widthProcessingStepsPanel = 300;
 	private int heightProcessingStepsPanel = 60;
