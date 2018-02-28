@@ -90,7 +90,7 @@ public class VortexVialGUI extends EditorModules{
 	private int getIndex() {
 		int index = Integer.parseInt(vialIndex.getText());
 		if (index<1 || index>54) {
-			System.err.println("Index of Washing Station must be 1 or 2!");
+			System.err.println("Vial Number is not within limits of 1 to 54!");
 			return -1;
 		} else {
 			return index;

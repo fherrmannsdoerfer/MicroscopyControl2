@@ -413,6 +413,43 @@ public class Utility implements Serializable {
 		OutputControl.writeFile("C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl", outputXMLFileContent);
 		startChronosPlugin(pathToExchangeFolder, "C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl");
 	}
+
+	public static void createSampleListForPreparationOfMEA(int volumePBSForStock, int indexVialMeaStock,
+			int indexVialMeaFinal, int volumePBSForFinal, int volumeMEAStockForFinal, int volumeNaOHForFinal,
+			int indexVialNaOH, String pathToExchangeFolder, boolean createStock) {
+		String template;
+		if (createStock) {
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplatePrepareBufferAndMEATokenVolumesVialsLS1AndLS2.csl");
+		} else {
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplatePrepareBufferTokenVolumesVialsLS1AndLS2.csl");
+		}
+		String toReplaceVolPBSForStock = "tokenPBSForStock";
+		String replacementVolPBSForStock = String.format("%d",volumePBSForStock);
+		String toReplaceIndexVialMeaStock = "tokenIndexMEAStock";
+		String replacementIndexVialMeaStock = String.format("%d",indexVialMeaStock);
+		String toReplaceIndexVialMeaFinal = "tokenIndexMEAFinal";
+		String replacementIndexVialMeaFinal = String.format("%d",indexVialMeaFinal);
+		String toReplaceVolumePBSForFinal = "tokenVolumePBSForFinal";
+		String replacementVolumePBSForFinal = String.format("%d",volumePBSForFinal);
+		String toReplaceVolumeMeaStockForFinal = "tokenMEAStockForFinal";
+		String replacementVolumeMeaStockForFinal = String.format("%d",volumeMEAStockForFinal);
+		String toReplaceVolumeNaOHForFinal = "tokenNaOHForFial";
+		String replacementIndexDest = String.format("%d",volumeNaOHForFinal);
+		String toReplaceIndexVialNaOH = "tokenIndexNaOH";
+		String replacementIndexVialNaOH = String.format("%d",indexVialNaOH);
+	
+		String outputXMLFileContent = template.replace(toReplaceVolPBSForStock, replacementVolPBSForStock);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceIndexVialMeaStock, replacementIndexVialMeaStock);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceIndexVialMeaFinal, replacementIndexVialMeaFinal);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceVolumePBSForFinal, replacementVolumePBSForFinal);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceVolumeMeaStockForFinal, replacementVolumeMeaStockForFinal);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceVolumeNaOHForFinal, replacementIndexDest);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceIndexVialNaOH, replacementIndexVialNaOH);
+
+		OutputControl.writeFile("C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl", outputXMLFileContent);
+		startChronosPlugin(pathToExchangeFolder, "C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl");
+		
+	}
 	
 	
 }

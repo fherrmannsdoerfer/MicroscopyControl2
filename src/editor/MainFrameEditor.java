@@ -57,6 +57,7 @@ import editorModulesDefinitions.LoopROIsGUI;
 import editorModulesDefinitions.MeasurementTagGUI;
 import editorModulesDefinitions.MoveStageGUI;
 import editorModulesDefinitions.PauseGUI;
+import editorModulesDefinitions.PrepareMEABufferGUI;
 import editorModulesDefinitions.RemoveSolutionFromSampleGUI;
 import editorModulesDefinitions.StainingRobotCommandGUI;
 import editorModulesDefinitions.StartImageAcquisitionGUI;
@@ -130,6 +131,7 @@ public class MainFrameEditor extends JDialog implements Serializable{
 		stainingRobotComboBoxOptions.add(new WashSyringeGUI());
 		stainingRobotComboBoxOptions.add(new VortexVialGUI());
 		stainingRobotComboBoxOptions.add(new TransfereSolutionsFromVialToVial());
+		stainingRobotComboBoxOptions.add(new PrepareMEABufferGUI());
 		
 		//loopsComboBoxOptions.add(new LoopGUI());
 		loopsComboBoxOptions.add(new LoopROIsGUI());

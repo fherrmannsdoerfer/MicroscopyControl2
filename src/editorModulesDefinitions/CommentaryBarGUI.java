@@ -35,7 +35,6 @@ public class CommentaryBarGUI extends EditorModules{
 	
 	public CommentaryBarGUI(){
 		setModuleToFullWidth();
-		mfe.updatePanels();
 	}
 	
 		
