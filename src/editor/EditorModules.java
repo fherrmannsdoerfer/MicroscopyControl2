@@ -37,7 +37,7 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 	private int id = 0;
 	public JButton parameterButton;
 	public JButton removeButton;
-	transient private MainFrameEditor mfe;
+	public transient MainFrameEditor mfe;
 	private EditorModules thisModule;
 	private Color color;
 	private boolean visibilityOptionPanel = false;
@@ -151,6 +151,7 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 		
 		this.setMaximumSize(dimensionWholeBox);
 		this.setPreferredSize(dimensionWholeBox);
+		mfe.repaintOptionPanel();
 	}
 
 	

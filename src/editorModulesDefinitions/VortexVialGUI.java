@@ -43,6 +43,7 @@ public class VortexVialGUI extends EditorModules{
 		retPanel.add(repetitions);
 		retPanel.add(new JLabel(""));
 		retPanel.add(useLS2);
+		useLS2.setSelected(true);
 		return retPanel;
 	}
 	

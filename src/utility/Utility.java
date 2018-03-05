@@ -36,9 +36,9 @@ public class Utility implements Serializable {
 	//function that parses the parameter to either return a value or in case of a tag starting with '%' the appropriate value
 	//if multiple tags are used the output is concatenated
 	public static String parseParameter(String parameter, MainFrameEditor mfe){
-		if (parameter.startsWith("%")){
+		if (parameter.contains("%")){
 			String[] tagNames = parameter.split("%");
-			String returnString ="";
+			String returnString =tagNames[0];
 			for (int i = 1; i<tagNames.length; i++) {
 				returnString = returnString + mfe.getControlerEditorReference().getIterationValue("%"+tagNames[i]);
 			}
@@ -48,7 +48,7 @@ public class Utility implements Serializable {
 			return parameter;
 		}
 	}
-
+	
 	public static ArrayList<ImagePlus> cropImages(ImageProcessor imp,
 			boolean roiApplied, ROIParameters params) {
 		if (roiApplied){
@@ -169,29 +169,6 @@ public class Utility implements Serializable {
 		return retVal;
 	}
 
-	//This method chooses the right sample list based on the position of the stage. 
-	//The left border is preferred. A grid with 2 mm spacing is used.
-	//Sample lists ranging from x = -13 mm; y = -5 mm up to x = 5 mm; y = 5 mm are provided
-	//filename of the sample list files is for example AspirateFromCenterOfGlassBottomDishDisposeInWaste+5-5 in case of x=5 mm; y=-5 mm
-	//The diameter of the inner circle is 14 mm, therefore for stage position 0,0 the file with x=-5; y = +-1 is selected
-	public static String ChooseSampleListBasedOnStagePositionForRemovalOfSolution(XYStagePosition xyStagePosition) {
-		Pair shifts = calculateShifts(-5.5, 0, xyStagePosition);
-		String fname = String.format("AspirateFromCenterOfGlassBottomDishDisposeInWaste%s%s.csl", shifts.xShift, shifts.yShift);
-		return fname;
-	}
-	
-	public static String ChooseSampleListForAspirationBasedOnStagePosition(XYStagePosition xyStagePosition) {
-		Pair shifts = calculateShifts(0, 0, xyStagePosition);
-		String inputSamplelists =String.format("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\SampleListsForAspiration\\CombinedSampleLists\\CombinedAspirationMoveRelativeX%smmY%smm.csl", shifts.xShift, shifts.yShift);
-		return inputSamplelists;
-	}
-
-	public static String ChooseSampleListBasedOnStagePositionForAddingSolution(XYStagePosition xyStagePosition) {
-		Pair shifts = calculateShifts(0, 0, xyStagePosition);
-		String inputSamplelists = String.format("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\SampleListsForSolutionPlacement\\CombinedSampleLists\\CombinedSolutionPlacementMoveRelativeX%smmY%smm.csl", shifts.xShift, shifts.yShift);
-		return inputSamplelists;
-	}
-	
 	private static class Pair{
 		public String xShift;
 		public String yShift;
@@ -234,9 +211,9 @@ public class Utility implements Serializable {
 	public static void createSampleListForSolutionAdding(int vialNumber, int volume, boolean useLS2, XYStagePosition xyStagePosition, String pathToExchangeFolder) {
 		String template;
 		if (useLS2) {
-			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\WashSyringe\\TemplateSolutionPlacementFromVialTokenVialPositionVolumeShiftXShiftYLS2.csl");
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromVialTokenVialPositionVolumeShiftXShiftYLS2.csl");
 		} else {
-			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\WashSyringe\\TemplateSolutionPlacementFromVialTokenVialPositionVolumeShiftXShiftYLS1.csl");
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromVialTokenVialPositionVolumeShiftXShiftYLS1.csl");
 		}
 	
 		String toReplaceVialNumber = "tokenVial";
@@ -318,12 +295,12 @@ public class Utility implements Serializable {
 			XYStagePosition xyStagePosition, String pathToExchangeFolder) {
 		String template;
 		if (useLS2) {
-			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\WashSyringe\\TemplateSolutionPlacementFromWashingStationTokenVolumeIndexShiftXShiftYLS2.csl");
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromWashingStationTokenVolumeIndexShiftXShiftYLS2.csl");
 		} else {
-			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\WashSyringe\\TemplateSolutionPlacementFromWashingStationTokenVolumeIndexShiftXShiftYLS1.csl");
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromWashingStationTokenVolumeIndexShiftXShiftYLS1.csl");
 		}
-		String toReplaceIndex = "tokenIndex";
-		String replacementIndex = String.format("%d",index);
+		String toReplaceIndex = ">tokenIndex<";
+		String replacementIndex = String.format(">%d<",index);
 		String toReplaceVolume = "tokenVolume";
 		String replacementVolume = String.format("%d",volume);
 		

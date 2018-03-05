@@ -32,9 +32,7 @@ public class LoopIterableGUI extends LoopModules{
 	private static String name = "LoopIterable";
 	EditorModules endLoop = new EndLoopGUI(this);
 	transient MainFrameEditor mfe;
-	Box verticalBox;
 	JScrollPane scrollPane;
-	ArrayList<ParameterTag> parameterTags = new ArrayList<ParameterTag>();
 	
 	public LoopIterableGUI(MainFrameEditor mfe) {
 		super(mfe);
@@ -58,8 +56,7 @@ public class LoopIterableGUI extends LoopModules{
 		upperPart.add(addParameterTag);
 		upperPart.add(new JLabel());
 
-		verticalBox = Box.createVerticalBox();
-		scrollPane = new JScrollPane(verticalBox);
+		scrollPane = new JScrollPane(verticalBox2);
 		scrollPane.setPreferredSize(new Dimension(400+60,800));
 		scrollPane.setMinimumSize(new Dimension(400+30,700));
 		scrollPane.setMaximumSize(new Dimension(400+900,800));
@@ -78,18 +75,6 @@ public class LoopIterableGUI extends LoopModules{
 		
 		retPanel.add(verticalBoxAlles);
 		return retPanel;
-	}
-	
-	public void addParameterTag(){
-		ParameterTag pt = new ParameterTag(mfe); 
-		parameterTags.add(pt);
-		verticalBox.add(pt);
-		verticalBox.add(Box.createVerticalStrut(15));
-		mfe.repaintOptionPanel();
-	}
-	
-	public ArrayList<ParameterTag> getParameters(){
-		return this.parameterTags;
 	}
 	
 	@Override
@@ -169,15 +154,6 @@ public class LoopIterableGUI extends LoopModules{
 		
 	}
 
-	@Override
-	public ArrayList<String> getParameterTags() {
-		ArrayList<String> al = new ArrayList<String>();
-		for (ParameterTag pt:parameterTags){
-			al.add(pt.getParameterTag());
-		}
-		return al;
-		//return iterationTag.getText();
-	}
 
 	@Override
 	public boolean checkForValidity() {

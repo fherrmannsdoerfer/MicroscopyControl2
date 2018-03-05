@@ -102,23 +102,31 @@ public class CameraWorker  {
 	}
 
 	public void startSequenceAcquisition(boolean applyChecks) {
-		if (checkAcquisitionSettings()&& applyChecks){
-			livePreviewRunning = false;		
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		if (applyChecks) {
+			if (checkAcquisitionSettings()){
+				prepareAcquisition();
 			}
-			//create new Thread. Otherwise the GUI would not be responsive
-			acquisitionThread = new Thread(new AcquisitionThread(mf));
-			acquisitionThread.start();
-			mf.setEnableStartAcquisition(false);
-		}
-		else{
-			System.out.println("The settings check went wrong!");
+			else{
+				System.out.println("The settings check went wrong!");
+			}
+		} else {
+			prepareAcquisition();
 		}
 	};
+	
+	private void prepareAcquisition() {
+		livePreviewRunning = false;		
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//create new Thread. Otherwise the GUI would not be responsive
+		acquisitionThread = new Thread(new AcquisitionThread(mf));
+		acquisitionThread.start();
+		mf.setEnableStartAcquisition(false);
+	}
 	
 	//this class is used to create the Thread that takes care of the image sequence acquisition
 	class AcquisitionThread implements Runnable {

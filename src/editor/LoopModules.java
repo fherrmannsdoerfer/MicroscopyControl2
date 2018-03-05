@@ -17,9 +17,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import editor.LoopModules.ParameterTag;
+
 public abstract class LoopModules extends EditorModules{
 	private int currentIterationStep = 0;
 	private int nbrIterations;
+	protected ArrayList<ParameterTag> parameterTags = new ArrayList<ParameterTag>();
+	protected Box verticalBox2 = Box.createVerticalBox();
 	public LoopModules(MainFrameEditor mfe){
 		super(mfe);
 	}
@@ -42,7 +46,14 @@ public abstract class LoopModules extends EditorModules{
 	abstract public void perform();
 	abstract public void performIncrementalStep();
 	abstract public EditorModules getEndLoopModule(MainFrameEditor mfe);
-	abstract public ArrayList<String> getParameterTags();
+	public ArrayList<String> getParameterTags() {
+		ArrayList<String> al = new ArrayList<String>();
+		for (ParameterTag pt:parameterTags){
+			al.add(pt.getParameterTag());
+		}
+		return al;
+		//return iterationTag.getText();
+	}
 	public void nextStep(){
 		currentIterationStep+=1;
 		setProgressbarValue(currentIterationStep*100/nbrIterations);	
@@ -50,6 +61,10 @@ public abstract class LoopModules extends EditorModules{
 	public int getCurrentIterationStep(){return (currentIterationStep%nbrIterations);}//the modulo is needed in case the for loop lies within a forloop to "reset" the counter
 	public int getNbrIterations(){return nbrIterations;}
 	public void setNbrIterations(int nbrIterations){this.nbrIterations = nbrIterations;}
+	
+	public ArrayList<ParameterTag> getParameters(){
+		return this.parameterTags;
+	}
 	
 	public class ParameterTag extends JPanel implements Serializable{
 		JButton addParameterColumn = new JButton("Add New Param");
@@ -59,11 +74,12 @@ public abstract class LoopModules extends EditorModules{
 		JPanel newLinePanel = new JPanel();
 		JPanel middlePart;
 		transient MainFrameEditor mfe;
+		ParameterTag selfReference;
 		
 		public ParameterTag(MainFrameEditor mfe){
 			this.mfe = mfe;
 			this.setBorder(BorderFactory.createLineBorder(Color.black));
-
+			selfReference = this;
 			JPanel upperPart = new JPanel();
 			upperPart.setLayout(new GridLayout(1, 2,60,15));
 
@@ -84,7 +100,7 @@ public abstract class LoopModules extends EditorModules{
 			scrollPane.setMaximumSize(new Dimension(200+900,800));
 			
 			Box horizontalBox = Box.createHorizontalBox();
-			horizontalBox.add(Box.createVerticalGlue());
+			
 			JButton buttonAddLine = new JButton("Add New Parameter");
 			buttonAddLine.addActionListener(new ActionListener(){
 				@Override
@@ -95,10 +111,23 @@ public abstract class LoopModules extends EditorModules{
 				}
 			});
 			horizontalBox.add(buttonAddLine);
+			horizontalBox.add(Box.createHorizontalStrut(120));
+			JButton buttonRemoveThis = new JButton(" X ");
+			buttonRemoveThis.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					removeParameterTag(selfReference);
+				}
+			});
+			horizontalBox.add(buttonRemoveThis);
 			newLinePanel.add(horizontalBox);
 			verticalBox.add(Box.createVerticalStrut(20));
 			verticalBox.add(scrollPane);
 			middlePart.add(newLinePanel);
+		}
+		
+		public void addRow(String entry) {
+			parameterList.add(new ParameterColumn(entry));
 		}
 		
 		public int getNumberOfColumns() {
@@ -107,12 +136,15 @@ public abstract class LoopModules extends EditorModules{
 		
 		public void fillScrollPane(){
 			middlePart.removeAll();
+			middlePart.add(newLinePanel);
 			for (ParameterColumn pc:parameterList){
 				middlePart.add(pc);
 				middlePart.add(Box.createVerticalStrut(10));
 			}
-			middlePart.add(newLinePanel);
-			middlePart.add(Box.createVerticalGlue());
+			for (int i = 0;i<100;i++) {
+				middlePart.add(Box.createVerticalGlue());
+			}
+
 			mfe.repaintOptionPanel();
 		}
 		
@@ -139,7 +171,7 @@ public abstract class LoopModules extends EditorModules{
 			iterationTagParameterFields.setText(text);
 		}
 		
-		class ParameterColumn extends JPanel implements Serializable{
+		public class ParameterColumn extends JPanel implements Serializable{
 			/**
 			 * 
 			 */
@@ -185,6 +217,32 @@ public abstract class LoopModules extends EditorModules{
 		}
 	}
 	
+	public void createContentVerticalBox2() {
+		verticalBox2.removeAll();
+		for (int i=0;i<parameterTags.size();i++) {
+			verticalBox2.add(parameterTags.get(i));
+			verticalBox2.add(Box.createVerticalStrut(15));
+		}
+		mfe.repaintOptionPanel();
+	}
 	
+	public void addParameterTag(){
+		ParameterTag pt = new ParameterTag(mfe); 
+		parameterTags.add(pt);
+		createContentVerticalBox2();
+	}
+	
+	public void removeParameterTag(ParameterTag pt) {
+		parameterTags.remove(pt);
+		createContentVerticalBox2();
+		mfe.repaintOptionPanel();
+	}
 
+	public void replaceParameterTag(ParameterTag pt, int indexOfReplacement){
+		try {
+			parameterTags.remove(indexOfReplacement);
+		} catch (Exception e) {}
+		parameterTags.add(indexOfReplacement,pt);
+		createContentVerticalBox2();
+	}
 }

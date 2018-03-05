@@ -22,7 +22,7 @@ public class FocusLockStateGUI extends EditorModules{
 	 */
 	private static final long serialVersionUID = 1L;
 	JComboBox focuslockState;
-	JTextField focuslockStateSelectionNumber = new JTextField("0");
+	JTextField focuslockStateSelectionNumber = new JTextField("1");
 	
 	transient MainFrameEditor mfe;
 	private static String name = "FocusLockStateGUI";
@@ -111,10 +111,10 @@ public class FocusLockStateGUI extends EditorModules{
 	public void perform() {
 		try {
 			if (Integer.parseInt(Utility.parseParameter(focuslockStateSelectionNumber.getText(), mfe))-1 == 0){
-				mfe.getMainFrameReference().setFocusLockState(0);
+				mfe.getMainFrameReference().setFocusLockState(false);
 			}
 			else{
-				mfe.getMainFrameReference().setFocusLockState(1);
+				mfe.getMainFrameReference().setFocusLockState(true);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

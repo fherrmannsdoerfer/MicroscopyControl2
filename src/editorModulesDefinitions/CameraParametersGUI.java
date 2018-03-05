@@ -22,7 +22,7 @@ public class CameraParametersGUI extends EditorModules{
 	 */
 	private static final long serialVersionUID = 1L;
 	JComboBox shutterPosition;
-	JTextField shutterSelectionNumber = new JTextField("0");
+	JTextField shutterSelectionNumber = new JTextField("1");
 	JTextField emGain = new JTextField("10");
 	JTextField exposureTime = new JTextField("100");
 	JTextField nbrFrames = new JTextField("20000");
@@ -133,6 +133,12 @@ public class CameraParametersGUI extends EditorModules{
 		}
 		else{
 			camParam = new CameraParameters(Double.parseDouble(Utility.parseParameter(exposureTime.getText(), mfe)),Integer.parseInt(Utility.parseParameter(emGain.getText(), mfe)), Integer.parseInt(Utility.parseParameter(nbrFrames.getText(), mfe)),false);
+		}
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		mfe.getMainFrameReference().setCameraParameter(camParam);
 		setProgressbarValue(100);

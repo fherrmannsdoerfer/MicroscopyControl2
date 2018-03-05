@@ -49,8 +49,10 @@ import editorModulesDefinitions.LaserControl;
 import editorModulesDefinitions.LoopIterableGUI;
 import editorModulesDefinitions.LoopROIsGUI;
 import editorModulesDefinitions.MeasurementTagGUI;
+import editorModulesDefinitions.MoveFocalPlaneGUI;
 import editorModulesDefinitions.MoveStageGUI;
 import editorModulesDefinitions.PauseGUI;
+import editorModulesDefinitions.PerformMeasurmentGUI;
 import editorModulesDefinitions.PrepareMEABufferGUI;
 import editorModulesDefinitions.RemoveSolutionFromSampleGUI;
 import editorModulesDefinitions.StainingRobotCommandGUI;
@@ -115,6 +117,8 @@ public class MainFrameEditor extends JDialog implements Serializable{
 		microscopeComboBoxOptions.add(new MeasurementTagGUI());
 		microscopeComboBoxOptions.add(new CommentaryBarGUI());
 		microscopeComboBoxOptions.add(new FocusLockStateGUI());
+		microscopeComboBoxOptions.add(new MoveFocalPlaneGUI());
+		microscopeComboBoxOptions.add(new PerformMeasurmentGUI());
 		
 		
 		stainingRobotComboBoxOptions.add(new StainingRobotCommandGUI());

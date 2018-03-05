@@ -80,18 +80,20 @@ public class MoveStageGUI extends EditorModules{
 		String[] tempString = new String[4];
 		tempString[0] = xPos.getText();
 		tempString[1] = yPos.getText();
+		tempString[2] = tagROILoop.getText();
 		if (useVariableFromLoop.isSelected()){
-			tempString[2] = "selected";
+			tempString[3] = "selected";
 		}
 		else {
-			tempString[2] = "notSelected";
+			tempString[3] = "notSelected";
 		}
 		return tempString;
 	}
 	public void setSettings(String[] tempString){
 		xPos.setText(tempString[0]);
 		yPos.setText(tempString[1]);
-		if (tempString[2].equals("selected")){
+		tagROILoop.setText(tempString[2]);
+		if (tempString[3].equals("selected")){
 			useVariableFromLoop.setSelected(true);
 		}
 	}
@@ -111,11 +113,15 @@ public class MoveStageGUI extends EditorModules{
 		return name;
 	}
 
+	private double parseStageCoordinates(String coords, int index) {
+		String[] parts =coords.split("<->");
+		return Double.valueOf(parts[index]);
+	}
 
 	@Override
 	public void perform() {
 		if (useVariableFromLoop.isSelected()){
-			mfe.getMainFrameReference().moveXYStage(Double.valueOf(Utility.parseParameter(tagROILoop.getText()+"X", mfe)), Double.valueOf(Utility.parseParameter(tagROILoop.getText()+"Y", mfe)));
+			mfe.getMainFrameReference().moveXYStage(parseStageCoordinates(Utility.parseParameter(tagROILoop.getText(), mfe),0), parseStageCoordinates(Utility.parseParameter(tagROILoop.getText(), mfe),1));
 		}
 		else{
 			mfe.getMainFrameReference().moveXYStage(Double.valueOf(Utility.parseParameter(xPos.getText(),mfe)), Double.valueOf(Utility.parseParameter(yPos.getText(),mfe)));

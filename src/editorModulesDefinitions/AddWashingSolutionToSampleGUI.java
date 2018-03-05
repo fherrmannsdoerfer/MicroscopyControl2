@@ -93,7 +93,6 @@ public class AddWashingSolutionToSampleGUI extends EditorModules{
 
 	@Override
 	public void perform() {
-		// TODO Auto-generated method stub
 		Utility.createSampleListForSolutionAddingFromWashingStation(getIndex(washingStationIndex), getVolume(volume, useLS2.isSelected()), useLS2.isSelected(),mfe.getMainFrameReference().getXYStagePosition(),mfe.getMainFrameReference().getPathToExchangeFolder());
 		setProgressbarValue(100);
 	}

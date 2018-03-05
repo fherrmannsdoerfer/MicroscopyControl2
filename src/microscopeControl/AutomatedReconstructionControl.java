@@ -256,4 +256,10 @@ public class AutomatedReconstructionControl extends JPanel {
 	}
 
 	public boolean isSimulatneousReconstruction() {return chkBoxSimultaneousProcessing.isSelected();}
+	public void setStateDoSimulatneousReconstruction(boolean state) {
+		chkBoxSimultaneousProcessing.setSelected(state);
+	}
+	public void setStateDo3DReconstruction(boolean state) {
+		chkBoxDo3D.setSelected(state);
+	}
 }

@@ -1,35 +1,29 @@
 package editorModulesDefinitions;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import javax.swing.Box;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-
-import org.micromanager.api.MultiStagePosition;
 import org.micromanager.api.PositionList;
 
-import dataTypes.XYStagePosition;
-import microscopeControl.MainFrame;
-import utility.Utility;
 import editor.EditorModules;
 import editor.LoopModules;
 import editor.MainFrameEditor;
+import editor.LoopModules.ParameterTag;
 
 public class LoopROIsGUI extends LoopModules{
 	
 	private static final long serialVersionUID = 1L;
 	JLabel numberRuns = new JLabel("");
-	JTextField parameterTagForThisLoop = new JTextField();
+	//JTextField parameterTagForThisLoop = new JTextField();
 	JButton updateButton = new JButton("Update ROI List");
 	JButton addParameterTag = new JButton("Add Parameter Tag");
 	transient MainFrameEditor mfe;
@@ -38,8 +32,8 @@ public class LoopROIsGUI extends LoopModules{
 	private static String name = "LoopROIs";
 	EditorModules endLoop = new EndLoopGUI(this);
 	JScrollPane scrollPane2;
-	ArrayList<ParameterTag> parameterTags = new ArrayList<ParameterTag>();
-	Box verticalBox2;
+	
+	
 	
 	public LoopROIsGUI(MainFrameEditor mfe) {
 		super(mfe);
@@ -59,11 +53,9 @@ public class LoopROIsGUI extends LoopModules{
 
 		JPanel retPanel = new JPanel();
 		JPanel upperPart = new JPanel();
-		upperPart.setLayout(new GridLayout(4, 2,60,15));
+		upperPart.setLayout(new GridLayout(3, 2,60,15));
 		upperPart.add(new JLabel("Number of iterations:"));
 		upperPart.add(numberRuns);
-		upperPart.add(new JLabel("Parameter tag for this loop:"));
-		upperPart.add(parameterTagForThisLoop);
 		upperPart.add(new JLabel(""));
 		upperPart.add(updateButton);
 		upperPart.add(new JLabel());
@@ -71,7 +63,7 @@ public class LoopROIsGUI extends LoopModules{
 		updateButton.addActionListener(new updateButtonActionListener());
 		
 		dispList = new JPanel();
-		updatePositionList();
+		//updatePositionList();
 		Box verticalBox = Box.createVerticalBox();
 		verticalBox.add(upperPart);
 		verticalBox.add(Box.createVerticalStrut(30));
@@ -98,13 +90,7 @@ public class LoopROIsGUI extends LoopModules{
 		return retPanel;
 	}
 	
-	public void addParameterTag(){
-		ParameterTag pt = new ParameterTag(mfe); 
-		parameterTags.add(pt);
-		verticalBox2.add(pt);
-		verticalBox2.add(Box.createVerticalStrut(15));
-		mfe.repaintOptionPanel();
-	}
+	
 	
 	public ArrayList<ParameterTag> getParameters(){
 		return this.parameterTags;
@@ -133,6 +119,15 @@ public class LoopROIsGUI extends LoopModules{
 			dispList.add(new JLabel(String.valueOf(list.getPosition(i).getY())));
 			dispList.add(new JLabel(String.valueOf(list.getPosition(i).getZ())));
 		}
+		
+		ParameterTag pt = new ParameterTag(mfe);
+		pt.setParameterTag("%Positions");
+		for (int i = 0;i<list.getNumberOfPositions(); i++){
+			pt.addRow(String.format(Locale.US,"%.3f<->%.3f", list.getPosition(i).getX(),list.getPosition(i).getY()));
+		}
+		pt.fillScrollPane();
+		replaceParameterTag(pt,0);
+		
 	}
 	
 	@Override
@@ -147,14 +142,42 @@ public class LoopROIsGUI extends LoopModules{
 
 	@Override
 	public String[] getSettings() {
-		String[] tempString = new String[1];
+		//The first entry is reserved to the number of runs, then comes the parameterTag and the parameters for each ParameterTag object.
+		int nbrElements =1+parameterTags.size()*(Integer.parseInt(numberRuns.getText())+1);
+		String[] tempString = new String[nbrElements];
 		tempString[0] = numberRuns.getText();
+		int counter = 1;
+		while (counter < nbrElements){
+			for (ParameterTag pt:parameterTags){
+				tempString[counter] = pt.getParameterTag();
+				counter +=1;
+				for (String parameterVal:pt.getParameterList()){
+					tempString[counter] = parameterVal;
+					counter +=1;
+				}
+			}
+		}
 		return tempString;
 	}
 
 	@Override
 	public void setSettings(String[] tempString) {
 		numberRuns.setText(tempString[0]);
+		int nbrRuns = Integer.parseInt(tempString[0]);
+		//tempString.length -1 is the number of elements for the individual parameterTags,
+		//Integer.parseInt(tempString[0])+1 is the number of field that is occupied by each 
+		//parameterTag, 1 for the tag itself and numberRuns (tempString[0]) for the parameters
+		int nbrParameterTags = (tempString.length-1)/(nbrRuns+1);
+		for (int i = 0; i< nbrParameterTags; i++){
+			addParameterTag();
+			parameterTags.get(i).setParameterTag(tempString[1+i*(nbrRuns+1)]);
+			ArrayList<String> params = new ArrayList<String>();
+			for (int j = 0;j<nbrRuns; j++){
+				params.add(tempString[1+i*(nbrRuns+1)+j+1]);
+			}
+			parameterTags.get(i).setParameterList(params);
+			parameterTags.get(i).fillScrollPane();
+		}
 	}
 
 	@Override
@@ -194,16 +217,20 @@ public class LoopROIsGUI extends LoopModules{
 	
 	}
 
-	@Override
+	/*@Override
 	public ArrayList<String> getParameterTags() {
 		ArrayList<String> al = new ArrayList<String>();
 		al.add("roi iteration");
 		return al;
-	}
+	}*/
 
 	@Override
 	public boolean checkForValidity() {
-		// TODO Auto-generated method stub
+		for (int i= 0;i<parameterTags.size();i++) {
+			if (parameterTags.get(i).getNumberOfColumns()!= Integer.parseInt(numberRuns.getText())) {
+				return false;
+			}
+		}
 		return true;
 	}
 

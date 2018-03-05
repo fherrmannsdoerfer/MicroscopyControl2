@@ -46,6 +46,7 @@ public class TransfereSolutionsFromVialToVial extends EditorModules{
 		retPanel.add(volume);
 		retPanel.add(new JLabel(""));
 		retPanel.add(useLS2);
+		useLS2.setSelected(true);
 		return retPanel;
 	}
 	

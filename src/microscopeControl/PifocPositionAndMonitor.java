@@ -110,10 +110,10 @@ public class PifocPositionAndMonitor extends JPanel {
 		public void actionPerformed(ActionEvent arg0) {
 			try {
 				if (chkBoxFocusLock.isSelected()){
-					mf.setFocusLockState(1);
+					mf.getCoreObject().setProperty(mf.getZObjectiveName(), "External sensor", 1);
 				}
 				else {
-					mf.setFocusLockState(0);
+					mf.getCoreObject().setProperty(mf.getZObjectiveName(), "External sensor", 0);
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -121,4 +121,19 @@ public class PifocPositionAndMonitor extends JPanel {
 			}
 		}
 	};
+	
+	public void setFocusLockState(boolean isTurnedOn) {
+		chkBoxFocusLock.setSelected(isTurnedOn);
+		try {
+			if (chkBoxFocusLock.isSelected()){
+				mf.getCoreObject().setProperty(mf.getZObjectiveName(), "External sensor", 1);
+			}
+			else {
+				mf.getCoreObject().setProperty(mf.getZObjectiveName(), "External sensor", 0);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

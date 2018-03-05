@@ -240,9 +240,12 @@ public class MainFrame extends JFrame {
 	public void sleep(int ms) {core.sleep(ms);}
 
 	public ImagePlus captureImage(){return camWorker.captureImage();}
+	
+	public String getZObjectiveName() {return zObjectiveName;}
 
-	public void setFocusLockState(int state) throws Exception {core.setProperty(zObjectiveName, "External sensor", state);}
-
+	//public void setFocusLockState(int state) throws Exception {core.setProperty(zObjectiveName, "External sensor", state);}
+	public void setFocusLockState(boolean state) {pifocCon.setFocusLockState(state);}
+	
 	public boolean isROISet() {return roiSet.isCustomROISet();}
 
 	public boolean isROIApplied() {return roiSet.isROIApplied();}
@@ -269,6 +272,10 @@ public class MainFrame extends JFrame {
 	public String getPythonPath() {return this.pathToPython;}
 	public void startReconstruction(String pathToTiffFile, String basename) {autoRecCon.startReconstruction(pathToTiffFile, basename);}
 	public boolean isSimulatneousReconstruction() {return autoRecCon.isSimulatneousReconstruction();}
+	
+	public void setStateDoSimulatneousReconstruction(boolean state) {autoRecCon.setStateDoSimulatneousReconstruction(state);}
+	
+	public void setStateDo3DReconstruction(boolean state) {autoRecCon.setStateDo3DReconstruction(state);}
 
 	public void stopSequenceAcquisition() {camWorker.stopSequenceAcquisition();}
 
@@ -379,6 +386,15 @@ public class MainFrame extends JFrame {
 	public void setLaserIntensity(int index, double power) {laserCon.setLaserPower(index, power);
 	}
 
+	public void pauseThread(int delay) {
+		try {
+			Thread.sleep(delay);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public String[] getFilterNames() {return filterNames;}
 
 	public void setCameraParameter(CameraParameters camParam2) {camParam.setCameraParameters(camParam2);}
