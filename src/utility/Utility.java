@@ -7,6 +7,8 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import microscopeControl.OutputControl;
 
+import java.awt.Component;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Polygon;
 import java.io.File;
@@ -14,6 +16,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import dataTypes.ROIParameters;
@@ -35,19 +40,36 @@ public class Utility implements Serializable {
 	
 	//function that parses the parameter to either return a value or in case of a tag starting with '%' the appropriate value
 	//if multiple tags are used the output is concatenated
-	public static String parseParameter(String parameter, MainFrameEditor mfe){
-		if (parameter.contains("%")){
-			String[] tagNames = parameter.split("%");
-			String returnString =tagNames[0];
-			for (int i = 1; i<tagNames.length; i++) {
-				returnString = returnString + mfe.getControlerEditorReference().getIterationValue("%"+tagNames[i]);
+	//find the tags defined by %tag% and return the complete parameter String with replaced tags
+		public static String parseParameter(String parameter, MainFrameEditor mfe){
+			ArrayList<String> tags = new ArrayList<String>();
+			String retString = "";
+			int counterPercent = 0;
+			int startStr = 0;
+			for (int i =0; i<parameter.length();i++){
+				if (parameter.substring(i, i+1).equals("%")){
+					counterPercent += 1;
+					//This condition is true for the first %
+					if (((counterPercent-1)%2)==0){
+						//if the first char is a % then there is nothing to add on the left side therefore skipp the adding
+						if (i>0){retString += parameter.substring(startStr, i);}
+						startStr = i;
+					} else if (i>0& (counterPercent%2==0)) { //this condition is true for the second % therefore completing the current tag
+						String currTag = parameter.substring(startStr, i+1);
+						tags.add(currTag);
+						retString += mfe.getControlerEditorReference().getIterationValue(currTag);
+						startStr = i+1;
+					}
+				}
 			}
-			return returnString;
-		}	
-		else{
-			return parameter;
+			if (!parameter.contains("%")) {
+				retString = parameter;
+			}else { //if there is something behind the last tag is must be added as well
+				retString += parameter.substring(startStr, parameter.length());
+			}
+			return retString;
 		}
-	}
+		
 	
 	public static ArrayList<ImagePlus> cropImages(ImageProcessor imp,
 			boolean roiApplied, ROIParameters params) {
@@ -214,8 +236,12 @@ public class Utility implements Serializable {
 						break;
 					}
 				}
-			} else { //some other file is in the folder maybe from an other instance maybe a sample list that is currently processed, dont do anything
-				
+			} else { //some other file is in the folder maybe from an other instance maybe a sample list that is currently processed, show error pause execution
+				int result = -5555;
+
+				result = JOptionPane.showConfirmDialog((Component) null, "Something went wrong, the robot might be already running!",
+				        "alert", JOptionPane.OK_CANCEL_OPTION);
+				System.exit(-1);
 			}
 		}
 	}
