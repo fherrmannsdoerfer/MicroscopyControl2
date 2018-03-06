@@ -23,6 +23,7 @@ public class PrepareMEABufferGUI extends EditorModules{
 	private static final long serialVersionUID = 1L;
 	JTextField volumePBSForStock = new JTextField("500");
 	JCheckBox createStockSolution = new JCheckBox("Create Stock Solution");
+	JTextField fieldCreateStockSolution = new JTextField("1");
 	JTextField indexVialMeaPowder = new JTextField("-1");
 	JTextField indexVialMeaFinal = new JTextField("-1");
 	JTextField volumePBSForFinal = new JTextField("900");
@@ -30,6 +31,7 @@ public class PrepareMEABufferGUI extends EditorModules{
 	JTextField volumeNaOHForFinal = new JTextField("20");
 	JTextField indexVialNaOH = new JTextField("-1");
 	JTextField nbrVortex = new JTextField("3");
+	JTextField volumeVortex = new JTextField("200");
 	JTextField nbrWashingCycles = new JTextField("3");
 	transient MainFrameEditor mfe;
 	JTextField tagROILoop = new JTextField();
@@ -50,12 +52,14 @@ public class PrepareMEABufferGUI extends EditorModules{
 	private JPanel createOptionPanel(){
 		
 		JPanel retPanel = new JPanel();
-		retPanel.setLayout(new GridLayout(10, 2,60,15));
+		retPanel.setLayout(new GridLayout(12, 2,60,15));
 		
 		retPanel.add(new JLabel("Volume Of PBS For Stock Solution [Microliter]:"));
 		retPanel.add(volumePBSForStock);
 		retPanel.add(new JLabel(""));
 		retPanel.add(createStockSolution);
+		retPanel.add(new JLabel("Stock Solution (yes:1, no:0)"));
+		retPanel.add(fieldCreateStockSolution);
 		retPanel.add(new JLabel("Vial Number From Rack 3 (MEA Stock):"));
 		retPanel.add(indexVialMeaPowder);
 		createStockSolution.addActionListener(new chkBoxActionListener());
@@ -72,6 +76,8 @@ public class PrepareMEABufferGUI extends EditorModules{
 		retPanel.add(volumeNaOHForFinal);
 		retPanel.add(new JLabel("Number Of Vortex-Cycles:"));
 		retPanel.add(nbrVortex);
+		retPanel.add(new JLabel("Volume Vortex (LS2):"));
+		retPanel.add(volumeVortex);
 		retPanel.add(new JLabel("Number Of Washing Cycles (Syringe):"));
 		retPanel.add(nbrWashingCycles);
 		return retPanel;
@@ -82,6 +88,11 @@ public class PrepareMEABufferGUI extends EditorModules{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			volumePBSForStock.setEnabled(createStockSolution.isSelected());
+			if (createStockSolution.isSelected()) {
+				fieldCreateStockSolution.setText("1");
+			} else {
+				fieldCreateStockSolution.setText("0");
+			}
 		}
 		
 	}
@@ -93,7 +104,7 @@ public class PrepareMEABufferGUI extends EditorModules{
 	}
 
 	public String[] getSettings(){
-		String[] tempString = new String[10];
+		String[] tempString = new String[12];
 		tempString[0] = volumePBSForStock.getText();
 		tempString[1] = indexVialMeaPowder.getText();
 		tempString[2] = indexVialMeaFinal.getText();
@@ -103,12 +114,14 @@ public class PrepareMEABufferGUI extends EditorModules{
 		tempString[6] = volumeNaOHForFinal.getText();
 		tempString[7] = nbrVortex.getText();
 		tempString[8] = nbrWashingCycles.getText();
+		tempString[9] = fieldCreateStockSolution.getText();
 		if (createStockSolution.isSelected()){
-			tempString[9] = "selected";
+			tempString[10] = "selected";
 		}
 		else {
-			tempString[9] = "notSelected";
+			tempString[10] = "notSelected";
 		}
+		tempString[11] = volumeVortex.getText();
 		return tempString;
 	}
 	public void setSettings(String[] tempString){
@@ -121,9 +134,11 @@ public class PrepareMEABufferGUI extends EditorModules{
 		volumeNaOHForFinal.setText(tempString[6]);
 		nbrVortex.setText(tempString[7]);
 		nbrWashingCycles.setText(tempString[8]);
-		if (tempString[9].equals("selected")){
+		fieldCreateStockSolution.setText(tempString[9]);
+		if (tempString[10].equals("selected")){
 			createStockSolution.setSelected(true);
 		}
+		volumeVortex.setText(tempString[11]);
 	}
 
 	@Override
@@ -141,35 +156,17 @@ public class PrepareMEABufferGUI extends EditorModules{
 		return name;
 	}
 	
-	private int getNbrVortexCycles() {
-		int index = Integer.parseInt(nbrVortex.getText());
-		if (index<1 || index>100) {
-			System.err.println("Number vortex-cycles must be between 1 and 100!");
-			return -1;
-		} else {
-			return index;
-		}
-	}
-	private int getNbrWashingCycles() {
-		int index = Integer.parseInt(nbrWashingCycles.getText());
-		if (index<1 || index>100) {
-			System.err.println("Number washing-cycles must be between 1 and 100!");
-			return -1;
-		} else {
-			return index;
-		}
-	}
-
-
 	@Override
 	public void perform() {
-		Utility.createSampleListForPreparationOfMEA(getVolume(volumePBSForStock,true), getVialNumber(indexVialMeaPowder), getVialNumber(indexVialMeaFinal), getVolume(volumePBSForFinal,true),getVolume(volumeMEAStockForFinal,true),getVolume(volumeNaOHForFinal,false),getVialNumber(indexVialNaOH),getNbrCycles(nbrVortex), getNbrCycles(nbrWashingCycles),mfe.getMainFrameReference().getPathToExchangeFolder(), createStockSolution.isSelected());
+		logTimeStart();
+		Utility.createSampleListForPreparationOfMEA(getVolume(volumePBSForStock,true), getVialNumber(indexVialMeaPowder), getVialNumber(indexVialMeaFinal), getVolume(volumePBSForFinal,true),getVolume(volumeMEAStockForFinal,true),getVolume(volumeNaOHForFinal,false),getVialNumber(indexVialNaOH),getNbrCycles(nbrVortex), getNbrCycles(nbrWashingCycles),getVolume(volumeVortex,true),mfe.getMainFrameReference().getPathToExchangeFolder(), fieldCreateStockSolution.getText().equals("1"));
 		setProgressbarValue(100);
+		logTimeEnd();
 	}
 
 	@Override
 	public boolean checkForValidity() {
-		if (getVolume(volumePBSForStock,true)==-1||getVialNumber(indexVialMeaPowder)==-1||getVialNumber(indexVialMeaFinal)==-1|| getVolume(volumePBSForFinal,true)==-1|| getVolume(volumeMEAStockForFinal,true)==-1||getVolume(volumeNaOHForFinal,false)==-1||getVialNumber(indexVialNaOH)==-1||getNbrCycles(nbrVortex)==-1||getNbrCycles(nbrWashingCycles)==-1) {
+		if (getVolume(volumePBSForStock,true)==-1||getVialNumber(indexVialMeaPowder)==-1||getVialNumber(indexVialMeaFinal)==-1|| getVolume(volumePBSForFinal,true)==-1|| getVolume(volumeMEAStockForFinal,true)==-1||getVolume(volumeNaOHForFinal,false)==-1||getVialNumber(indexVialNaOH)==-1||getNbrCycles(nbrVortex)==-1||getNbrCycles(nbrWashingCycles)==-1||getVolume(volumeVortex,true)==-1) {
 			return false;
 		}
 		return true;

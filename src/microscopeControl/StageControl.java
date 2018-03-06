@@ -176,7 +176,7 @@ public class StageControl extends JPanel {
 			mf.setAction("Tile Scan");
 			//only use large overlap in y direction
 			int overlapInPixelsX = 6;//(int) Math.ceil(percentageOverlap[comboBoxOverlap.getSelectedIndex()]/100.*256);
-			int overlapInPixelsY = (int) Math.ceil(percentageOverlap[comboBoxOverlap.getSelectedIndex()]/100.*512);
+			int overlapInPixelsY = (int) Math.floor(percentageOverlap[comboBoxOverlap.getSelectedIndex()]/100.*512);
 			if (overlapInPixelsX%2!=0){
 				overlapInPixelsX += 1;
 			}
@@ -184,7 +184,7 @@ public class StageControl extends JPanel {
 				overlapInPixelsY += 1;
 			}
 			int numberStepsX = (int)Math.ceil((lowerRightCorner.getxPos()-upperLeftCorner.getxPos())/pixelSizeX/(256-overlapInPixelsX))+1;
-			int numberStepsY = (int)Math.ceil((lowerRightCorner.getyPos()-upperLeftCorner.getyPos())/pixelSizeY/(512-overlapInPixelsY))+1;
+			int numberStepsY = (int)Math.ceil((-lowerRightCorner.getyPos()+upperLeftCorner.getyPos())/pixelSizeY/(512-overlapInPixelsY))+1;
 			System.out.println(numberStepsX+" "+numberStepsY);
 			ImagePlus[][] tileScanImages = new ImagePlus[numberStepsX][numberStepsY];
 			for (int x = 0; x< numberStepsX ;x++){
@@ -194,7 +194,7 @@ public class StageControl extends JPanel {
 					}
 					mf.setFrameCount(numberStepsY*x+y+1+"/"+numberStepsY*numberStepsX);
 					double xPos = upperLeftCorner.getxPos() + x * pixelSizeX * (256-overlapInPixelsX);
-					double yPos = upperLeftCorner.getyPos() + y * pixelSizeY * (512-overlapInPixelsY);
+					double yPos = upperLeftCorner.getyPos() - y * pixelSizeY * (512-overlapInPixelsY);
 					mf.moveXYStage(xPos,yPos);
 					try {
 						Thread.sleep((long) (200+mf.getExposureTime()));
@@ -211,7 +211,7 @@ public class StageControl extends JPanel {
 				}
 			}
 			if (tileScanRunning){
-				ImagePlus stichedImage = Utility.stichTileScan(tileScanImages,numberStepsX, numberStepsY, overlapInPixelsX, overlapInPixelsY);
+				ImagePlus stichedImage = Utility.stichTileScan(tileScanImages,numberStepsX, numberStepsY, overlapInPixelsX, overlapInPixelsY,true);
 				mf.createOutputFolder();
 				OutputControl.saveSingleImage(stichedImage, mf.getOutputFolder()+"stichedImage.tif");
 			}

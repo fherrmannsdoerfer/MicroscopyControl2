@@ -14,7 +14,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -275,6 +277,17 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 	abstract public void perform();
 	abstract public boolean checkForValidity();
 	
+	public void logTimeStart() {
+		String content = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+		content = content + ":\nstart of module: " + this.getFunctionName();
+		mfe.getMainFrameReference().writeToEditorLogfile(content);
+	}
+	
+	public void logTimeEnd() {
+		String content = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+		content = content + ":\nend of module: " + this.getFunctionName()+"\n";
+		mfe.getMainFrameReference().writeToEditorLogfile(content);
+	}
 	
 	/** Returns an ImageIcon, or null if the path was invalid. */
 	protected Icon createIcon(String name) {	    

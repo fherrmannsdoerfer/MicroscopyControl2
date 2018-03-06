@@ -96,9 +96,11 @@ public class AddWashingSolutionToVialGUI extends EditorModules{
 
 	@Override
 	public void perform() {
+		logTimeStart();
 		// TODO Auto-generated method stub
 		Utility.createSampleListForSolutionAddingFromWashingStationToVial(getIndex(washingStationIndex), getVolume(volume,useLS2.isSelected()), getVialNumber(targetVial),mfe.getMainFrameReference().getPathToExchangeFolder());
 		setProgressbarValue(100);
+		logTimeEnd();
 	}
 
 	@Override

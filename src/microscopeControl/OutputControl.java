@@ -6,6 +6,7 @@ import ij.io.FileSaver;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -104,17 +105,17 @@ public class OutputControl {
 		}
     }
 	
-	private static void writeStringToFile(String string, String filename) {
-		PrintWriter out;
+	static void writeStringToFile(String string, String filename, boolean append) {
 		try {
-			out = new PrintWriter(filename);
-			out.println(string);
-			out.close();
+			PrintWriter pw = new PrintWriter(new FileOutputStream(
+				    new File(filename), append)); 
+			pw.println(string);
+			pw.flush();
+			pw.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
+		}	
 	}
 	
 	

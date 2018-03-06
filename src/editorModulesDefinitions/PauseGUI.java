@@ -82,6 +82,7 @@ public class PauseGUI extends EditorModules{
 
 	@Override
 	public void perform() {
+		logTimeStart();
 		try {
 			double duration = Long.parseLong(Utility.parseParameter(durationOfPause.getText(),mfe));
 			double interval = 100; //in ms
@@ -101,6 +102,7 @@ public class PauseGUI extends EditorModules{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		logTimeEnd();
 	}
 
 	@Override

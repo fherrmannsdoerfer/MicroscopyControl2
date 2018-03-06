@@ -43,9 +43,11 @@ public class MainFrame extends JFrame {
 	//Path to the python executable
 	String pathToPython = "C:\\ProgramData\\Anaconda3\\python.exe";
 	
+	//Path to log File Editor
+	private String pathToLogFile = "D:\\Measurements\\LogFileEditor.txt";
 	//Path to the exchange folder monitored by the Chronos plugin
 	private String pathToExchangeFolder ="C:\\Users\\Public\\Folder For Chronos\\ExchangeFolder";
-	
+	private String pathTo3DCalibrationFileRapidStorm ="D:\\MessungenTemp\\calibFiles\\20180301_Calibration_661Laser.txt";
 	//name of the hardware set in Micro-Manager
 	private String camName = "iXon Ultra";
 	private String zObjectiveName = "FocusLocPIZMotorObjective";
@@ -184,6 +186,7 @@ public class MainFrame extends JFrame {
 		//set zstage (the large on on top of the xy stage) by default to 100
 		try {
 			core.setProperty(zStageName, "Position",100);
+			core.setProperty(zObjectiveName, "Position",25);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -401,7 +404,7 @@ public class MainFrame extends JFrame {
 
 	public void setMeasurementTag(String text) {outCon.setMeasurementTag(text);}
 
-	public void setMirrorPosition(double d) {try {core.setProperty(mirrorFocuslock, "Position", d);} catch (Exception e) {e.printStackTrace();}}
+	public void setMirrorPosition(double d) {try {core.setPosition(mirrorFocuslock, d);} catch (Exception e) {e.printStackTrace();}}
 	
 	public boolean isAcquisitionRunning(){
 		return acquisitionIsRunning;
@@ -446,5 +449,25 @@ public class MainFrame extends JFrame {
 
 	public void setPathForMeasurment(String pathToOutputFolder) {
 		outCon.setPathOutputFolder(pathToOutputFolder);
+	}
+
+	public String getPathTo3DCalibrationFileRapidStorm() {
+		return pathTo3DCalibrationFileRapidStorm;
+	}
+
+	public void setPathTo3DCalibrationFileRapidStorm(String pathTo3DCalibrationFileRapidStorm) {
+		this.pathTo3DCalibrationFileRapidStorm = pathTo3DCalibrationFileRapidStorm;
+	}
+
+	public String getPathToLogFile() {
+		return pathToLogFile;
+	}
+
+	public void setPathToLogFile(String pathToLogFile) {
+		this.pathToLogFile = pathToLogFile;
+	}
+	
+	public void writeToEditorLogfile(String content) {
+		OutputControl.writeStringToFile(content, pathToLogFile, true);
 	}
 }

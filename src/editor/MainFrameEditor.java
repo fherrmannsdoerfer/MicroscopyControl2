@@ -16,7 +16,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -39,6 +41,7 @@ import microscopeControl.MainFrame;
 import editorModulesDefinitions.AddSolutionFromVialToSampleGUI;
 import editorModulesDefinitions.AddWashingSolutionToSampleGUI;
 import editorModulesDefinitions.AddWashingSolutionToVialGUI;
+import editorModulesDefinitions.BreakPointGUI;
 import editorModulesDefinitions.CameraParametersGUI;
 import editorModulesDefinitions.CaptureWidefieldImageGUI;
 import editorModulesDefinitions.CommentaryBarGUI;
@@ -119,6 +122,7 @@ public class MainFrameEditor extends JDialog implements Serializable{
 		microscopeComboBoxOptions.add(new FocusLockStateGUI());
 		microscopeComboBoxOptions.add(new MoveFocalPlaneGUI());
 		microscopeComboBoxOptions.add(new PerformMeasurmentGUI());
+		microscopeComboBoxOptions.add(new BreakPointGUI());
 		
 		
 		stainingRobotComboBoxOptions.add(new StainingRobotCommandGUI());
@@ -242,7 +246,14 @@ public class MainFrameEditor extends JDialog implements Serializable{
 						editorShouldBeRunning = true;
 						controler.resetData();
 						controler.resetProgressBar(getListProcessingStepPanels());
+						String content = "-------------------------------------------------------------------------------------------------\n";
+						content += new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+						content = content + ":\nStart of processing.\n\n";
+						getMainFrameReference().writeToEditorLogfile(content);
 						controler.startProcessing(getListProcessingStepPanels());
+						content = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+						content = content + ":\nEnd of processing.-------------------------------------------------------------------------------------------------\n";
+						getMainFrameReference().writeToEditorLogfile(content);
 					}
 				};
 				t.start();

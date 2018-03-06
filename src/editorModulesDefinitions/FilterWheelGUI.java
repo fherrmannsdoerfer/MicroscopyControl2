@@ -105,6 +105,7 @@ public class FilterWheelGUI extends EditorModules{
 
 	@Override
 	public void perform() {
+		logTimeStart();
 		mfe.getMainFrameReference().setFilterWheelPosition(Integer.parseInt(Utility.parseParameter(filterSelectionNumber.getText(), mfe))-1);
 		try {
 			Thread.sleep(5000);
@@ -113,6 +114,7 @@ public class FilterWheelGUI extends EditorModules{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		logTimeEnd();
 	}
 
 	@Override

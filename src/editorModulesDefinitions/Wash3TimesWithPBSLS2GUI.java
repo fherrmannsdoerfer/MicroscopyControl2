@@ -119,8 +119,10 @@ public class Wash3TimesWithPBSLS2GUI extends EditorModules{
 
 	@Override
 	public void perform() {
+		logTimeStart();
 		Utility.createSampleListForWashing3Times(getVolume(injectionVolume,true), getVolumePerSpot(volumePerSpot), getWaitTime(), removeSolutionFirst.isSelected(), leaveSolutionLast.isSelected(),mfe.getMainFrameReference().getXYStagePosition(),mfe.getMainFrameReference().getPathToExchangeFolder());
 		setProgressbarValue(100);
+		logTimeEnd();
 	}
 
 	@Override

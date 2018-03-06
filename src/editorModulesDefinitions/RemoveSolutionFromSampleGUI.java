@@ -74,8 +74,10 @@ public class RemoveSolutionFromSampleGUI extends EditorModules{
 	
 	@Override
 	public void perform() {
+		logTimeStart();
 		Utility.createSampleListForSolutionRemoval(getVolumePerSpot(volumePerSpot), mfe.getMainFrameReference().getXYStagePosition(),mfe.getMainFrameReference().getPathToExchangeFolder());
 		setProgressbarValue(100);
+		logTimeEnd();
 	}
 
 	@Override

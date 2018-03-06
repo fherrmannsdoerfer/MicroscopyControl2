@@ -107,17 +107,29 @@ public class Utility implements Serializable {
 	}*/
 	
 	public static ImagePlus stichTileScan(ImagePlus[][] tileScanImages, int numberStepsX, int numberStepsY,
-			int overlapInPixelsX, int overlapInPixelsY) {
-		int heightCoreRegion = 512-overlapInPixelsY;
+			int overlapInPixelsX, int overlapInPixelsY, boolean correctIntensities) {
+ 		int heightCoreRegion = 512-overlapInPixelsY;
 		int widthCoreRegion = 256-overlapInPixelsX;
 		int startPixelX = (256-widthCoreRegion)/2;
 		int startPixelY = (512-heightCoreRegion)/2;
 		ImageProcessor iP = new FloatProcessor(numberStepsX*widthCoreRegion, numberStepsY * heightCoreRegion);
+		
+		//try to correct for the Gaussian illumination by reducing the intensity of the center in the stiched image
+		double[][] weight = new double[256][512]; 
+		for (int xsmall =startPixelX, xPos = 0;xsmall <(startPixelX+widthCoreRegion);xsmall++, xPos++){
+			for (int ysmall =startPixelY, yPos = 0;ysmall <(startPixelY+heightCoreRegion);ysmall++,yPos++){
+				if (correctIntensities) {
+					weight[xsmall][ysmall] = 1./Math.exp(-(Math.pow((xsmall-128), 2)+Math.pow(ysmall-256, 2))/(2*260*260));
+				} else {
+					weight[xsmall][ysmall]=1;
+				}
+			}
+		}
 		for (int x = 0; x < numberStepsX ;x++){
 			for (int y = 0; y < numberStepsY;y++){
 				for (int xsmall =startPixelX, xPos = 0;xsmall <(startPixelX+widthCoreRegion);xsmall++, xPos++){
 					for (int ysmall =startPixelY, yPos = 0;ysmall <(startPixelY+heightCoreRegion);ysmall++,yPos++){
-						iP.putPixelValue(xPos+widthCoreRegion*x, yPos+heightCoreRegion*y, tileScanImages[x][y].getProcessor().getPixelValue(xsmall, ysmall));
+						iP.putPixelValue(xPos+widthCoreRegion*x, yPos+heightCoreRegion*y,weight[xsmall][ysmall]* tileScanImages[x][y].getProcessor().getPixelValue(xsmall, ysmall));
 					}
 				}
 			}
@@ -208,29 +220,39 @@ public class Utility implements Serializable {
 		}
 	}
 
-	public static void createSampleListForSolutionAdding(int vialNumber, int volume, boolean useLS2, XYStagePosition xyStagePosition, String pathToExchangeFolder) {
+	public static void createSampleListForSolutionAdding(int vialNumber, int volume, boolean useLS2, boolean vortex, int vortexVolume, int vortexCycle, XYStagePosition xyStagePosition, String pathToExchangeFolder) {
 		String template;
 		if (useLS2) {
-			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromVialTokenVialPositionVolumeShiftXShiftYLS2.csl");
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromVialTokenVialPositionVolumeShiftXShiftYFillStrokesFillVolumeLS2.csl");
 		} else {
-			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromVialTokenVialPositionVolumeShiftXShiftYLS1.csl");
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromVialTokenVialPositionVolumeShiftXShiftYFillStrokesFillVolumeLS1.csl");
 		}
-	
-		String toReplaceVialNumber = "tokenVial";
-		String replacementVialNumber = String.format("%d",vialNumber);
-		String toReplaceVolume = "tokenVolume";
-		String replacementVolume = String.format("%d",volume);
+		if (!vortex) {
+			vortexCycle = 0;
+		}
 		
-		String toReplacementShiftX = "tokenShiftX";
-		String toReplacementShiftY = "tokenShiftY";
+		String toReplaceVortexVolume = ">tokenVortexVolume<";
+		String replacementVortexVolume = String.format(">%d<", vortexVolume);
+		String toReplaceVortexCycles = ">tokenVortexCycles<";
+		String replacementVortexCycles = String.format(">%d<", vortexCycle);
+		
+		String toReplaceVialNumber = ">tokenVial<";
+		String replacementVialNumber = String.format(">%d<",vialNumber);
+		String toReplaceVolume = ">tokenVolume<";
+		String replacementVolume = String.format(">%d<",volume);
+		
+		String toReplacementShiftX = ">tokenShiftX<";
+		String toReplacementShiftY = ">tokenShiftY<";
 		//x gets minus since only one axis is inverted relative to the coordinate system of the staining robot
-		String replacementShiftX = String.format(Locale.US,"%.1f", -xyStagePosition.getxPos()/1000);
-		String replacementShiftY = String.format(Locale.US,"%.1f", xyStagePosition.getyPos()/1000);
+		String replacementShiftX = String.format(Locale.US,">%.1f<", -xyStagePosition.getxPos()/1000);
+		String replacementShiftY = String.format(Locale.US,">%.1f<", xyStagePosition.getyPos()/1000);
 		
 		String outputXMLFileContent = template.replace(toReplaceVialNumber, replacementVialNumber);
 		outputXMLFileContent = outputXMLFileContent.replace(toReplaceVolume, replacementVolume);
 		outputXMLFileContent = outputXMLFileContent.replace(toReplacementShiftX, replacementShiftX);
 		outputXMLFileContent = outputXMLFileContent.replace(toReplacementShiftY, replacementShiftY);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceVortexVolume, replacementVortexVolume);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceVortexCycles, replacementVortexCycles);
 		OutputControl.writeFile("C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl", outputXMLFileContent);
 		startChronosPlugin(pathToExchangeFolder, "C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl");
 	}
@@ -357,46 +379,57 @@ public class Utility implements Serializable {
 		
 	}
 
-	public static void createSampleListForVortexingVial(int index, int repetitions, boolean useLS2,
+	public static void createSampleListForVortexingVial(int index, int repetitions, int vortexVolume, boolean useLS2,
 			String pathToExchangeFolder) {
 		String template;
 		if (useLS2) {
-			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateVortexVialTokenIndexRepetitionsLS2.csl");
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateVortexVialTokenIndexRepetitionsVolumeLS2.csl");
 		} else {
-			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateVortexVialTokenIndexRepetitionsLS1.csl");
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateVortexVialTokenIndexRepetitionsVolumeLS1.csl");
 		}
-		String toReplaceRepetition = "tokenReps";
-		String replacementRepetition = String.format("%d",repetitions);
-		String toReplaceIndex = "tokenIndex";
-		String replacementIndex = String.format("%d",index);
+		String toReplaceIndexSource = ">tokenIndexSource<";
+		String replacementIndexSource = String.format(">%d<",index);
+		String toReplaceReps = ">tokenReps<";
+		String replacementReps = String.format(">%d<", repetitions);
+		String toReplaceVolumeVortex = ">tokenVortexVolume<";
+		String replacementVolumeVortex = String.format(">%d<", vortexVolume);
 
 		
-		String outputXMLFileContent = template.replace(toReplaceRepetition, replacementRepetition);
-		outputXMLFileContent = outputXMLFileContent.replace(toReplaceIndex, replacementIndex);
+		String outputXMLFileContent = template.replace(toReplaceIndexSource, replacementIndexSource);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceReps, replacementReps);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceVolumeVortex, replacementVolumeVortex);
 
 		OutputControl.writeFile("C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl", outputXMLFileContent);
 		startChronosPlugin(pathToExchangeFolder, "C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl");
 	}
 
 	public static void createSampleListForTransfereFromVialToVial(int indexSource, int indexDest, int volume,
-			boolean useLS2, String pathToExchangeFolder) {
+			boolean useLS2, boolean vortex, int vortexVolume, int vortexReps, String pathToExchangeFolder) {
 		String template;
 		if (useLS2) {
-			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateTransfereSolutionFromVialToVialTokensVolumeVialSourceVialDestLS2.csl");
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateTransfereSolutionFromVialToVialTokensVolumeVialSourceVialDestFillStrokesFillVolumeLS2.csl");
 		} else {
-			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateTransfereSolutionFromVialToVialTokensVolumeVialSourceVialDestLS1.csl");
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateTransfereSolutionFromVialToVialTokensVolumeVialSourceVialDestFillStrokesFillVolumeLS1.csl");
 		}
-		String toReplaceVolume = "tokenVolume";
-		String replacementVolume = String.format("%d",volume);
-		String toReplaceIndexSource = "tokenIndexSource";
-		String replacementIndexSource = String.format("%d",indexSource);
-		String toReplaceIndexDest = "tokenIndexDest";
-		String replacementIndexDest = String.format("%d",indexDest);
-
+		if (!vortex) {
+			vortexReps = 0;
+		}
+		String toReplaceVolume = ">tokenVolume<";
+		String replacementVolume = String.format(">%d<",volume);
+		String toReplaceIndexSource = ">tokenIndexSource<";
+		String replacementIndexSource = String.format(">%d<",indexSource);
+		String toReplaceIndexDest = ">tokenIndexDest<";
+		String replacementIndexDest = String.format(">%d<",indexDest);
+		String toReplaceNbrFillStrokes = ">tokenNbrFillStrokes<";
+		String replacementNbrFillStrokes = String.format(">%d<", vortexReps);
+		String toReplaceVolumeVortex = ">tokenVortexVolume<";
+		String replacementVolumeVortex = String.format(">%d<", vortexVolume);
 		
 		String outputXMLFileContent = template.replace(toReplaceVolume, replacementVolume);
 		outputXMLFileContent = outputXMLFileContent.replace(toReplaceIndexSource, replacementIndexSource);
 		outputXMLFileContent = outputXMLFileContent.replace(toReplaceIndexDest, replacementIndexDest);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceNbrFillStrokes, replacementNbrFillStrokes);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceVolumeVortex, replacementVolumeVortex);
 
 		OutputControl.writeFile("C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl", outputXMLFileContent);
 		startChronosPlugin(pathToExchangeFolder, "C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl");
@@ -404,31 +437,33 @@ public class Utility implements Serializable {
 
 	public static void createSampleListForPreparationOfMEA(int volumePBSForStock, int indexVialMeaStock,
 			int indexVialMeaFinal, int volumePBSForFinal, int volumeMEAStockForFinal, int volumeNaOHForFinal,
-			int indexVialNaOH, int nbrVortexCycles, int nbrWashingCycles, String pathToExchangeFolder, boolean createStock) {
+			int indexVialNaOH, int nbrVortexCycles, int nbrWashingCycles, int volumeVortex, String pathToExchangeFolder, boolean createStock) {
 		String template;
 		if (createStock) {
-			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplatePrepareBufferAndMEATokenVolumesVialsLS1AndLS2.csl");
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplatePrepareBufferAndMEATokenVolumesVialsVortexFillStrokesFillVolumeLS1AndLS2.csl");
 		} else {
-			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplatePrepareBufferTokenVolumesVialsLS1AndLS2.csl");
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplatePrepareBufferTokenVolumesVialsVortexFillStrokeFillVolumeLS1AndLS2.csl");
 		}
-		String toReplaceVolPBSForStock = "tokenPBSForStock";
-		String replacementVolPBSForStock = String.format("%d",volumePBSForStock);
-		String toReplaceIndexVialMeaStock = "tokenIndexMEAStock";
-		String replacementIndexVialMeaStock = String.format("%d",indexVialMeaStock);
-		String toReplaceIndexVialMeaFinal = "tokenIndexMEAFinal";
-		String replacementIndexVialMeaFinal = String.format("%d",indexVialMeaFinal);
-		String toReplaceVolumePBSForFinal = "tokenVolumePBSForFinal";
-		String replacementVolumePBSForFinal = String.format("%d",volumePBSForFinal);
-		String toReplaceVolumeMeaStockForFinal = "tokenMEAStockForFinal";
-		String replacementVolumeMeaStockForFinal = String.format("%d",volumeMEAStockForFinal);
-		String toReplaceVolumeNaOHForFinal = "tokenNaOHForFinal";
-		String replacementIndexDest = String.format("%d",volumeNaOHForFinal);
-		String toReplaceIndexVialNaOH = "tokenIndexNaOH";
-		String replacementIndexVialNaOH = String.format("%d",indexVialNaOH);
-		String toReplaceNbrVortexCycles = "tokenRepsVortex";
-		String replacementNbrVortexCycles = String.format("%d",nbrVortexCycles);
-		String toReplaceNbrWashingCycles = "tokenRepsWash";
-		String replacementNbrWashingCycles = String.format("%d",nbrWashingCycles);
+		String toReplaceVolPBSForStock = ">tokenPBSForStock<";
+		String replacementVolPBSForStock = String.format(">%d<",volumePBSForStock);
+		String toReplaceIndexVialMeaStock = ">tokenIndexMEAStock<";
+		String replacementIndexVialMeaStock = String.format(">%d<",indexVialMeaStock);
+		String toReplaceIndexVialMeaFinal = ">tokenIndexMEAFinal<";
+		String replacementIndexVialMeaFinal = String.format(">%d<",indexVialMeaFinal);
+		String toReplaceVolumePBSForFinal = ">tokenVolumePBSForFinal<";
+		String replacementVolumePBSForFinal = String.format(">%d<",volumePBSForFinal);
+		String toReplaceVolumeMeaStockForFinal = ">tokenMEAStockForFinal<";
+		String replacementVolumeMeaStockForFinal = String.format(">%d<",volumeMEAStockForFinal);
+		String toReplaceVolumeNaOHForFinal = ">tokenNaOHForFinal<";
+		String replacementIndexDest = String.format(">%d<",volumeNaOHForFinal);
+		String toReplaceIndexVialNaOH = ">tokenIndexNaOH<";
+		String replacementIndexVialNaOH = String.format(">%d<",indexVialNaOH);
+		String toReplaceNbrVortexCycles = ">tokenRepsVortex<";
+		String replacementNbrVortexCycles = String.format(">%d<",nbrVortexCycles);
+		String toReplaceNbrWashingCycles = ">tokenRepsWash<";
+		String replacementNbrWashingCycles = String.format(">%d<",nbrWashingCycles);
+		String toReplaceVolumeVortex = ">tokenVolumeVortex<";
+		String replacementVolumeVortex = String.format(">%d<",volumeVortex);
 	
 		String outputXMLFileContent = template.replace(toReplaceVolPBSForStock, replacementVolPBSForStock);
 		outputXMLFileContent = outputXMLFileContent.replace(toReplaceIndexVialMeaStock, replacementIndexVialMeaStock);
@@ -439,6 +474,7 @@ public class Utility implements Serializable {
 		outputXMLFileContent = outputXMLFileContent.replace(toReplaceIndexVialNaOH, replacementIndexVialNaOH);
 		outputXMLFileContent = outputXMLFileContent.replace(toReplaceNbrVortexCycles, replacementNbrVortexCycles);
 		outputXMLFileContent = outputXMLFileContent.replace(toReplaceNbrWashingCycles, replacementNbrWashingCycles);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceVolumeVortex, replacementVolumeVortex);
 
 		OutputControl.writeFile("C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl", outputXMLFileContent);
 		startChronosPlugin(pathToExchangeFolder, "C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl");

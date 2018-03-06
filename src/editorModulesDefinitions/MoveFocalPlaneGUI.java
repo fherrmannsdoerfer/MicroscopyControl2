@@ -82,8 +82,10 @@ public class MoveFocalPlaneGUI extends EditorModules{
 
 	@Override
 	public void perform() {
+		logTimeStart();
 		mfe.getMainFrameReference().setMirrorPosition(Double.parseDouble(Utility.parseParameter(mirrorPosition.getText(), mfe)));
 		setProgressbarValue(100);
+		logTimeEnd();
 	}
 
 	@Override

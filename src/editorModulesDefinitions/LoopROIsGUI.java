@@ -197,6 +197,7 @@ public class LoopROIsGUI extends LoopModules{
 
 	@Override
 	public void perform() {
+		logTimeStart();
 		setNbrIterations(Integer.parseInt(numberRuns.getText()));
 		ParameterTag xVals = new ParameterTag(mfe);
 		ParameterTag yVals = new ParameterTag(mfe);
@@ -209,7 +210,7 @@ public class LoopROIsGUI extends LoopModules{
 		}
 		xVals.setParameterList(paramsX);
 		yVals.setParameterList(paramsY);
-
+		logTimeEnd();
 	}
 
 	@Override

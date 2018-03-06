@@ -120,6 +120,7 @@ public class MoveStageGUI extends EditorModules{
 
 	@Override
 	public void perform() {
+		logTimeStart();
 		if (useVariableFromLoop.isSelected()){
 			mfe.getMainFrameReference().moveXYStage(parseStageCoordinates(Utility.parseParameter(tagROILoop.getText(), mfe),0), parseStageCoordinates(Utility.parseParameter(tagROILoop.getText(), mfe),1));
 		}
@@ -127,6 +128,7 @@ public class MoveStageGUI extends EditorModules{
 			mfe.getMainFrameReference().moveXYStage(Double.valueOf(Utility.parseParameter(xPos.getText(),mfe)), Double.valueOf(Utility.parseParameter(yPos.getText(),mfe)));
 		}
 		setProgressbarValue(100);
+		logTimeEnd();
 	}
 
 	@Override

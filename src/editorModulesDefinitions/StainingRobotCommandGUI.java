@@ -81,8 +81,10 @@ public class StainingRobotCommandGUI extends EditorModules{
 
 	@Override
 	public void perform() {
+		logTimeStart();
 		Utility.startChronosPlugin(mfe.getMainFrameReference().getPathToExchangeFolder(), pathInstructionList.getText());
 		setProgressbarValue(100);
+		logTimeEnd();
 	}
 
 	@Override

@@ -145,13 +145,15 @@ public class LoopIterableGUI extends LoopModules{
 	@Override
 	public void perform() {
 		// TODO Auto-generated method stub
+		logTimeStart();
 		setNbrIterations(Integer.parseInt(numberRuns.getText()));
+		logTimeEnd();
 	}
 
 	@Override
 	public void performIncrementalStep() {
 		// TODO Auto-generated method stub
-		
+		logTimeStart();
 	}
 
 

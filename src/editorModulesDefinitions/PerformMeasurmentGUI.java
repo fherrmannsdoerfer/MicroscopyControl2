@@ -56,11 +56,13 @@ public class PerformMeasurmentGUI extends EditorModules{
 	}
 	
 	private JPanel createOptionPanel(){
-				
+		
+		pathToCalib.setText(mfe.getMainFrameReference().getPathTo3DCalibrationFileRapidStorm());
 		JPanel retPanel = new JPanel();
-		retPanel.setLayout(new GridLayout(17,2,60,15));
+		retPanel.setLayout(new GridLayout(17,2,10,15));
 		
 		retPanel.add(new JLabel("Path:"));
+		Utility.setFormatTextFields(pathToCalib, 120, 20, 5);
 		retPanel.add(measurementPath);
 		retPanel.add(new JLabel("Measurement Tag:"));
 		retPanel.add(measurementTag);
@@ -233,7 +235,7 @@ public class PerformMeasurmentGUI extends EditorModules{
 
 	@Override
 	public void perform() {
-		
+		logTimeStart();
 		//move if necessary
 		if (movePosition.isSelected()) {
 			mfe.getMainFrameReference().moveXYStage(parseStageCoordinates(Utility.parseParameter(targetPosition.getText(), mfe),0), parseStageCoordinates(Utility.parseParameter(targetPosition.getText(), mfe),1));
@@ -256,6 +258,7 @@ public class PerformMeasurmentGUI extends EditorModules{
 		mfe.getMainFrameReference().setStateDoSimulatneousReconstruction(doSimultaneousReconstruction.isSelected());
 		mfe.getMainFrameReference().setCameraParameter(camParam);
 		//close shutter
+		mfe.getMainFrameReference().setPathTo3DCalibrationFileRapidStorm(pathToCalib.getText());
 		if (bleachSampleBeforeMeasurement.isSelected()) {
 			mfe.getMainFrameReference().closeShutter();
 			mfe.getMainFrameReference().pauseThread(5000);
@@ -274,6 +277,7 @@ public class PerformMeasurmentGUI extends EditorModules{
 		//turn off laser
 		mfe.getMainFrameReference().setLaserIntensity(Integer.parseInt(Utility.parseParameter(laserIndex.getText(), mfe))-1, 0.1);
 		setProgressbarValue(100);
+		logTimeEnd();
 	}
 
 	@Override

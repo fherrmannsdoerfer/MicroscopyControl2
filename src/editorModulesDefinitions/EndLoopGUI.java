@@ -75,6 +75,8 @@ public class EndLoopGUI extends EditorModules{
 
 	@Override
 	public void perform() {
+		logTimeStart();
+		logTimeEnd();
 		// TODO Auto-generated method stub
 		
 	}

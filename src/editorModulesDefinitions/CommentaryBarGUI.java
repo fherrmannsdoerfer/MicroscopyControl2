@@ -88,6 +88,8 @@ public class CommentaryBarGUI extends EditorModules{
 
 	@Override
 	public void perform() {
+		logTimeStart();
+		logTimeEnd();
 		// TODO Auto-generated method stub
 		
 	}

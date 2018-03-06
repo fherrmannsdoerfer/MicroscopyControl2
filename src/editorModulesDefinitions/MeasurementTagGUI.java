@@ -84,6 +84,7 @@ public class MeasurementTagGUI extends EditorModules{
 
 	@Override
 	public void perform() {
+		logTimeStart();
 		try {
 			//mf.setMeasurementTag(measurementTag.getText());
 			System.out.println(Utility.parseParameter(measurementTag.getText(), mfe));
@@ -94,6 +95,7 @@ public class MeasurementTagGUI extends EditorModules{
 			e.printStackTrace();
 		}
 		setProgressbarValue(100);
+		logTimeEnd();
 	}
 
 	@Override

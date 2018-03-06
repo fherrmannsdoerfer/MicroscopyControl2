@@ -109,6 +109,7 @@ public class FocusLockStateGUI extends EditorModules{
 
 	@Override
 	public void perform() {
+		logTimeStart();
 		try {
 			if (Integer.parseInt(Utility.parseParameter(focuslockStateSelectionNumber.getText(), mfe))-1 == 0){
 				mfe.getMainFrameReference().setFocusLockState(false);
@@ -120,6 +121,7 @@ public class FocusLockStateGUI extends EditorModules{
 			e.printStackTrace();
 		}
 		setProgressbarValue(100);
+		logTimeEnd();
 	}
 
 	@Override

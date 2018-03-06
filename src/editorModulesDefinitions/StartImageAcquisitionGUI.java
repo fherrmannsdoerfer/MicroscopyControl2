@@ -86,6 +86,7 @@ public class StartImageAcquisitionGUI extends EditorModules{
 
 	@Override
 	public void perform() {
+		logTimeStart();
 		mfe.getMainFrameReference().startSequenceAcquisition(applyChecks.isSelected());
 		System.out.println("Acquisition has started!");
 		while (mfe.getMainFrameReference().isAcquisitionRunning()){
@@ -99,6 +100,7 @@ public class StartImageAcquisitionGUI extends EditorModules{
 		}
 		setProgressbarValue(100);
 		System.out.println("Acquisition has stopped!");
+		logTimeEnd();
 	}
 
 	@Override

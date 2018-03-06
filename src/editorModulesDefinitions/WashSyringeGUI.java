@@ -18,7 +18,7 @@ public class WashSyringeGUI extends EditorModules{
 	private static final long serialVersionUID = 1L;
 	transient MainFrameEditor mfe;
 	private static String name = "Wash Syringe";
-	private JTextField washingStationIndex = new JTextField("1");
+	private JTextField washingStationIndex = new JTextField("2");
 	private JTextField repetitions = new JTextField("3");
 	private JCheckBox useLS2 = new JCheckBox("Use LS2");
 	
@@ -91,9 +91,11 @@ public class WashSyringeGUI extends EditorModules{
 
 	@Override
 	public void perform() {
+		logTimeStart();
 		// TODO Auto-generated method stub
 		Utility.createSampleListForWashingSyringe(getIndex(washingStationIndex), getNbrCycles(repetitions), useLS2.isSelected(),mfe.getMainFrameReference().getPathToExchangeFolder());
 		setProgressbarValue(100);
+		logTimeEnd();
 	}
 
 	@Override

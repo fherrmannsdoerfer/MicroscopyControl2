@@ -68,7 +68,7 @@ public class AutomatedReconstructionControl extends JPanel {
 		horizontalBoxCalibration.add(Box.createHorizontalGlue());
 		
 		txtCalibrationPath = new JTextField();
-		txtCalibrationPath.setText("D:\\MessungenTemp\\Calibration141107KalibrationSchalenLinseAligned_cropped-sigma-table.txt");
+		txtCalibrationPath.setText(mf.getPathTo3DCalibrationFileRapidStorm());
 		Utility.setFormatTextFields(txtCalibrationPath, 200, 20, 100);
 
 		Box horizontalBoxOutputPath = Box.createHorizontalBox();

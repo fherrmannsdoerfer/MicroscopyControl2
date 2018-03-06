@@ -127,6 +127,7 @@ public class CameraParametersGUI extends EditorModules{
 
 	@Override
 	public void perform() {
+		logTimeStart();
 		CameraParameters camParam;
 		if (Integer.parseInt(Utility.parseParameter(shutterSelectionNumber.getText(), mfe))-1 == 0){
 			camParam = new CameraParameters(Double.parseDouble(Utility.parseParameter(exposureTime.getText(), mfe)),Integer.parseInt(Utility.parseParameter(emGain.getText(), mfe)), Integer.parseInt(Utility.parseParameter(nbrFrames.getText(), mfe)),true);
@@ -142,6 +143,7 @@ public class CameraParametersGUI extends EditorModules{
 		}
 		mfe.getMainFrameReference().setCameraParameter(camParam);
 		setProgressbarValue(100);
+		logTimeEnd();
 	}
 
 	@Override
