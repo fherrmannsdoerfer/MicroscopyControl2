@@ -30,6 +30,8 @@ import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+import utility.Utility;
+
 
 public abstract class EditorModules extends JPanel implements PropertyChangeListener, Transferable, Serializable{
 	/**
@@ -318,7 +320,7 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 	}
 	
 	protected int getVolume(JTextField textfield, boolean useLS2) {
-		int intVolume = Integer.parseInt(textfield.getText());
+		int intVolume = Integer.parseInt(Utility.parseParameter(textfield.getText(),mfe));
 		int limit = 100;
 		if (useLS2) {
 			limit = 1000;
@@ -332,7 +334,7 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 	}
 	
 	protected int getVialNumber(JTextField vialNumber) {
-		int intVialNumber = Integer.parseInt(vialNumber.getText());
+		int intVialNumber = Integer.parseInt(Utility.parseParameter(vialNumber.getText(),mfe));
 		if (intVialNumber<1 || intVialNumber>54) {
 			System.err.println("Vial Number is not within limits of 1 to 54!");
 			return -1;
@@ -342,8 +344,17 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 		
 	}
 	
+	protected int getPumpTime(JTextField pumptime) {
+		int pumpT = Integer.parseInt(Utility.parseParameter(pumptime.getText(),mfe));
+		if (pumpT < 0 || pumpT >3600) {
+			System.err.println("Pumptime lies not within limits of 0 to 3600!");
+			return -1;
+		}
+		else {return pumpT;}
+	}
+	
 	protected int getIndex(JTextField washingStationIndex) {
-		int index = Integer.parseInt(washingStationIndex.getText());
+		int index = Integer.parseInt(Utility.parseParameter(washingStationIndex.getText(),mfe));
 		if (index<1 || index>2) {
 			System.err.println("Index of Washing Station must be 1 or 2!");
 			return -1;
@@ -353,16 +364,16 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 		
 	}
 	protected int getNbrCycles(JTextField cycles) {
-		int index = Integer.parseInt(cycles.getText());
-		if (index<1 || index>100) {
-			System.err.println("Number vortex-cycles must be between 1 and 100!");
+		int index = Integer.parseInt(Utility.parseParameter(cycles.getText(),mfe));
+		if (index<0 || index>100) {
+			System.err.println("Number vortex-cycles must be between 0 and 100!");
 			return -1;
 		} else {
 			return index;
 		}
 	}
 	protected int getVolumePerSpot(JTextField volumePerSpot) {
-		int volume = Integer.parseInt(volumePerSpot.getText());
+		int volume = Integer.parseInt(Utility.parseParameter(volumePerSpot.getText(),mfe));
 		if (volume<1 || volume>250) {
 			System.err.println("Volume per spot must be in range of 1 to 250!");
 			return -1;

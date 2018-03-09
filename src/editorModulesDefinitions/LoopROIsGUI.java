@@ -121,7 +121,7 @@ public class LoopROIsGUI extends LoopModules{
 		}
 		
 		ParameterTag pt = new ParameterTag(mfe);
-		pt.setParameterTag("%Positions");
+		pt.setParameterTag("%Positions%");
 		for (int i = 0;i<list.getNumberOfPositions(); i++){
 			pt.addRow(String.format(Locale.US,"%.3f<->%.3f", list.getPosition(i).getX(),list.getPosition(i).getY()));
 		}

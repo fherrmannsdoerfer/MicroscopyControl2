@@ -39,6 +39,8 @@ public class PerformMeasurmentGUI extends EditorModules{
 	JTextField pathToCalib = new JTextField("PathToCalibFile3D");
 	JTextField cameraGain = new JTextField("10");
 	JCheckBox movePosition = new JCheckBox("Change Position");
+	JCheckBox moveFocus = new JCheckBox("Move Focus");
+	JTextField focusMirrorPos = new JTextField("0");
 	
 	transient MainFrameEditor mfe;
 	private static String name = "Perform Measurement";
@@ -59,10 +61,10 @@ public class PerformMeasurmentGUI extends EditorModules{
 		
 		pathToCalib.setText(mfe.getMainFrameReference().getPathTo3DCalibrationFileRapidStorm());
 		JPanel retPanel = new JPanel();
-		retPanel.setLayout(new GridLayout(17,2,10,15));
+		retPanel.setLayout(new GridLayout(19,2,10,15));
 		
 		retPanel.add(new JLabel("Path:"));
-		Utility.setFormatTextFields(pathToCalib, 120, 20, 5);
+		Utility.setFormatTextFields(measurementPath, 120, 20, 5);
 		retPanel.add(measurementPath);
 		retPanel.add(new JLabel("Measurement Tag:"));
 		retPanel.add(measurementTag);
@@ -70,6 +72,10 @@ public class PerformMeasurmentGUI extends EditorModules{
 		retPanel.add(movePosition);
 		retPanel.add(new JLabel("Target Position:"));
 		retPanel.add(targetPosition);
+		retPanel.add(new JLabel(""));
+		retPanel.add(moveFocus);
+		retPanel.add(new JLabel("Focus Mirror Position:"));
+		retPanel.add(focusMirrorPos);
 		retPanel.add(new JLabel("Laser Index:"));
 		retPanel.add(laserIndex);
 		retPanel.add(new JLabel("Laser Power Widefield [Milliwatt]:"));
@@ -95,7 +101,17 @@ public class PerformMeasurmentGUI extends EditorModules{
 		retPanel.add(new JLabel(""));
 		retPanel.add(recon3D);
 		retPanel.add(new JLabel("Path To 3D Calibration:"));
+		Utility.setFormatTextFields(pathToCalib, 120, 20, 5);
 		retPanel.add(pathToCalib);
+		
+		moveFocus.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				focusMirrorPos.setEnabled(moveFocus.isSelected());
+			}
+			
+		});
 		
 		movePosition.addActionListener(new ActionListener() {
 			@Override
@@ -137,7 +153,7 @@ public class PerformMeasurmentGUI extends EditorModules{
 	}
 
 	public String[] getSettings(){
-		String[] tempString = new String[17];
+		String[] tempString = new String[19];
 		tempString[0] = measurementPath.getText();
 		tempString[1] = measurementTag.getText();
 		tempString[2] = targetPosition.getText();
@@ -175,6 +191,13 @@ public class PerformMeasurmentGUI extends EditorModules{
 		else {
 			tempString[16] = "notSelected";
 		}
+		if (moveFocus.isSelected()){
+			tempString[17] = "selected";
+		}
+		else {
+			tempString[17] = "notSelected";
+		}
+		tempString[18] = focusMirrorPos.getText();
 		return tempString;
 	}
 	public void setSettings(String[] tempString){
@@ -200,17 +223,28 @@ public class PerformMeasurmentGUI extends EditorModules{
 			doSimultaneousReconstruction.setSelected(true);
 		}else {
 			doSimultaneousReconstruction.setSelected(false);
+			recon3D.setEnabled(false);
+			movePosition.setEnabled(false);
 		}
 		if (tempString[15].equals("selected")){
 			recon3D.setSelected(true);
 		}else {
 			recon3D.setSelected(false);
+			movePosition.setEnabled(false);
 		}
 		if (tempString[16].equals("selected")){
 			movePosition.setSelected(true);
 		}else {
 			movePosition.setSelected(false);
+			targetPosition.setEnabled(false);
 		}
+		if (tempString[17].equals("selected")){
+			moveFocus.setSelected(true);
+		}else {
+			moveFocus.setSelected(false);
+			focusMirrorPos.setEnabled(false);
+		}
+		focusMirrorPos.setText(tempString[18]);
 	}
 
 	@Override
@@ -239,6 +273,9 @@ public class PerformMeasurmentGUI extends EditorModules{
 		//move if necessary
 		if (movePosition.isSelected()) {
 			mfe.getMainFrameReference().moveXYStage(parseStageCoordinates(Utility.parseParameter(targetPosition.getText(), mfe),0), parseStageCoordinates(Utility.parseParameter(targetPosition.getText(), mfe),1));
+		}
+		if (moveFocus.isSelected()) {
+			mfe.getMainFrameReference().setMirrorPosition(Double.parseDouble(Utility.parseParameter(focusMirrorPos.getText(), mfe)));
 		}
 		//set output Paths
 		mfe.getMainFrameReference().setPathForMeasurment(Utility.parseParameter(measurementPath.getText(), mfe));

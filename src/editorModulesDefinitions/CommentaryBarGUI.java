@@ -55,6 +55,9 @@ public class CommentaryBarGUI extends EditorModules{
 		
 		return retPanel;
 	}
+	
+
+
 
 	@Override
 	public EditorModules getFunction(MainFrameEditor mfe) {
@@ -63,12 +66,15 @@ public class CommentaryBarGUI extends EditorModules{
 
 	@Override
 	public String[] getSettings() {
-		return null;
+		String[] tempString = new String[1];
+		tempString[0] = newButtonText.getText();
+		return tempString;
 	}
 
 	@Override
 	public void setSettings(String[] tempString) {
-		
+		newButtonText.setText(tempString[0]);
+		setButtonText(tempString[0]);
 	}
 
 	@Override

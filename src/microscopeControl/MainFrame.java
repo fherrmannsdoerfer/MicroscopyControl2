@@ -273,8 +273,10 @@ public class MainFrame extends JFrame {
 	public void triggerPSFRateEstimation(ImagePlus imp) {laserCon.addBlinkingNumber(Utility.findNumberOfBlinkingEvents(imp));}
 
 	public String getPythonPath() {return this.pathToPython;}
-	public void startReconstruction(String pathToTiffFile, String basename) {autoRecCon.startReconstruction(pathToTiffFile, basename);}
+	public void startReconstruction(String pathToTiffFile, String basename,String path, String outputPath, String measurementTag) {autoRecCon.startReconstruction(pathToTiffFile, basename, path, outputPath, measurementTag);}
 	public boolean isSimulatneousReconstruction() {return autoRecCon.isSimulatneousReconstruction();}
+	
+	public String getRelativeOutputPath() {return autoRecCon.getRelativeOutputPath();}
 	
 	public void setStateDoSimulatneousReconstruction(boolean state) {autoRecCon.setStateDoSimulatneousReconstruction(state);}
 	

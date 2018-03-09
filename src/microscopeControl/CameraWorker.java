@@ -323,25 +323,26 @@ public class CameraWorker  {
 			
 			   String basename2 = "RightChannel"+measurementTag+"pt"+String.format("%03d", stackCounter);
 			   String pathTiffFile2 = path+"\\"+measurementTag+"\\RightChannel\\"+basename2+".tif";
+			   String outputPath = mf.getRelativeOutputPath();
 			   if (selectedIndex == 0){
 					OutputControl.writeStack(stack1, pathTiffFile1);
 					OutputControl.writeStack(stack2, pathTiffFile2);
 
 					if (mf.isSimulatneousReconstruction()){
-						mf.startReconstruction(pathTiffFile1, basename1);
-						mf.startReconstruction(pathTiffFile2, basename2);
+						mf.startReconstruction(pathTiffFile1, basename1, path, outputPath, measurementTag);
+						mf.startReconstruction(pathTiffFile2, basename2, path, outputPath, measurementTag);
 					}
 		    	}
 		        else if (selectedIndex == 1){
 		        	OutputControl.writeStack(stack1,pathTiffFile1);
 					if (mf.isSimulatneousReconstruction()){
-						mf.startReconstruction(pathTiffFile1, basename1);
+						mf.startReconstruction(pathTiffFile1, basename1, path, outputPath, measurementTag);
 		    		}
 		    	}
 		        else {
 		        	OutputControl.writeStack(stack2,pathTiffFile2);
 					if (mf.isSimulatneousReconstruction()){
-						mf.startReconstruction(pathTiffFile2, basename2);
+						mf.startReconstruction(pathTiffFile2, basename2, path, outputPath, measurementTag);
 		    		}
 		        }		    					   
 		   }

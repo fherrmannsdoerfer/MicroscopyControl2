@@ -115,11 +115,11 @@ public class AutomatedReconstructionControl extends JPanel {
 		(new File(outputPath+"\\PythonSkripts")).mkdirs();
 	}
 	
-	public void startReconstruction(String pathToTiffFile, String basename){
+	public void startReconstruction(String pathToTiffFile, String basename,String path, String outputPath, String measurementTag){
 		//PrintWriter outputStream;
-		String outputPath = txtRelativeOutputPath.getText();
-		String path = mf.getPath();
-		String measurementTag = mf.getMeasurementTag();
+		//String outputPath = txtRelativeOutputPath.getText();
+		//String path = mf.getPath();
+		//String measurementTag = mf.getMeasurementTag();
 		//(new File(path+"\\"+measurementTag+"\\Auswertung\\RapidStorm\\PythonSkripts")).mkdirs();
 		String outputBasename = path+"\\"+measurementTag+"\\"+outputPath+"\\"+basename;
 		//String outputBasename = path+"\\"+measurementTag+"\\Auswertung\\RapidStorm\\"+basename;
@@ -215,6 +215,7 @@ public class AutomatedReconstructionControl extends JPanel {
 	class RecalculateEverythingButtonActionListener implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 			String path = mf.getPath();
+			String outputPath = getRelativeOutputPath();
 			String measurementTag = mf.getMeasurementTag();
 			File dir = new File(path+"\\"+measurementTag+"\\RightChannel\\");
 	    	File[] files = dir.listFiles(new FilenameFilter() { 
@@ -227,7 +228,7 @@ public class AutomatedReconstructionControl extends JPanel {
 		    		String fname = files[i].getName();
 		    		String[] parts = fname.split("\\.");
 		    		String basename = parts[0];
-		    		startReconstruction(files[i].toString(),basename);
+		    		startReconstruction(files[i].toString(),basename, path, outputPath, measurementTag);
 		    	}
 		    }
 	    	if (mf.getSelectedChannel() == 0||(mf.getSelectedChannel() == 2)){
@@ -236,7 +237,7 @@ public class AutomatedReconstructionControl extends JPanel {
 		    		String fname = files[i].getName();
 		    		String[] parts = fname.split("\\.");
 		    		String basename = parts[0];
-		    		startReconstruction(files[i].toString(),basename);
+		    		startReconstruction(files[i].toString(),basename, path, outputPath, measurementTag);
 		    	}
 		    }
 	    	dir = new File(path+"\\"+measurementTag+"\\LeftChannel\\");
@@ -249,7 +250,7 @@ public class AutomatedReconstructionControl extends JPanel {
 	    		String fname = files[i].getName();
 	    		String[] parts = fname.split("\\.");
 	    		String basename = parts[0];
-	    		startReconstruction(files[i].toString(),basename);
+	    		startReconstruction(files[i].toString(),basename, path, outputPath, measurementTag);
 	    	}
 	    	
 		}
@@ -262,4 +263,9 @@ public class AutomatedReconstructionControl extends JPanel {
 	public void setStateDo3DReconstruction(boolean state) {
 		chkBoxDo3D.setSelected(state);
 	}
+	
+	public String getRelativeOutputPath() {
+		return txtRelativeOutputPath.getText();
+	}
+	
 }

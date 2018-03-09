@@ -239,9 +239,10 @@ public class Utility implements Serializable {
 			} else { //some other file is in the folder maybe from an other instance maybe a sample list that is currently processed, show error pause execution
 				int result = -5555;
 
-				result = JOptionPane.showConfirmDialog((Component) null, "Something went wrong, the robot might be already running!",
+				result = JOptionPane.showConfirmDialog((Component) null, "Something went wrong, the robot might be already running! Hit any button to proceed.",
 				        "alert", JOptionPane.OK_CANCEL_OPTION);
-				System.exit(-1);
+				
+				//System.exit(-1);
 			}
 		}
 	}
@@ -340,28 +341,31 @@ public class Utility implements Serializable {
 	}
 
 	public static void createSampleListForSolutionAddingFromWashingStation(int index, int volume, boolean useLS2,
-			XYStagePosition xyStagePosition, String pathToExchangeFolder) {
+			int pumpDuration, XYStagePosition xyStagePosition, String pathToExchangeFolder) {
 		String template;
 		if (useLS2) {
-			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromWashingStationTokenVolumeIndexShiftXShiftYLS2.csl");
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromWashingRunPumpStationTokenVolumeIndexShiftXShiftYLS2.csl");			
 		} else {
-			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromWashingStationTokenVolumeIndexShiftXShiftYLS1.csl");
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromWashingRunPumpStationTokenVolumeIndexShiftXShiftYLS1.csl");
 		}
 		String toReplaceIndex = ">tokenIndex<";
 		String replacementIndex = String.format(">%d<",index);
 		String toReplaceVolume = "tokenVolume";
 		String replacementVolume = String.format("%d",volume);
+		String toReplacePumpDuration = ">tokenPumpDuration<";
+		String replacementPumpDuration = String.format(">%d<",pumpDuration);
 		
-		String toReplacementShiftX = "tokenShiftX";
-		String toReplacementShiftY = "tokenShiftY";
+		String toReplacementShiftX = ">tokenShiftX<";
+		String toReplacementShiftY = ">tokenShiftY<";
 		//x gets minus since only one axis is inverted relative to the coordinate system of the staining robot
-		String replacementShiftX = String.format(Locale.US,"%.1f", -xyStagePosition.getxPos()/1000);
-		String replacementShiftY = String.format(Locale.US,"%.1f", xyStagePosition.getyPos()/1000);
+		String replacementShiftX = String.format(Locale.US,">%.1f<", -xyStagePosition.getxPos()/1000);
+		String replacementShiftY = String.format(Locale.US,">%.1f<", xyStagePosition.getyPos()/1000);
 		
 		String outputXMLFileContent = template.replace(toReplaceIndex, replacementIndex);
 		outputXMLFileContent = outputXMLFileContent.replace(toReplaceVolume, replacementVolume);
 		outputXMLFileContent = outputXMLFileContent.replace(toReplacementShiftX, replacementShiftX);
 		outputXMLFileContent = outputXMLFileContent.replace(toReplacementShiftY, replacementShiftY);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplacePumpDuration, replacementPumpDuration);
 		OutputControl.writeFile("C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl", outputXMLFileContent);
 		startChronosPlugin(pathToExchangeFolder, "C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl");
 	}

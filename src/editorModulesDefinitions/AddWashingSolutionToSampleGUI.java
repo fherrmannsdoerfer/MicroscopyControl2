@@ -20,6 +20,7 @@ public class AddWashingSolutionToSampleGUI extends EditorModules{
 	private JTextField washingStationIndex = new JTextField("1");
 	private JTextField volume = new JTextField("300");
 	private JCheckBox useLS2 = new JCheckBox("Use LS2");
+	private JTextField pumpDuration = new JTextField("0");
 	
 	public AddWashingSolutionToSampleGUI(MainFrameEditor mfe) {
 		super(mfe);
@@ -35,11 +36,13 @@ public class AddWashingSolutionToSampleGUI extends EditorModules{
 	
 	private JPanel createOptionPanel(){
 		JPanel retPanel = new JPanel();
-		retPanel.setLayout(new GridLayout(3, 2,60,15));
+		retPanel.setLayout(new GridLayout(4, 2,60,15));
 		retPanel.add(new JLabel("Index Washing Station (1: PBS, 2: H2O):"));
 		retPanel.add(washingStationIndex);
 		retPanel.add(new JLabel("Volume [Microliter]:"));
 		retPanel.add(volume);
+		retPanel.add(new JLabel("Pump Duration (0 For No Pump):"));
+		retPanel.add(pumpDuration);
 		retPanel.add(new JLabel(""));
 		retPanel.add(useLS2);
 		useLS2.setSelected(true);
@@ -54,12 +57,13 @@ public class AddWashingSolutionToSampleGUI extends EditorModules{
 
 	@Override
 	public String[] getSettings() {
-		String[] tempString = new String[3];
+		String[] tempString = new String[4];
 		tempString[0] = washingStationIndex.getText();
 		tempString[1] = volume.getText();
 		if (useLS2.isSelected()){
 			tempString[2] = "selected";
 		}
+		tempString[3] = pumpDuration.getText();
 		return tempString;
 	}
 
@@ -70,6 +74,7 @@ public class AddWashingSolutionToSampleGUI extends EditorModules{
 		if (tempString[2].equals("selected")){
 			useLS2.setSelected(true);
 		}
+		pumpDuration.setText(tempString[3]);
 	}
 
 	@Override
@@ -94,14 +99,14 @@ public class AddWashingSolutionToSampleGUI extends EditorModules{
 	@Override
 	public void perform() {
 		logTimeStart();
-		Utility.createSampleListForSolutionAddingFromWashingStation(getIndex(washingStationIndex), getVolume(volume, useLS2.isSelected()), useLS2.isSelected(),mfe.getMainFrameReference().getXYStagePosition(),mfe.getMainFrameReference().getPathToExchangeFolder());
+		Utility.createSampleListForSolutionAddingFromWashingStation(getIndex(washingStationIndex), getVolume(volume, useLS2.isSelected()), useLS2.isSelected(),getPumpTime(pumpDuration),mfe.getMainFrameReference().getXYStagePosition(),mfe.getMainFrameReference().getPathToExchangeFolder());
 		setProgressbarValue(100);
 		logTimeEnd();
 	}
 
 	@Override
 	public boolean checkForValidity() {
-		if (getVolume(volume,useLS2.isSelected())==-1 || getIndex(washingStationIndex)==-1) {
+		if (getVolume(volume,useLS2.isSelected())==-1 || getIndex(washingStationIndex)==-1||getPumpTime(pumpDuration)==-1) {
 			return false;
 		}
 		return true;
