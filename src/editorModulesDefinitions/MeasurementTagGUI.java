@@ -39,11 +39,11 @@ public class MeasurementTagGUI extends EditorModules{
 		JPanel retPanel = new JPanel();
 		retPanel.setLayout(new GridLayout(4, 1,6,15));
 		retPanel.add(new JLabel("Path:"));
-		Utility.setFormatTextFields(pathField, 200, 20, 5);
+		Utility.setFormatTextFields(pathField, 200, 20, 50);
 		retPanel.add(pathField);
 		
 		retPanel.add(new JLabel("Measurement tag:"));
-		Utility.setFormatTextFields(measurementTag, 200, 20, 5);
+		Utility.setFormatTextFields(measurementTag, 200, 20, 50);
 		retPanel.add(measurementTag);
 		
 		return retPanel;

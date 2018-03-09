@@ -41,6 +41,8 @@ public class PerformMeasurmentGUI extends EditorModules{
 	JCheckBox movePosition = new JCheckBox("Change Position");
 	JCheckBox moveFocus = new JCheckBox("Move Focus");
 	JTextField focusMirrorPos = new JTextField("0");
+	JCheckBox enableUVLaserControl = new JCheckBox("Enable UV Laser Control");
+	JTextField minimalNbrBlinkingEvents = new JTextField("10");
 	
 	transient MainFrameEditor mfe;
 	private static String name = "Perform Measurement";
@@ -103,6 +105,11 @@ public class PerformMeasurmentGUI extends EditorModules{
 		retPanel.add(new JLabel("Path To 3D Calibration:"));
 		Utility.setFormatTextFields(pathToCalib, 120, 20, 5);
 		retPanel.add(pathToCalib);
+		retPanel.add(new JLabel(""));
+		retPanel.add(enableUVLaserControl);
+		retPanel.add(new JLabel("Minimal Nbr. Of BlinkingEvents:"));
+		retPanel.add(minimalNbrBlinkingEvents);
+		
 		
 		moveFocus.addActionListener(new ActionListener() {
 
@@ -142,7 +149,15 @@ public class PerformMeasurmentGUI extends EditorModules{
 			}
 		});
 		recon3D.setSelected(true);
-
+		
+		enableUVLaserControl.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				minimalNbrBlinkingEvents.setEnabled(enableUVLaserControl.isSelected());
+			}
+		});
+		enableUVLaserControl.setSelected(false);
+		minimalNbrBlinkingEvents.setEnabled(false);
 		return retPanel;
 	}
 	
@@ -153,7 +168,7 @@ public class PerformMeasurmentGUI extends EditorModules{
 	}
 
 	public String[] getSettings(){
-		String[] tempString = new String[19];
+		String[] tempString = new String[21];
 		tempString[0] = measurementPath.getText();
 		tempString[1] = measurementTag.getText();
 		tempString[2] = targetPosition.getText();
@@ -198,6 +213,13 @@ public class PerformMeasurmentGUI extends EditorModules{
 			tempString[17] = "notSelected";
 		}
 		tempString[18] = focusMirrorPos.getText();
+		if (enableUVLaserControl.isSelected()){
+			tempString[19] = "selected";
+		}
+		else {
+			tempString[19] = "notSelected";
+		}
+		tempString[20] = minimalNbrBlinkingEvents.getText();
 		return tempString;
 	}
 	public void setSettings(String[] tempString){
@@ -245,6 +267,12 @@ public class PerformMeasurmentGUI extends EditorModules{
 			focusMirrorPos.setEnabled(false);
 		}
 		focusMirrorPos.setText(tempString[18]);
+		if (tempString[19].equals("selected")){
+			enableUVLaserControl.setSelected(true);
+		}else {
+			minimalNbrBlinkingEvents.setEnabled(false);
+		}
+		minimalNbrBlinkingEvents.setText(tempString[20]);
 	}
 
 	@Override
@@ -276,6 +304,10 @@ public class PerformMeasurmentGUI extends EditorModules{
 		}
 		if (moveFocus.isSelected()) {
 			mfe.getMainFrameReference().setMirrorPosition(Double.parseDouble(Utility.parseParameter(focusMirrorPos.getText(), mfe)));
+		}
+		if (enableUVLaserControl.isSelected()) {
+			mfe.getMainFrameReference().setEnableUVControlState(true);
+			mfe.getMainFrameReference().setMinimalBlinkingNbr(Integer.parseInt(Utility.parseParameter(minimalNbrBlinkingEvents.getText(), mfe)));
 		}
 		//set output Paths
 		mfe.getMainFrameReference().setPathForMeasurment(Utility.parseParameter(measurementPath.getText(), mfe));
@@ -320,7 +352,7 @@ public class PerformMeasurmentGUI extends EditorModules{
 	@Override
 	public boolean checkForValidity() {
 		
-		if(measurementPath.getText().isEmpty()||measurementTag.getText().isEmpty()||targetPosition.getText().isEmpty()||laserIndex.getText().isEmpty()||laserPowerWf.getText().isEmpty()||laserPowerMeasurement.getText().isEmpty()||filterWheelIndex.getText().isEmpty()||exposureTimeWF.getText().isEmpty()||bleachTime.getText().isEmpty()||exposureTimeMeasurement.getText().isEmpty()||nbrFrames.getText().isEmpty()||pathToCalib.getText().isEmpty()||cameraGain.getText().isEmpty()) {
+		if(measurementPath.getText().isEmpty()||measurementTag.getText().isEmpty()||targetPosition.getText().isEmpty()||laserIndex.getText().isEmpty()||laserPowerWf.getText().isEmpty()||laserPowerMeasurement.getText().isEmpty()||filterWheelIndex.getText().isEmpty()||exposureTimeWF.getText().isEmpty()||bleachTime.getText().isEmpty()||exposureTimeMeasurement.getText().isEmpty()||nbrFrames.getText().isEmpty()||pathToCalib.getText().isEmpty()||cameraGain.getText().isEmpty()||minimalNbrBlinkingEvents.getText().isEmpty()) {
 			return false;
 		}
 		else {return true;}

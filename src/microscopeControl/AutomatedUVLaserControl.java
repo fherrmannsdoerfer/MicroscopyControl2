@@ -69,4 +69,8 @@ public class AutomatedUVLaserControl extends JPanel {
 	public void setCurrentNumberOfBlinkingEvents(int nbrBlinkingEvents){
 		lblBlinkingEventsPerFrame.setText(""+nbrBlinkingEvents);
 	}
+	
+	public void setUVControlEnabled(boolean state) {
+		chkboxEnableUVControl.setSelected(state);
+	}
 }

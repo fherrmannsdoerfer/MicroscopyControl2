@@ -318,13 +318,17 @@ public class CameraWorker  {
 			 this.stackCounter = stackCounter;
 		 }
 		 @Override
-		   public void run(){
-			   String basename1 = "LeftChannel"+measurementTag+"pt"+String.format("%03d", stackCounter);
-			   String pathTiffFile1 = path+"\\"+measurementTag+"\\LeftChannel\\"+basename1+".tif";
+		 public void run(){
+			 String basename1 = findBasename(path+"\\"+measurementTag+"\\LeftChannel\\", stackCounter);
+			 String basename2 = findBasename(path+"\\"+measurementTag+"\\RightChannel\\", stackCounter);
+			   
+			 //String basename1 = "LeftChannel"+measurementTag+"pt"+String.format("%03d", stackCounter);
+			 String pathTiffFile1 = path+"\\"+measurementTag+"\\LeftChannel\\"+basename1+".tif";
 			
-			   String basename2 = "RightChannel"+measurementTag+"pt"+String.format("%03d", stackCounter);
-			   String pathTiffFile2 = path+"\\"+measurementTag+"\\RightChannel\\"+basename2+".tif";
-			   String outputPath = mf.getRelativeOutputPath();
+			 //  String basename2 = "RightChannel"+measurementTag+"pt"+String.format("%03d", stackCounter);
+			 String pathTiffFile2 = path+"\\"+measurementTag+"\\RightChannel\\"+basename2+".tif";
+			 
+			 String outputPath = mf.getRelativeOutputPath();
 			   if (selectedIndex == 0){
 					OutputControl.writeStack(stack1, pathTiffFile1);
 					OutputControl.writeStack(stack2, pathTiffFile2);
@@ -347,6 +351,22 @@ public class CameraWorker  {
 		    		}
 		        }		    					   
 		   }
+		 
+		 //in case of multiple measurements with the same output folder, 
+		 //check if the file already exists and increase the counter until
+		 //a new filename is generated
+		 String findBasename(String outputPath, int counter) {
+			 String basename;
+			 String pathTiffFile;
+			 do {
+				 basename = "LeftChannel"+measurementTag+"pt"+String.format("%03d", counter);
+				 pathTiffFile = path+"\\"+measurementTag+"\\LeftChannel\\"+basename+".tif";
+				 counter = counter + 1;
+			 } while (new File(pathTiffFile).exists());
+			 
+			 
+			 return basename;
+		 }
 
 	}
 		

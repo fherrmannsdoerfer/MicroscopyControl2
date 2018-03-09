@@ -480,4 +480,7 @@ public class MainFrame extends JFrame {
 		createOutputFolder();
 		OutputControl.writeStringToFile(content, outputPath, append);
 	}
+	
+	public void setEnableUVControlState(boolean state) {laserCon.setEnableUVControlState(state);}
+	public void setMinimalBlinkingNbr(int nbr) {laserCon.setBlinkingNumber(nbr);}
 }
