@@ -7,9 +7,9 @@ import javax.swing.border.TitledBorder;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 
-
 public class CommentControl extends JPanel {
 	MainFrame mf;
+	JTextPane textPane;
 	CommentControl(MainFrame mf, Dimension minSize, Dimension prefSize, Dimension maxSize){
 		this.mf = mf;
 		setMinimumSize(minSize);
@@ -19,7 +19,7 @@ public class CommentControl extends JPanel {
 		setBorder(new TitledBorder(null, "Commentary Section", TitledBorder.LEADING, TitledBorder.TOP, mf.getTitelFont(), null));
 		setLayout(new BorderLayout(0, 0));
 		
-		JTextPane textPane = new JTextPane();
+		textPane = new JTextPane();
 		JScrollPane scrollPane = new JScrollPane(textPane);
 		add(scrollPane);
 		
@@ -27,4 +27,10 @@ public class CommentControl extends JPanel {
 		textPane.setMinimumSize(minSize);
 		textPane.setMaximumSize(maxSize);
 	}
+	
+	public void writeCommentarySection(){
+		mf.writeCommentaryToOutputFolder(textPane.getText(), "Comments.txt", false);
+	}
+
+	
 }

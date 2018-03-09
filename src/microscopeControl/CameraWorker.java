@@ -122,6 +122,7 @@ public class CameraWorker  {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		mf.initializeCommentaryOutput();
 		//create new Thread. Otherwise the GUI would not be responsive
 		acquisitionThread = new Thread(new AcquisitionThread(mf));
 		acquisitionThread.start();

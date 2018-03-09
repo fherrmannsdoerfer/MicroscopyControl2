@@ -472,4 +472,12 @@ public class MainFrame extends JFrame {
 	public void writeToEditorLogfile(String content) {
 		OutputControl.writeStringToFile(content, pathToLogFile, true);
 	}
+	public void initializeCommentaryOutput(){
+		comCon.writeCommentarySection();
+	}
+	public void writeCommentaryToOutputFolder(String content, String filename, boolean append){
+		String outputPath = getOutputFolder()+filename;
+		createOutputFolder();
+		OutputControl.writeStringToFile(content, outputPath, append);
+	}
 }

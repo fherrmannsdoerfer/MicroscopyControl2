@@ -225,6 +225,19 @@ public class MainFrameEditor extends JDialog implements Serializable{
 			}
 		});
 		
+		JMenuItem importModulesButton = new JMenuItem("Import Modules");
+		fileMenu.add(importModulesButton);
+		importModulesButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				int returnVal = settingsFileChooserLoad.showOpenDialog(null);
+				System.out.println("loadSettingsButton");
+				if (returnVal == JFileChooser.APPROVE_OPTION){
+					importPanels(settingsFileChooserLoad.getSelectedFile());
+				}		
+			}
+			
+		});
 		
 		JMenuItem saveSettingsButton = new JMenuItem("Save Settings");
 		fileMenu.add(saveSettingsButton);
@@ -711,6 +724,42 @@ public class MainFrameEditor extends JDialog implements Serializable{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+	}
+	
+	void importPanels(File file) {
+		ArrayList<EditorModules> tempOrderList = new ArrayList<EditorModules>();
+		String settingsPath = null;
+		//File file = settingsFileChooserLoad.getSelectedFile();
+		settingsPath = file.getAbsolutePath();
+		try {
+			FileInputStream fileIn = new FileInputStream(settingsPath);
+			ObjectInputStream in = new ObjectInputStream(fileIn);
+			tempOrderList = (ArrayList<EditorModules>) in.readObject();
+			in.close();
+			fileIn.close();
+			System.out.println("loaded");	
+			
+			for (int i = 0; i < tempOrderList.size(); i++){						
+				EditorModules tempObject = tempOrderList.get(i);
+				EditorModules tmp = tempObject.getEditorModulesObject(tempObject, mfe);
+				tmp.setSettings(tempOrderList.get(i).getSettings());
+				listProcessingStepPanels.add(tmp);
+			}
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		updatePanels();
+		invalidate();
+		validate();
+//		revalidate();
+		repaint();
 	}
 	
 	void loadPanels(File file){
