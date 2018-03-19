@@ -3,7 +3,7 @@ package editor;
 import java.awt.dnd.DropTarget;
 
 import javax.swing.JPanel;
-
+//class used for drag and drop functionality
 public class RootPanel extends JPanel{
 	private final MainFrameEditor mfe;
 	RootPanel(MainFrameEditor mfe){

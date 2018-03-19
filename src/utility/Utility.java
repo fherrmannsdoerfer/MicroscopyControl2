@@ -5,6 +5,7 @@ import ij.plugin.filter.GaussianBlur;
 import ij.plugin.filter.MaximumFinder;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
+import microscopeControl.MainFrame;
 import microscopeControl.OutputControl;
 
 import java.awt.Component;
@@ -288,14 +289,14 @@ public class Utility implements Serializable {
 	
 	public static void createSampleListForSolutionRemoval(int volumePerSpot, XYStagePosition xyStagePosition, String pathToExchangeFolder) {
 		String template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionRemovalFromSampleTokenVolumePerSpotShiftXShiftYLS2.csl");
-		String toReplaceVialNumber = "tokenVolume";
-		String replacementVialNumber = String.format("%d",volumePerSpot);
+		String toReplaceVialNumber = ">tokenVolume<";
+		String replacementVialNumber = String.format(">%d<",volumePerSpot);
 				
-		String toReplacementShiftX = "tokenShiftX";
-		String toReplacementShiftY = "tokenShiftY";
+		String toReplacementShiftX = ">tokenShiftX<";
+		String toReplacementShiftY = ">tokenShiftY<";
 		//x gets minus since only one axis is inverted relative to the coordinate system of the staining robot
-		String replacementShiftX = String.format(Locale.US,"%.1f", -xyStagePosition.getxPos()/1000);
-		String replacementShiftY = String.format(Locale.US,"%.1f", xyStagePosition.getyPos()/1000);
+		String replacementShiftX = String.format(Locale.US,">%.1f<", -xyStagePosition.getxPos()/1000);
+		String replacementShiftY = String.format(Locale.US,">%.1f<", xyStagePosition.getyPos()/1000);
 		
 		String outputXMLFileContent = template.replace(toReplaceVialNumber, replacementVialNumber);
 		outputXMLFileContent = outputXMLFileContent.replace(toReplacementShiftX, replacementShiftX);
@@ -317,18 +318,18 @@ public class Utility implements Serializable {
 			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\Washing\\TemplateWashThreeTimesFindDryLeavePBSTokenInjectionVolumeShiftXShiftYVolumePerSpotTimeLS2.csl");
 		}
 		
-		String toReplaceInjection = "tokenInjection";
-		String replacementInjection = String.format("%d",injectionVolume);
-		String toReplaceVolume = "tokenVolume";
-		String replacementVolume = String.format("%d",volumePerSpot);
-		String toReplaceTime = "tokenTime";
-		String replacementTime = String.format("%d", waitTime);
+		String toReplaceInjection = ">tokenInjection<";
+		String replacementInjection = String.format(">%d<",injectionVolume);
+		String toReplaceVolume = ">tokenVolume<";
+		String replacementVolume = String.format(">%d<",volumePerSpot);
+		String toReplaceTime = ">tokenTime<";
+		String replacementTime = String.format(">%d<", waitTime);
 		
-		String toReplacementShiftX = "tokenShiftX";
-		String toReplacementShiftY = "tokenShiftY";
+		String toReplacementShiftX = ">tokenShiftX<";
+		String toReplacementShiftY = ">tokenShiftY<";
 		//x gets minus since only one axis is inverted relative to the coordinate system of the staining robot
-		String replacementShiftX = String.format(Locale.US,"%.1f", -xyStagePosition.getxPos()/1000);
-		String replacementShiftY = String.format(Locale.US,"%.1f", xyStagePosition.getyPos()/1000);
+		String replacementShiftX = String.format(Locale.US,">%.1f<", -xyStagePosition.getxPos()/1000);
+		String replacementShiftY = String.format(Locale.US,">%.1f<", xyStagePosition.getyPos()/1000);
 		
 		String outputXMLFileContent = template.replace(toReplaceInjection, replacementInjection);
 		outputXMLFileContent = outputXMLFileContent.replace(toReplaceVolume, replacementVolume);
@@ -372,12 +373,12 @@ public class Utility implements Serializable {
 
 	public static void createSampleListForSolutionAddingFromWashingStationToVial(int index, int volume, int vialNumber, String pathToExchangeFolder) {
 		String template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromWashingStationToVialTokenVolumeIndexVialNbrLS2.csl");
-		String toReplaceVialNumber = "tokenVial";
-		String replacementVialNumber = String.format("%d",vialNumber);
-		String toReplaceIndex = "tokenIndex";
-		String replacementIndex = String.format("%d",index);
-		String toReplaceVolume = "tokenVolume";
-		String replacementVolume = String.format("%d",volume);
+		String toReplaceVialNumber = ">tokenVial<";
+		String replacementVialNumber = String.format(">%d<",vialNumber);
+		String toReplaceIndex = ">tokenIndex<";
+		String replacementIndex = String.format(">%d<",index);
+		String toReplaceVolume = ">tokenVolume<";
+		String replacementVolume = String.format(">%d<",volume);
 		
 		String outputXMLFileContent = template.replace(toReplaceVialNumber, replacementVialNumber);
 		outputXMLFileContent = outputXMLFileContent.replace(toReplaceVolume, replacementVolume);
@@ -386,6 +387,26 @@ public class Utility implements Serializable {
 		OutputControl.writeFile("C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl", outputXMLFileContent);
 		startChronosPlugin(pathToExchangeFolder, "C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl");
 	}
+	
+	public static void createSampleListForRunPumps(int index, int time, boolean useLS2, String pathToExchangeFolder) {
+		String template;
+		if (useLS2) {
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateRunPumpsTokenPumpNumberPumpTimeLS2_MK.csl");
+		} else {
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateRunPumpsTokenPumpNumberPumpTimeLS1_MK.csl");
+		}
+		String toReplaceTime = ">tokenPumpDuration<";
+		String replacementTime = String.format(">%d<",time);
+		String toReplaceIndex = ">tokenWStationIndex<";
+		String replacementIndex = String.format(">%d<",index);
+		
+		String outputXMLFileContent = template.replace(toReplaceTime, replacementTime);
+		outputXMLFileContent = outputXMLFileContent.replace(toReplaceIndex, replacementIndex);
+
+		OutputControl.writeFile("C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl", outputXMLFileContent);
+		startChronosPlugin(pathToExchangeFolder, "C:\\Users\\Public\\Folder For Chronos\\tmpSampleList.csl");
+	}
+
 
 	public static void createSampleListForWashingSyringe(int index, int repetitions, boolean useLS2,
 			String pathToExchangeFolder) {
@@ -395,10 +416,10 @@ public class Utility implements Serializable {
 		} else {
 			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\WashSyringe\\WashSyringeTokenIndexRepetitionsLS1.csl");
 		}
-		String toReplaceRepetition = "tokenReps";
-		String replacementRepetition = String.format("%d",repetitions);
-		String toReplaceIndex = "tokenIndex";
-		String replacementIndex = String.format("%d",index);
+		String toReplaceRepetition = ">tokenReps<";
+		String replacementRepetition = String.format(">%d<",repetitions);
+		String toReplaceIndex = ">tokenIndex<";
+		String replacementIndex = String.format(">%d<",index);
 
 		
 		String outputXMLFileContent = template.replace(toReplaceRepetition, replacementRepetition);
@@ -511,5 +532,17 @@ public class Utility implements Serializable {
 		
 	}
 	
+	public static boolean checkSpace(String outputPath, double minimalToleratedSpace,MainFrame mf) {
+		String harddrive = outputPath.substring(0, 2);
+		if (mf.getFreeSpaceInGB(harddrive)< minimalToleratedSpace) {
+			int result = JOptionPane.showConfirmDialog((Component) null, "There is only "+mf.getFreeSpaceInGB(harddrive)+" gb of free space left! Do you want to proceed or cancel?",
+			        "alert", JOptionPane.OK_CANCEL_OPTION);
+			if (result ==2) {
+				return false;
+			}
+		}
+		return true;
+		
+	}
 	
 }

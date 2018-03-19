@@ -24,8 +24,8 @@ import utility.Utility;
 
 public class StageControl extends JPanel {
 	
-	double pixelSizeX = .133;
-	double pixelSizeY = .133; //with 3d lense 122 nm
+	double pixelSizeX = .129;
+	double pixelSizeY = .129; //with 3d lense 122 nm
 	MainFrame mf;
 	
 	JButton btnSetUpperLeft;
@@ -109,7 +109,7 @@ public class StageControl extends JPanel {
 		public void actionPerformed(ActionEvent arg0) {
 			// TODO Auto-generated method stub
 			try {
-				upperLeftCorner = mf.getXYStagePosition();
+				upperLeftCorner = mf.getXYStagePositionShifted();
 				lblUpperLeft.setText(upperLeftCorner.toString());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -126,7 +126,7 @@ public class StageControl extends JPanel {
 			try{
 				double xPos = Double.valueOf(txtXPos.getText());
 				double yPos = Double.valueOf(txtYPos.getText());
-				mf.moveXYStage(xPos, yPos);
+				mf.moveXYStageShiftedCoordinates(xPos, yPos);
 				
 				
 			} catch(Exception e){
@@ -140,7 +140,7 @@ public class StageControl extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			try {
-				lowerRightCorner = mf.getXYStagePosition();
+				lowerRightCorner = mf.getXYStagePositionShifted();
 				lblLowerRight.setText(lowerRightCorner.toString());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -195,7 +195,7 @@ public class StageControl extends JPanel {
 					mf.setFrameCount(numberStepsY*x+y+1+"/"+numberStepsY*numberStepsX);
 					double xPos = upperLeftCorner.getxPos() + x * pixelSizeX * (256-overlapInPixelsX);
 					double yPos = upperLeftCorner.getyPos() - y * pixelSizeY * (512-overlapInPixelsY);
-					mf.moveXYStage(xPos,yPos);
+					mf.moveXYStageShiftedCoordinates(xPos,yPos);
 					try {
 						Thread.sleep((long) (200+mf.getExposureTime()));
 						ImagePlus temp = mf.captureImage();

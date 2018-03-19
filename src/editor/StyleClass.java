@@ -3,7 +3,8 @@ package editor;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.io.Serializable;
-
+//class that contains all colors and spaces used in the editor. All of these attributes
+//are stored at this location only
 public class StyleClass implements Serializable{
 	private Color colorMicroscope = new Color(171,65,152);
 	private Color colorStainingRobot = new Color(101,194,148);

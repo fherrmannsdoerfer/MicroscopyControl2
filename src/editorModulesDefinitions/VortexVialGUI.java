@@ -12,7 +12,7 @@ import javax.swing.JTextField;
 import utility.Utility;
 import editor.EditorModules;
 import editor.MainFrameEditor;
-
+//for detailed comments look at performMeasurementGUI
 public class VortexVialGUI extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;

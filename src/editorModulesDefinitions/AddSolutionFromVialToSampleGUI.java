@@ -14,7 +14,7 @@ import javax.swing.JTextField;
 import utility.Utility;
 import editor.EditorModules;
 import editor.MainFrameEditor;
-
+//for detailed comments look at performMeasurementGUI
 public class AddSolutionFromVialToSampleGUI extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;
@@ -116,12 +116,7 @@ public class AddSolutionFromVialToSampleGUI extends EditorModules{
 	public String getFunctionName() {
 		return name;
 	}
-	
-	
-	
-	
-	
-	
+		
 
 	@Override
 	public void perform() {

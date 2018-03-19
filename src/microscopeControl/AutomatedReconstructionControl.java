@@ -23,7 +23,22 @@ import utility.Utility;
 
 
 
+//This class takes care of the automated RapidStorm reconstruction during the measurment
+//it relies on RapidStorm  and Python to be installed and properly linked in the MainFrame class
+//using the variables 
+//String pathToPython = "C:\\ProgramData\\Anaconda3\\python.exe";
+//in case of python
+//or in case of RapidStorm to be set properly in the following code block in this class (approximately line 175)
+//it is important the for the path these / instead of these \ separators are used!
+//String content = "import os\n"+"os.system(\"\\\"C:/Program Files/rapidstorm3/bin/rapidSTORM.exe\\\" "
+//		+ "--inputFile "+pathToTiffFile+" --Basename "+outputBasename+pixelsize+image+
+//		" --chooseTransmission Table "+fitMethode+" --ThreeD Spline3D --ZCalibration "
+//		+calibrationFile+ " --AutoTerminate --run\")";
 
+//The whole automated reconstruction is a bit complicated as it cannot directly call RapidStorm but uses Python to do so
+//the reason for that is that the command line feature of RapidStorm3 was turned off for the windows release, but with the trick
+//of Python calling it it works. So in order to start the reconstruction a python script with the instruction to start Rapidstorm
+//is created and executed which in turn then starts RapidStorm and gives all necessary parameters
 public class AutomatedReconstructionControl extends JPanel {
 	
 	MainFrame mf;
@@ -40,6 +55,7 @@ public class AutomatedReconstructionControl extends JPanel {
 	Runnable t = new Thread(rc);
 	ExecutorService executor = Executors.newFixedThreadPool(7);		
 	
+	//consturctor that creates the panel for the module
 	public  AutomatedReconstructionControl(MainFrame mf, Dimension minSize, Dimension prefSize, Dimension maxSize){
 		this.mf = mf;
 		executor.execute(t); //start thread that handles reconstruction
@@ -84,6 +100,7 @@ public class AutomatedReconstructionControl extends JPanel {
 		fitMethodSelectionChkBox.addItem("Absolute Threshold");
 		
 		thresholdText = new JTextField();
+		//here you can set the default Local Relative Threshold
 		thresholdText.setText("30");
 		Utility.setFormatTextFields(thresholdText, 50, 20, 5);
 		
@@ -111,6 +128,7 @@ public class AutomatedReconstructionControl extends JPanel {
 		
 	}
 	
+	//function that creates the folder used to store the the python scripts temporarily 
 	public void createReconStuff(String outputPath){
 		(new File(outputPath+"\\PythonSkripts")).mkdirs();
 	}
@@ -255,11 +273,13 @@ public class AutomatedReconstructionControl extends JPanel {
 	    	
 		}
 	}
-
+	//get and set the state of the checkbox which controls whether or not the reconstruction should be started during the measurement 
 	public boolean isSimulatneousReconstruction() {return chkBoxSimultaneousProcessing.isSelected();}
 	public void setStateDoSimulatneousReconstruction(boolean state) {
 		chkBoxSimultaneousProcessing.setSelected(state);
 	}
+	
+	//set the state for the checkbox which controls 3D vs 2D reconstruction
 	public void setStateDo3DReconstruction(boolean state) {
 		chkBoxDo3D.setSelected(state);
 	}

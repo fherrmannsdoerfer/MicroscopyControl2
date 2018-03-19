@@ -35,7 +35,10 @@ import utility.Utility;
 
 public abstract class EditorModules extends JPanel implements PropertyChangeListener, Transferable, Serializable{
 	/**
-	 * 
+	 *Parent class for all modules of the experiment editor.  
+	 *Each module has a button which when pressed shows the option pane for the module.
+	 *There is also a progress bar which is disabled for certain subclasses like the commentaryBar class
+	 *All information about the size comes from the StyleClass and can be altered there
 	 */
 	private static final long serialVersionUID = 1L;
 	private int id = 0;
@@ -51,6 +54,8 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 	private int indentation = 1;
 	//jpanel containing the buttons and progressbar but not the possible right shift
 	private JPanel module = new JPanel();
+	//when a module is placed within a loop it shifted to the right, this is managed in adding invisible
+	//placehoders in the indent component
 	Component indent;
 	Dimension dimensionWholeBox;
 	Dimension dimensionModule;
@@ -100,6 +105,7 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 		assembleModule();
 	}
 	
+	//in this function the module is constructed
 	private void assembleModule(){
 		this.removeAll();
 		module.removeAll();
@@ -168,6 +174,7 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 		module.setBackground(color);
 	}
 	
+	//needed for drag and drop
 	@Override
 	public DataFlavor[] getTransferDataFlavors() {
 		DataFlavor[] flavors ={null};
@@ -180,6 +187,7 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 		return null;
 	}
 
+	//needed for drag and drop
 	@Override
 	public boolean isDataFlavorSupported(DataFlavor flavor) {
 		DataFlavor[] flavors = {null};
@@ -198,7 +206,7 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 
         return false;
 	}
-
+	//needed for drag and drop
 	@Override
 	public Object getTransferData(DataFlavor flavor)
 			throws UnsupportedFlavorException, IOException {
@@ -223,6 +231,7 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 		return optionPanel;
 	}
 
+	//once the parameter button is clicked the option pane corresponding to this module is displayed on the right column
 	public void setOptionPanel(JPanel optionPanel) {
 		this.optionPanel = optionPanel;
 		mfe.optionPanel.add(optionPanel);
@@ -271,17 +280,35 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 		int progress = (Integer) evt.getNewValue();
         setProgressbarValue(progress);
 	}
+	
+	//abstract functions must be implemented by each subclass
 	abstract public EditorModules getFunction(MainFrameEditor mfe);
+	//this class returns the chosen parameters as a array of Strings information about checked checkboxes is also stored as a String
 	abstract public String[] getSettings();
+	//Once a module is imported or leaded the default parameters are overwritten with the loaded ones
 	abstract public void setSettings(String[] tempString);
 	abstract public EditorModules getEditorModulesObject(EditorModules processingStepsPanelObject, MainFrameEditor mfe);
 	abstract public String getFunctionName();
+	//This function contains the individual instructions for each module. For example in the PauseGUI module a Thread.sleep command is executed at this position
 	abstract public void perform();
+	//function used to perform a coarse check if every field has entries in it
 	abstract public boolean checkForValidity();
 	
+	//logTimeStart-End are functions that are called at the beginning and the end of the perform block and will write a line in a logfile from which the order and runtime of the modules can be inferred
 	public void logTimeStart() {
 		String content = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
 		content = content + ":\nstart of module: " + this.getFunctionName();
+		mfe.getMainFrameReference().writeToEditorLogfile(content);
+		logParams();
+	}
+	
+	public void logParams() {
+		String[] params = this.getSettings();
+		String content = "";
+		for (int i =0;i<params.length;i++) {
+			content = content+params[i]+" , ";
+		}
+		content = content + "\n";
 		mfe.getMainFrameReference().writeToEditorLogfile(content);
 	}
 	
@@ -292,6 +319,7 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 	}
 	
 	/** Returns an ImageIcon, or null if the path was invalid. */
+	//used to load the pictures for the remove button
 	protected Icon createIcon(String name) {	    
 		try {
 			Image img = ImageIO.read(ClassLoader.getSystemResourceAsStream(name));
@@ -319,16 +347,42 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 		return useFullWidth;
 	}
 	
+	//the following methods check the validity of selected parameters getVolume for example knows which syringe will be used and
+	//checks if the requested volume is within the possible range of volumes that the syring can hold
+	
+	//getVolume takes two parameters, first the text field from which the quantity (volume in this case) is extracted. Another parameter is whether or not the LS2 tool is used
+
 	protected int getVolume(JTextField textfield, boolean useLS2) {
+		//The volume will be an integer value (ganze Zahl). Integer.parseInt() is a function that is used
+		//to convert a String (text) into a number. 
+		//Utility.parseParameter(textfield.getText(),mfe) this does either return the input of the text field
+		//e.g. "200" or if tags (e.g. %volume%) were used the correct String from the Loop which defined this specific tag.
+		//textfield.getText() will give the entry entered in the text field (e.g. "200" or "%volume%"). The additional
+		//argument (mfe) is a reference to the main class of the experiment editor and is needed to look up 
+		//the value of the tag if one was used. 
+		//the method which looks up which value corresponds to which tag is located in the Utility package and called
+		//parseParameter().
+		//For example lets assume in the given text field was "%volume% written.
+		//1. textfield.getText() returns "%volume%
+		//2. Utility.parseParameter("%volume%", mfe) finds the loop that defined the tag "%volume%" and yields the value specified there e.g. "255"
+		//3. Integer.parseInt("255") returns the integer 255 
+		//4. intVolume is created and the integer value 255 is assigned to it
+		
+		//the four steps above would have looked similar if the value "255" would have been direcly written to the textfield,
+		//the function Utility.parseParameter(textfield.getText(), mfe) would have returned "255" in that case and would not have looked in any loop for a tag
+		
 		int intVolume = Integer.parseInt(Utility.parseParameter(textfield.getText(),mfe));
+		//depending on the tool used (LS1 or LS2) the upper limit for the volume is specified 100 in case of LS1 
 		int limit = 100;
+		//1000 in case of LS2
 		if (useLS2) {
 			limit = 1000;
 		}
-		if (intVolume<1 || intVolume>limit) {
+		//Here it is checked if the given value of intVolume lies within the allowed limits
+		if (intVolume<1 || intVolume>limit) {//if not an error is displayed and -1 is returned as the volume to use which will most likely stop the execution of the sampleList in Chronos
 			System.err.println("Volume is not within limits of 1 to "+limit+"!");
 			return -1;
-		} else {
+		} else {//otherwise the correct value is returned
 			return intVolume;
 		}	
 	}
@@ -379,6 +433,15 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 			return -1;
 		} else {
 			return volume;
+		}
+	}
+	
+	protected double getPositiveValue(JTextField valueTxt) {
+		double value = Double.parseDouble(Utility.parseParameter(valueTxt.getText(), mfe));
+		if (value >=0) {
+			return value;
+		} else {
+			return -1;
 		}
 	}
 }

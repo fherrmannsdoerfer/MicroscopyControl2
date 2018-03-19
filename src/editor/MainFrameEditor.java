@@ -41,6 +41,7 @@ import microscopeControl.MainFrame;
 import editorModulesDefinitions.AddSolutionFromVialToSampleGUI;
 import editorModulesDefinitions.AddWashingSolutionToSampleGUI;
 import editorModulesDefinitions.AddWashingSolutionToVialGUI;
+import editorModulesDefinitions.AutoFocusGUI;
 import editorModulesDefinitions.BreakPointGUI;
 import editorModulesDefinitions.CameraParametersGUI;
 import editorModulesDefinitions.CaptureWidefieldImageGUI;
@@ -58,17 +59,19 @@ import editorModulesDefinitions.PauseGUI;
 import editorModulesDefinitions.PerformMeasurmentGUI;
 import editorModulesDefinitions.PrepareMEABufferGUI;
 import editorModulesDefinitions.RemoveSolutionFromSampleGUI;
+import editorModulesDefinitions.RunPumpsGUI;
 import editorModulesDefinitions.StainingRobotCommandGUI;
 import editorModulesDefinitions.StartImageAcquisitionGUI;
 import editorModulesDefinitions.TransfereSolutionsFromVialToVial;
 import editorModulesDefinitions.VortexVialGUI;
 import editorModulesDefinitions.Wash3TimesWithPBSLS2GUI;
 import editorModulesDefinitions.WashSyringeGUI;
-
+//Main class behind the experiment editor. The GUI is created here. Also the handling of all button callbacks are managed within this class
 public class MainFrameEditor extends JDialog implements Serializable{
 	
 	transient private MainFrame mf;
 	private ArrayList<EditorModules> listProcessingStepPanels = new ArrayList<EditorModules>();
+	//controlerEditor takes care of the execution of the modules and find parameterTags
 	ControlerEditor controlerReference;
 	JPanel panel;
 	//JPanel optionPanel;
@@ -84,35 +87,44 @@ public class MainFrameEditor extends JDialog implements Serializable{
 	public StyleClass style = new StyleClass();
 	ButtonGroup bg = new ButtonGroup();
 	private boolean editorShouldBeRunning = true;
-		
+
+	JButton runButton;
+	JButton stopButton;
+	
+	//Default folder for saving and loading of module lists
 	File folder = new File(System.getProperty("user.home")+"//ExperimentEditor"); //Folder of savedPresettings
 	private final ArrayList<EditorModules> stainingRobotComboBoxOptions = new ArrayList<EditorModules>();
 	private final ArrayList<EditorModules> microscopeComboBoxOptions = new ArrayList<EditorModules>();
 	private final ArrayList<EditorModules> loopsComboBoxOptions = new ArrayList<EditorModules>();
+	
+	JMenuBar menuBar;
+	final JFileChooser settingsFileChooserLoad = new JFileChooser(folder);
+	final JFileChooser settingsFileChooserSave = new JFileChooser(folder);
 
 	public MainFrameEditor(final ControlerEditor controler, MainFrame mf) {
 		this.mf = mf;
-		setMinimumSize(style.getSizeEditor());
-		folder.mkdir();
-		optionPanel = new JPanel();
-		final JFileChooser settingsFileChooserLoad = new JFileChooser(folder);
-		final JFileChooser settingsFileChooserSave = new JFileChooser(folder);
-	
-		folder.mkdir();
 		this.controlerReference = controler;
-		outputActionListener = new OutputActionListener();
-		
-		//this.setBounds(0,0,1300,800);
-		getContentPane().setPreferredSize(style.getSizeEditor());
 		mfe = this;
+		//Create if necessary default folder in user.home directory
+		folder.mkdir();
+		setUpGUI();
+	}
+	
+	private void setUpComboboxes() {
+		outputActionListener = new OutputActionListener();
+		///////////////////////////////// set options to choose from for drop-down menus; creates empty GUI class objects with member name
 		
-		
-		//////////////////////////////////////////////////////////////////// set options to choose from for drop-down menus; creates empty GUI class objects with member name
-
+		//First Combobox contains all Files from the preselected tasks folder
+		File[] listOfFiles = folder.listFiles();		
+		for (int i = 0; i < listOfFiles.length; i++) {
+		if (listOfFiles[i].isFile()) {
+			optionsPreselectedTasksComboBoxAuto.add(listOfFiles[i].getName());
+			} 
+		}
+	
 		microscopeComboBoxOptions.add(new LaserControl());
 		microscopeComboBoxOptions.add(new StartImageAcquisitionGUI());
 		microscopeComboBoxOptions.add(new MoveStageGUI());
-		//microscopeComboBoxOptions.add(new IterableInputGUI());
 		microscopeComboBoxOptions.add(new CaptureWidefieldImageGUI());
 		microscopeComboBoxOptions.add(new PauseGUI());
 		microscopeComboBoxOptions.add(new FilterWheelGUI());
@@ -123,11 +135,12 @@ public class MainFrameEditor extends JDialog implements Serializable{
 		microscopeComboBoxOptions.add(new MoveFocalPlaneGUI());
 		microscopeComboBoxOptions.add(new PerformMeasurmentGUI());
 		microscopeComboBoxOptions.add(new BreakPointGUI());
-		
+		microscopeComboBoxOptions.add(new AutoFocusGUI());
 		
 		stainingRobotComboBoxOptions.add(new StainingRobotCommandGUI());
 		stainingRobotComboBoxOptions.add(new RemoveSolutionFromSampleGUI());
 		stainingRobotComboBoxOptions.add(new AddSolutionFromVialToSampleGUI());
+		stainingRobotComboBoxOptions.add(new RunPumpsGUI());
 		stainingRobotComboBoxOptions.add(new Wash3TimesWithPBSLS2GUI());
 		stainingRobotComboBoxOptions.add(new AddWashingSolutionToSampleGUI());
 		stainingRobotComboBoxOptions.add(new AddWashingSolutionToVialGUI());
@@ -140,14 +153,8 @@ public class MainFrameEditor extends JDialog implements Serializable{
 		loopsComboBoxOptions.add(new LoopROIsGUI());
 		loopsComboBoxOptions.add(new LoopIterableGUI());
 		
-		File[] listOfFiles = folder.listFiles();		
-	    for (int i = 0; i < listOfFiles.length; i++) {
-		if (listOfFiles[i].isFile()) {
-			optionsPreselectedTasksComboBoxAuto.add(listOfFiles[i].getName());
-			} 
-	    }
 		
-		
+		//Create Strings for the entries of the comboboxes
 		String[] optionsMicroscopeComboBox = new String[microscopeComboBoxOptions.size()];		
 		for (int i = 0; i < microscopeComboBoxOptions.size(); i++){
 			optionsMicroscopeComboBox[i] = microscopeComboBoxOptions.get(i).getFunctionName();
@@ -164,330 +171,191 @@ public class MainFrameEditor extends JDialog implements Serializable{
 			optionsStainingRobotComboBox[i] = stainingRobotComboBoxOptions.get(i).getFunctionName();
 		}
 		
-		JMenuBar menuBar = new JMenuBar();
-		this.setJMenuBar(menuBar);
-		JMenu fileMenu = new JMenu("File");
-		menuBar.add(fileMenu);
-		
-		JMenuItem loadSettingsButton = new JMenuItem("Load Settings");
-		fileMenu.add(loadSettingsButton);
-		
-		JMenuItem loadDefaultSettingsButton = new JMenuItem("Load Default Settings");
-		fileMenu.add(loadDefaultSettingsButton);
-		
-		loadDefaultSettingsButton.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {				
-				ArrayList<EditorModules> tempOrderList = new ArrayList<EditorModules>();
-				String settingsPath = "settings.default";
-				try {
-					FileInputStream fileInDefault = new FileInputStream(settingsPath);
-					ObjectInputStream inDefault = new ObjectInputStream(fileInDefault);
-					tempOrderList = (ArrayList<EditorModules>) inDefault.readObject();
-					inDefault.close();
-					fileInDefault.close();
-					System.out.println("loaded default");
-					listProcessingStepPanels.clear();
-					panel.removeAll();
-					optionPanel.removeAll();				
-					for (int i = 0; i < tempOrderList.size(); i++){						
-						EditorModules tempObject = tempOrderList.get(i);
-						listProcessingStepPanels.add(tempObject.getEditorModulesObject(tempObject, mfe));
-						listProcessingStepPanels.get(i).setSettings(tempOrderList.get(i).getSettings());
-					}				
-					updatePanels();
-					invalidate();
-					validate();
-//					revalidate();
-					repaint();					
-				} catch (FileNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}			
-		});
-		
-		loadSettingsButton.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("before loaded");
-				int returnVal = settingsFileChooserLoad.showOpenDialog(null);
-				System.out.println("loadSettingsButton");
-				if (returnVal == JFileChooser.APPROVE_OPTION){
-					loadPanels(settingsFileChooserLoad.getSelectedFile());
-				}
-			}
-		});
-		
-		JMenuItem importModulesButton = new JMenuItem("Import Modules");
-		fileMenu.add(importModulesButton);
-		importModulesButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				int returnVal = settingsFileChooserLoad.showOpenDialog(null);
-				System.out.println("loadSettingsButton");
-				if (returnVal == JFileChooser.APPROVE_OPTION){
-					importPanels(settingsFileChooserLoad.getSelectedFile());
-				}		
-			}
-			
-		});
-		
-		JMenuItem saveSettingsButton = new JMenuItem("Save Settings");
-		fileMenu.add(saveSettingsButton);
-		
-		JMenuItem saveDefaultSettingsButton = new JMenuItem("Save Default Settings");
-		fileMenu.add(saveDefaultSettingsButton);
-		
-		JButton runButton = new JButton("Start Processing");
-		runButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		menuBar.add(runButton);
-		
-		runButton.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Thread t = new Thread(){
-					@Override
-					public 
-					void run(){
-						editorShouldBeRunning = true;
-						controler.resetData();
-						controler.resetProgressBar(getListProcessingStepPanels());
-						String content = "-------------------------------------------------------------------------------------------------\n";
-						content += new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-						content = content + ":\nStart of processing.\n\n";
-						getMainFrameReference().writeToEditorLogfile(content);
-						controler.startProcessing(getListProcessingStepPanels());
-						content = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-						content = content + ":\nEnd of processing.-------------------------------------------------------------------------------------------------\n";
-						getMainFrameReference().writeToEditorLogfile(content);
-					}
-				};
-				t.start();
-			}			
-		});
-		
-		JButton stopButton = new JButton("Stop Processing");
-		stopButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		menuBar.add(stopButton);
-		
-		stopButton.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				stopEditor();
-			}			
-		});
-		
-		JButton checkValidity = new JButton("Check Validity");
-		checkValidity.setAlignmentX(Component.CENTER_ALIGNMENT);
-		menuBar.add(checkValidity);
-		
-		checkValidity.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				checkValidity();
-			}			
-		});
-		
-		saveDefaultSettingsButton.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				savePanels("settings.default");
-			}
-		});
-		
-		saveSettingsButton.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("before saved");
-				int saveVal = settingsFileChooserSave.showSaveDialog(null);
-				System.out.println("saveSettingsButton");
-				if (saveVal == JFileChooser.APPROVE_OPTION){
-					File file = settingsFileChooserSave.getSelectedFile();
-					savePanels(file.getAbsolutePath());
-				}				
-			}
-		});
-		
-		JMenuItem quit = new JMenuItem("Exit");
-		fileMenu.add(quit);
-		quit.addActionListener(new ActionListener(){
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-			
-		});
-		Box wholeEditorBox = Box.createHorizontalBox();
-		getContentPane().setLayout(new BorderLayout(0, 0));
-		getContentPane().add(wholeEditorBox);
-		
-		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
-		wholeEditorBox.add(horizontalStrut_1);
-		
-		Box availableModulesBox = Box.createVerticalBox();
-		availableModulesBox.setMaximumSize(style.getDimensionAvailableModules());
-		availableModulesBox.setMinimumSize(style.getDimensionAvailableModules());
-		wholeEditorBox.add(availableModulesBox);
-		
-		JLabel lblNewLabel_6 = new JLabel("Available Modules");
-		lblNewLabel_6.setAlignmentX(Component.CENTER_ALIGNMENT);
-		lblNewLabel_6.setFont(new Font("Tahoma", Font.BOLD, 20));
-		availableModulesBox.add(lblNewLabel_6);
-		
-		Component verticalStrut_3 = Box.createVerticalStrut(20);
-		availableModulesBox.add(verticalStrut_3);
-		
-		///////////////////////////////////////////////////////////////////
-		
-		
-		Box verticalBox_1 = Box.createVerticalBox();
-		availableModulesBox.add(verticalBox_1);
-		verticalBox_1.setMaximumSize(new Dimension(400, 99990));
-		
-		Box horizontalBox_5 = Box.createHorizontalBox();
-		verticalBox_1.add(horizontalBox_5);
-		
-		JLabel lblNewLabel_3 = new JLabel("Preselected Tasks");
-		horizontalBox_5.add(lblNewLabel_3);
-		
-		Component horizontalGlue_4 = Box.createHorizontalGlue();
-		horizontalBox_5.add(horizontalGlue_4);
 		
 		preselectionComboBox = new JComboBox(optionsPreselectedTasksComboBoxAuto.toArray());
 		preselectionComboBox.addActionListener(outputActionListener);
 		preselectionComboBox.setMaximumSize(new Dimension(32767, 22));
-		verticalBox_1.add(preselectionComboBox);		
 		
-		Component verticalStrut_2 = Box.createVerticalStrut(20);
-		verticalBox_1.add(verticalStrut_2);
-		
-		Box verticalBox_2 = Box.createVerticalBox();
-		verticalBox_2.setBorder(new TitledBorder(null, "Modules", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		verticalBox_1.add(verticalBox_2);
-		
-				
-		Box horizontalBox_3 = Box.createHorizontalBox();
-		verticalBox_2.add(horizontalBox_3);
-		
-		JLabel lblNewLabel_2 = new JLabel("Microscope Functions");
-		horizontalBox_3.add(lblNewLabel_2);
-		lblNewLabel_2.setAlignmentY(Component.TOP_ALIGNMENT);
 		microscopeFunctionsComboBox = new JComboBox(optionsMicroscopeComboBox);
 		microscopeFunctionsComboBox.addActionListener(outputActionListener);
-		
-		Component horizontalGlue_2 = Box.createHorizontalGlue();
-		horizontalBox_3.add(horizontalGlue_2);
-		verticalBox_2.add(microscopeFunctionsComboBox);
 		microscopeFunctionsComboBox.setMaximumSize(new Dimension(32767, 22));
-		
-		Component verticalStrut = Box.createVerticalStrut(20);
-		verticalBox_2.add(verticalStrut);
-		
-		Box horizontalBox_2 = Box.createHorizontalBox();
-		verticalBox_2.add(horizontalBox_2);
-		
-		JLabel lblNewLabel_1 = new JLabel("Staining Robot Functions");
-		horizontalBox_2.add(lblNewLabel_1);
-		
-		Component horizontalGlue_1 = Box.createHorizontalGlue();
-		horizontalBox_2.add(horizontalGlue_1);
 		
 		stainingRobotFunctionsComboBox = new JComboBox(optionsStainingRobotComboBox);
 		stainingRobotFunctionsComboBox.addActionListener(outputActionListener);
-		verticalBox_2.add(stainingRobotFunctionsComboBox);
 		stainingRobotFunctionsComboBox.setMaximumSize(new Dimension(32767, 22));
-		
-		Component verticalStrut_1 = Box.createVerticalStrut(20);
-		verticalBox_2.add(verticalStrut_1);
-		
-		Box horizontalBox_1 = Box.createHorizontalBox();
-		
-		
-		JLabel lblNewLabel = new JLabel("Loops");
-		lblNewLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		horizontalBox_1.add(lblNewLabel);
-		
-		Component horizontalGlue = Box.createHorizontalGlue();
-		horizontalBox_1.add(horizontalGlue);
-		verticalBox_2.add(horizontalBox_1);
 		
 		loopsComboBox = new JComboBox(optionsLoopsComboBox);
 		loopsComboBox.addActionListener(outputActionListener);
-		verticalBox_2.add(loopsComboBox);
 		loopsComboBox.setMaximumSize(new Dimension(32767, 22));
+	}
+	
+	
+	
+	private void setUpMenu() {
+		menuBar = new JMenuBar();
+		this.setJMenuBar(menuBar);
+		JMenu fileMenu = new JMenu("File");
 		
-		Component verticalGlue = Box.createVerticalGlue();
-		verticalBox_1.add(verticalGlue);
 		
-		Box verticalBox_5 = Box.createVerticalBox();
-		verticalBox_1.add(verticalBox_5);
+		JMenuItem loadSettingsButton = new JMenuItem("Load Settings");
+		JMenuItem loadDefaultSettingsButton = new JMenuItem("Load Default Settings");
+		JMenuItem importModulesButton = new JMenuItem("Import Modules");
+		JMenuItem saveSettingsButton = new JMenuItem("Save Settings");
+		JMenuItem saveDefaultSettingsButton = new JMenuItem("Save Default Settings");
 		
-		Box horizontalBox_6 = Box.createHorizontalBox();
-		verticalBox_5.add(horizontalBox_6);
+		fileMenu.add(loadSettingsButton);
+		fileMenu.add(loadDefaultSettingsButton);
+		fileMenu.add(importModulesButton);
+		fileMenu.add(saveSettingsButton);
+		fileMenu.add(saveDefaultSettingsButton);
 		
-		Component horizontalGlue_5 = Box.createHorizontalGlue();
-		horizontalBox_6.add(horizontalGlue_5);
+		loadDefaultSettingsButton.addActionListener(new LoadDefaultSettingActionListener());
+		loadSettingsButton.addActionListener(new LoadSettingActionListener());
+		importModulesButton.addActionListener(new ImportModulesActionListener());
+		saveDefaultSettingsButton.addActionListener(new SaveDefaultSettingActionListener());	
+		saveSettingsButton.addActionListener(new SaveSettingsButton());
 		
-		Box horizontalBox_7 = Box.createHorizontalBox();
-		verticalBox_5.add(horizontalBox_7);
+		runButton = new JButton("Start Processing");
+		runButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		runButton.addActionListener(new RunButtonActionListener());
 		
-		Component horizontalGlue_3 = Box.createHorizontalGlue();
-		horizontalBox_7.add(horizontalGlue_3);
+		stopButton = new JButton("Stop Processing");
+		stopButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		stopButton.addActionListener(new StopButtonActionListener());
 		
-		Component horizontalStrut = Box.createHorizontalStrut(20);
-		wholeEditorBox.add(horizontalStrut);
+		JButton checkValidity = new JButton("Check Validity");
+		checkValidity.setAlignmentX(Component.CENTER_ALIGNMENT);
+		checkValidity.addActionListener(new CheckValidityActionListener());
 		
+		menuBar.add(fileMenu);
+		menuBar.add(runButton);
+		menuBar.add(stopButton);
+		menuBar.add(checkValidity);
+	}
+		
+	private void setUpGUI() {
+		setMinimumSize(style.getSizeEditor());
+	
+		setUpComboboxes();
+		getContentPane().setPreferredSize(style.getSizeEditor());
+		setUpMenu();
+
+		JLabel titleAvailableModulesLabel = new JLabel("Available Modules");
+		titleAvailableModulesLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		titleAvailableModulesLabel.setFont(new Font("Tahoma", Font.BOLD, 20));
+				
+		Box preselectedTaskTagBox = Box.createHorizontalBox();
+		preselectedTaskTagBox.add( new JLabel("Preselected Tasks"));
+		preselectedTaskTagBox.add(Box.createHorizontalGlue());
+				
+		Box microscopeFunctionsTagBox = Box.createHorizontalBox();
+		microscopeFunctionsTagBox.add( new JLabel("Microscope Functions"));
+		microscopeFunctionsTagBox.add(Box.createHorizontalGlue());
+		
+		Box stainingRobotFunctionsTagBox = Box.createHorizontalBox();	
+		stainingRobotFunctionsTagBox.add(new JLabel("Staining Robot Functions"));		
+		stainingRobotFunctionsTagBox.add(Box.createHorizontalGlue());
+		
+		Box loopsTagBox = Box.createHorizontalBox();
+		loopsTagBox.add(new JLabel("Loops"));
+		loopsTagBox.add(Box.createHorizontalGlue());
+		
+		Box modulesSelectionBox = Box.createVerticalBox();
+		modulesSelectionBox.setBorder(new TitledBorder(null, "Modules", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		modulesSelectionBox.add(microscopeFunctionsTagBox);
+		modulesSelectionBox.add(microscopeFunctionsComboBox);
+		modulesSelectionBox.add(Box.createVerticalStrut(20));
+		modulesSelectionBox.add(stainingRobotFunctionsTagBox);
+		modulesSelectionBox.add(stainingRobotFunctionsComboBox);
+		modulesSelectionBox.add(Box.createVerticalStrut(20));
+		modulesSelectionBox.add(loopsTagBox);
+		modulesSelectionBox.add(loopsComboBox);
+
+		
+		Box blockOfComboboxes = Box.createVerticalBox();
+		
+		blockOfComboboxes.setMaximumSize(new Dimension(400, 99990));
+		blockOfComboboxes.add(preselectedTaskTagBox);
+		blockOfComboboxes.add(preselectionComboBox);
+		blockOfComboboxes.add(Box.createVerticalStrut(20));
+		blockOfComboboxes.add(modulesSelectionBox);
+		blockOfComboboxes.add(Box.createVerticalGlue());
+		
+		Box availableModulesBox = Box.createVerticalBox();
+		availableModulesBox.setMaximumSize(style.getDimensionAvailableModules());
+		availableModulesBox.setMinimumSize(style.getDimensionAvailableModules());
+		
+		availableModulesBox.add(titleAvailableModulesLabel);
+		availableModulesBox.add(Box.createVerticalStrut(20));
+		availableModulesBox.add(blockOfComboboxes);
+		
+		////create middle Column
+		Box selectedModulesBox = createSelecteModuleColumn();
+				
+		//create right column
+		Box parameterBox = createParameterSelection();
+		
+		//wholeEditorBox contains all elements of the editor GUI
+		Box wholeEditorBox = Box.createHorizontalBox();
+	
+		wholeEditorBox.add(Box.createHorizontalStrut(20));
+		wholeEditorBox.add(availableModulesBox);
+		wholeEditorBox.add(Box.createHorizontalStrut(20));
+		wholeEditorBox.add(selectedModulesBox);
+		wholeEditorBox.add(Box.createHorizontalStrut(20));
+		wholeEditorBox.add(parameterBox);
+				
+		getContentPane().setLayout(new BorderLayout(0, 0));
+		getContentPane().add(wholeEditorBox);
+	}
+	
+	Box createSelecteModuleColumn() {
 		Box selectedModulesBox = Box.createVerticalBox();
 		selectedModulesBox.setMaximumSize(style.getDimensionSelectedModules());
 		selectedModulesBox.setMinimumSize(style.getDimensionSelectedModules());
-		wholeEditorBox.add(selectedModulesBox);
 		
-		JLabel lblNewLabel_5 = new JLabel("Selected Modules");
-		lblNewLabel_5.setAlignmentX(Component.CENTER_ALIGNMENT);
-		lblNewLabel_5.setFont(new Font("Tahoma", Font.BOLD, 20));
-		selectedModulesBox.add(lblNewLabel_5);
-		
+		JLabel titelSelectedModulesLabel = new JLabel("Selected Modules");
+		titelSelectedModulesLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		titelSelectedModulesLabel.setFont(new Font("Tahoma", Font.BOLD, 20));
+
 		Component verticalStrut_4 = Box.createVerticalStrut(20);
-		selectedModulesBox.add(verticalStrut_4);
 		
 		panel = new RootPanel(this);
-		
-		wholeEditorBox.add(panel);
 		panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS));
 		JScrollPane scrollPane = new JScrollPane(panel);
-		selectedModulesBox.add(scrollPane);
+		
 		scrollPane.setPreferredSize(new Dimension(style.getWidthEditorModules()+60,1200));
 		scrollPane.setMinimumSize(new Dimension(style.getWidthEditorModules()+30,500));
 		scrollPane.setMaximumSize(new Dimension(style.getWidthEditorModules()+900,33200));
 		
+		selectedModulesBox.add(titelSelectedModulesLabel);
+		selectedModulesBox.add(verticalStrut_4);
+		selectedModulesBox.add(scrollPane);
+		
+		return selectedModulesBox;
+	}
+	
+	Box createParameterSelection() {
+		/// Right Column
+		optionPanel = new JPanel();
 		Box parameterBox = Box.createVerticalBox();
 		parameterBox.setMaximumSize(style.getDimensionParameters());
 		parameterBox.setMinimumSize(style.getDimensionParameters());
-		wholeEditorBox.add(horizontalStrut);
-		wholeEditorBox.add(parameterBox);
 		
-		JLabel lblNewLabel_4 = new JLabel("Parameter Selection");
-		lblNewLabel_4.setAlignmentX(Component.CENTER_ALIGNMENT);
-		lblNewLabel_4.setFont(new Font("Tahoma", Font.BOLD, 20));
-		parameterBox.add(lblNewLabel_4);
 		
+		JLabel titelParameterSelectionLabel = new JLabel("Parameter Selection");
+		titelParameterSelectionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		titelParameterSelectionLabel.setFont(new Font("Tahoma", Font.BOLD, 20));
 		Component verticalStrut_5 = Box.createVerticalStrut(20);
-		parameterBox.add(verticalStrut_5);
 		
-		optionPanel = new JPanel();
+		parameterBox.add(titelParameterSelectionLabel);
+		parameterBox.add(verticalStrut_5);
 		parameterBox.add(optionPanel);
 		optionPanel.setMinimumSize(mfe.style.getDimensionParameters());
-		
+		///Right Column
+		return parameterBox;
 	}
-		
+
 	protected void checkValidity() {
 		boolean valid = true;
 		ArrayList<Integer> positionList = new ArrayList<Integer>();
@@ -523,6 +391,7 @@ public class MainFrameEditor extends JDialog implements Serializable{
 	
 	public void stopEditor() {
 		editorShouldBeRunning = false;
+		runButton.setEnabled(true);
 	}
 	
 	public boolean getEditorShouldBeRunning() {
@@ -803,6 +672,9 @@ public class MainFrameEditor extends JDialog implements Serializable{
 		return mf;
 	}
 	
+	//////////////////////////////////////////Action Listener
+	
+	//Action listener to add modules once they are selected from the combobox
 	class OutputActionListener implements ActionListener{
 		
 		@Override
@@ -817,8 +689,128 @@ public class MainFrameEditor extends JDialog implements Serializable{
 		}
 	}
 	
+	class LoadDefaultSettingActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {				
+			ArrayList<EditorModules> tempOrderList = new ArrayList<EditorModules>();
+			String settingsPath = "settings.default";
+			try {
+				FileInputStream fileInDefault = new FileInputStream(settingsPath);
+				ObjectInputStream inDefault = new ObjectInputStream(fileInDefault);
+				tempOrderList = (ArrayList<EditorModules>) inDefault.readObject();
+				inDefault.close();
+				fileInDefault.close();
+				System.out.println("loaded default");
+				listProcessingStepPanels.clear();
+				panel.removeAll();
+				optionPanel.removeAll();				
+				for (int i = 0; i < tempOrderList.size(); i++){						
+					EditorModules tempObject = tempOrderList.get(i);
+					listProcessingStepPanels.add(tempObject.getEditorModulesObject(tempObject, mfe));
+					listProcessingStepPanels.get(i).setSettings(tempOrderList.get(i).getSettings());
+				}				
+				updatePanels();
+				invalidate();
+				validate();
+	//					revalidate();
+				repaint();					
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (ClassNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}			
+	}
+	
+	class LoadSettingActionListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("before loaded");
+			int returnVal = settingsFileChooserLoad.showOpenDialog(null);
+			System.out.println("loadSettingsButton");
+			if (returnVal == JFileChooser.APPROVE_OPTION){
+				loadPanels(settingsFileChooserLoad.getSelectedFile());
+			}
+		}
+	}
 	
 	
+	class ImportModulesActionListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			int returnVal = settingsFileChooserLoad.showOpenDialog(null);
+			System.out.println("loadSettingsButton");
+			if (returnVal == JFileChooser.APPROVE_OPTION){
+				importPanels(settingsFileChooserLoad.getSelectedFile());
+			}		
+		}
+	}
+	class SaveDefaultSettingActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			savePanels("settings.default");
+		}
+	}
+	
+	class SaveSettingsButton implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("before saved");
+			int saveVal = settingsFileChooserSave.showSaveDialog(null);
+			System.out.println("saveSettingsButton");
+			if (saveVal == JFileChooser.APPROVE_OPTION){
+				File file = settingsFileChooserSave.getSelectedFile();
+				savePanels(file.getAbsolutePath());
+			}				
+		}
+	}
+	
+	class RunButtonActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (mf.checkSpace(mf.getMinimalFreeSpaceForEditor())) {
+				Thread t = new Thread(){
+					@Override
+					public 
+					void run(){
+						editorShouldBeRunning = true;
+						controlerReference.resetData();
+						controlerReference.resetProgressBar(getListProcessingStepPanels());
+						String content = "-------------------------------------------------------------------------------------------------\n";
+						content += new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+						content = content + ":\nStart of processing.\n\n";
+						runButton.setEnabled(false);
+						getMainFrameReference().writeToEditorLogfile(content);
+						controlerReference.startProcessing(getListProcessingStepPanels());
+						content = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+						content = content + ":\nEnd of processing.\n-------------------------------------------------------------------------------------------------\n";
+						getMainFrameReference().writeToEditorLogfile(content);
+						runButton.setEnabled(true);
+					}
+				};
+				t.start();
+			}
+		}		
+	}
+	
+	class StopButtonActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			stopEditor();
+		}
+	}
+	
+	class CheckValidityActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			checkValidity();
+		}
+	}
 }
 
 

@@ -8,7 +8,7 @@ import editorModulesDefinitions.EndLoopGUI;
 import editorModulesDefinitions.LoopIterableGUI;
 import editorModulesDefinitions.LoopROIsGUI;
 
-
+//this class manages the execution of the individual modules and loops
 public class ControlerEditor implements Serializable{
 	MainFrameEditor mfe;
 	ArrayList<LoopModules> loopModules = new ArrayList<LoopModules>();

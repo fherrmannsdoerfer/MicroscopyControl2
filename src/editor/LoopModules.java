@@ -19,6 +19,8 @@ import javax.swing.JTextField;
 
 import editor.LoopModules.ParameterTag;
 
+//Loop modules inherit all properties of editorModules but extend this by methods that handle the dynamic creation
+//of parameter tags
 public abstract class LoopModules extends EditorModules{
 	private int currentIterationStep = 0;
 	private int nbrIterations;
@@ -46,6 +48,8 @@ public abstract class LoopModules extends EditorModules{
 	abstract public void perform();
 	abstract public void performIncrementalStep();
 	abstract public EditorModules getEndLoopModule(MainFrameEditor mfe);
+	
+	//return list of all parameterTags
 	public ArrayList<String> getParameterTags() {
 		ArrayList<String> al = new ArrayList<String>();
 		for (ParameterTag pt:parameterTags){
@@ -54,10 +58,12 @@ public abstract class LoopModules extends EditorModules{
 		return al;
 		//return iterationTag.getText();
 	}
+	
 	public void nextStep(){
 		currentIterationStep+=1;
 		setProgressbarValue(currentIterationStep*100/nbrIterations);	
 	}
+	
 	public int getCurrentIterationStep(){return (currentIterationStep%nbrIterations);}//the modulo is needed in case the for loop lies within a forloop to "reset" the counter
 	public int getNbrIterations(){return nbrIterations;}
 	public void setNbrIterations(int nbrIterations){this.nbrIterations = nbrIterations;}
@@ -66,6 +72,9 @@ public abstract class LoopModules extends EditorModules{
 		return this.parameterTags;
 	}
 	
+	//Parameter tags are defined like this %exampleTag%. The idea is to have a variable parameter within
+	//different runs of a loop. Each ParameterTags has a list of parameters, called parameterList which 
+	//holds the parameters like laser power for the respective iteration of the loop
 	public class ParameterTag extends JPanel implements Serializable{
 		JButton addParameterColumn = new JButton("Add New Param");
 		private ArrayList<ParameterColumn> parameterList = new ArrayList<ParameterColumn>();

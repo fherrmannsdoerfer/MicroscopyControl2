@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 
 import editor.EditorModules;
 import editor.MainFrameEditor;
-
+//for detailed comments look at performMeasurementGUI
 public class EndLoopGUI extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;

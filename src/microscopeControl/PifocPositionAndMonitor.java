@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -25,6 +26,7 @@ public class PifocPositionAndMonitor extends JPanel {
 	JSpinner spinner;
 	JCheckBox chkBoxFocusLock;
 	JComboBox comboBoxStepSize;
+	JButton autoFocus;
 	
 	public PifocPositionAndMonitor(MainFrame mf, Dimension minSize, Dimension prefSize, Dimension maxSize){
 		this.mf = mf;
@@ -42,7 +44,7 @@ public class PifocPositionAndMonitor extends JPanel {
 		spinner.setMaximumSize(new Dimension(70, 22));
 		spinner.addChangeListener(new SpinnerChangeListener());
 		
-		JLabel lblStepSize = new JLabel("Step size");
+		JLabel lblStepSize = new JLabel("Step Size");
 		
 		comboBoxStepSize = new JComboBox();
 		comboBoxStepSize.setMaximumSize(new Dimension(32767, 22));
@@ -52,7 +54,10 @@ public class PifocPositionAndMonitor extends JPanel {
 		comboBoxStepSize.addItem("1 nm");
 		((JLabel)comboBoxStepSize.getRenderer()).setHorizontalAlignment(SwingConstants.RIGHT);
 		comboBoxStepSize.addActionListener(new ComboBoxStepSizeActionListener());
-				
+		
+		autoFocus = new JButton("Auto Focus");
+		autoFocus.addActionListener(new AutoFocusActionListener());
+		
 		chkBoxFocusLock = new JCheckBox("Focus Lock");
 		chkBoxFocusLock.addActionListener(new FocusLockActionListener());
 		
@@ -61,6 +66,8 @@ public class PifocPositionAndMonitor extends JPanel {
 		horizontalBoxZStageControls.add(lblStepSize);
 		horizontalBoxZStageControls.add(Box.createHorizontalStrut(10));
 		horizontalBoxZStageControls.add(comboBoxStepSize);
+		horizontalBoxZStageControls.add(Box.createHorizontalGlue());
+		horizontalBoxZStageControls.add(autoFocus);
 		horizontalBoxZStageControls.add(Box.createHorizontalGlue());
 		horizontalBoxZStageControls.add(chkBoxFocusLock);
 		
@@ -105,6 +112,13 @@ public class PifocPositionAndMonitor extends JPanel {
 		}
 	};
 	
+	class AutoFocusActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			findAutoFocus(40,10,1);
+		}	
+	}
+	
 	class FocusLockActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
@@ -135,5 +149,66 @@ public class PifocPositionAndMonitor extends JPanel {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	//function that automatically finds the focus position defined by the focus lock and sets the zstage to that value
+	public boolean findAutoFocus(double upperBound, double lowerBound, double stepsize) {
+		
+		try {
+			for (double pifocPos = lowerBound; pifocPos<upperBound; pifocPos += stepsize) {
+				setFocusLockState(false);
+				Thread.sleep(200);
+				setZStagePosition(pifocPos);
+				Thread.sleep(200);
+				setFocusLockState(true);
+				boolean converged = focusConverges(lowerBound, upperBound, 0.1);
+				if (converged) {
+					setFocusLockState(false);
+					return true;
+				}
+			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	//this method is used to determine if the focus position settles within the lower and upper bound
+	//the tolerance is used as a measure for tolerated position fluctuations
+	private boolean focusConverges(double lowerBound, double upperBound, double tolerance) throws NumberFormatException, Exception {
+		double lastPos = getZStagePosition();
+		double currPos = -1;
+		Thread.sleep(200);
+		//this loop runs either until the current zstage position leaves its bounds or until it converges
+		boolean varSwitch = true;
+		while (true){
+			if (varSwitch) {
+				currPos = getZStagePosition();
+			} else {
+				lastPos = getZStagePosition();
+			}
+
+			if (currPos < lowerBound || currPos > upperBound) {
+				return false;
+			} else {
+				if (Math.abs(lastPos - currPos)<tolerance) {
+					return true;
+				}
+			}
+			Thread.sleep(100);
+			varSwitch = !varSwitch;
+		}
+	}
+	
+	public double getZStagePosition() throws NumberFormatException, Exception{
+		return Double.valueOf(mf.getCoreObject().getProperty(mf.getZObjectiveName(), "Position"));
+	}
+	
+	public void setZStagePosition(double position) throws Exception {
+		mf.getCoreObject().setProperty(mf.getZObjectiveName(), "Position",position);
 	}
 }

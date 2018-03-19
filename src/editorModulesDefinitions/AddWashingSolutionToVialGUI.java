@@ -11,7 +11,7 @@ import javax.swing.JTextField;
 import utility.Utility;
 import editor.EditorModules;
 import editor.MainFrameEditor;
-
+//for detailed comments look at performMeasurementGUI
 public class AddWashingSolutionToVialGUI extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;

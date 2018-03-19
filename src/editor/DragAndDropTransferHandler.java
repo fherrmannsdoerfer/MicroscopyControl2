@@ -1,5 +1,5 @@
 package editor;
-
+//needed for drag and drop
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DragSourceDragEvent;
 import java.awt.dnd.DragSourceMotionListener;

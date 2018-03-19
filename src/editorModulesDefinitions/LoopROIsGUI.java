@@ -18,7 +18,7 @@ import editor.EditorModules;
 import editor.LoopModules;
 import editor.MainFrameEditor;
 import editor.LoopModules.ParameterTag;
-
+//for detailed comments look at performMeasurementGUI
 public class LoopROIsGUI extends LoopModules{
 	
 	private static final long serialVersionUID = 1L;

@@ -16,11 +16,19 @@ import utility.Utility;
 import editor.EditorModules;
 import editor.MainFrameEditor;
 
-
+//find more detailed comments in this class
 public class PerformMeasurmentGUI extends EditorModules{
 	/**
 	 * 
 	 */
+	//In this part all member variables are defined
+	//JTextFields are objects where the user can type in numbers or chars
+	//In general all components have a type (JTextField, JCheckBox, etc) and
+	//a name (measurementPath, measurementTag, laserIndex, etc)
+	//A variable is created with the expression "type variablename" (e.g. JTextField measurementPath)
+	//on the right side of the equal sign the variable gets its content.
+	//e.g. new JTextField("test") creates an object of type JTextField with
+	//test written in the text field. All lines end with a semicolon.
 	private static final long serialVersionUID = 1L;
 	JTextField measurementPath = new JTextField("D:\\Measurements\\Default\\");
 	JTextField measurementTag = new JTextField("MessungX");
@@ -43,15 +51,25 @@ public class PerformMeasurmentGUI extends EditorModules{
 	JTextField focusMirrorPos = new JTextField("0");
 	JCheckBox enableUVLaserControl = new JCheckBox("Enable UV Laser Control");
 	JTextField minimalNbrBlinkingEvents = new JTextField("10");
-	
+	//MainFrameEditor reference to communicate with the rest of the editor and with 
+	//the MainFrame class from the microscopeControl software
+	//the transient property is needed to indicate that this part of the module is 
+	//not saved.
 	transient MainFrameEditor mfe;
+	//Name of the module which will be shown in the combobox and on the option button
 	private static String name = "Perform Measurement";
 	
+	//Constructor of this class. This code is executed whenever a new object of the type PerformMeasurementGUI is created
 	public PerformMeasurmentGUI(MainFrameEditor mfe) {
+		//first line in the constructor of a subclass must be the call for the constructor of the parent class
 		super(mfe);
+		//copy the MainFrameEditor reference to the member variable to be used within the module
 		this.mfe = mfe;
+		//set the text for the parameter button to be the same as the modules name
 		this.setParameterButtonsName(name);
+		//set the color for the module, get the information from the style class
 		this.setColor(mfe.style.getColorMicroscope());
+		//this sets the option panel which is created by the createOptionPanel() method
 		this.setOptionPanel(createOptionPanel());
 	}
 	
@@ -59,14 +77,32 @@ public class PerformMeasurmentGUI extends EditorModules{
 		
 	}
 	
+	//in this method the option panel is created. The option panel is what is shown in the right
+	//column of the experiment editor once the parameter button of a certain module is pressed.
+	//each module has its own option panel but in some cases the option panel is empty or does only
+	//contain text. All components have to be added in order to be displayed. 
 	private JPanel createOptionPanel(){
 		
+		//get the path of the calibration file for 3D astigmatism measurements from the MainFrame class
+		//of the microscope control software.
 		pathToCalib.setText(mfe.getMainFrameReference().getPathTo3DCalibrationFileRapidStorm());
+		//the local name of the variable of the option panel is retPanel which is created here 
 		JPanel retPanel = new JPanel();
-		retPanel.setLayout(new GridLayout(19,2,10,15));
+		//the layout is set to  GridLayout, which organizes the components in a table like fashion.
+		//the first parameter defines the number of rows, the second the number of columns, the third
+		//the horizontal gap between the individual components and the forth the vertical gap
+		//All components are filled in from left to right and from top to bottom.
+		//the number of added components should match the number of cells exactly
+		//All columns have the same width.
+		retPanel.setLayout(new GridLayout(21,2,10,15));
 		
+		//the first entry of the first row is added, in general the left column is used
+		//for labels the right column is used for the textfields and checkboxes
 		retPanel.add(new JLabel("Path:"));
+		//The width of the textfield is limited otherwise the column would expand with longer
+		//paths
 		Utility.setFormatTextFields(measurementPath, 120, 20, 5);
+		//The first textfield is added on the second column
 		retPanel.add(measurementPath);
 		retPanel.add(new JLabel("Measurement Tag:"));
 		retPanel.add(measurementTag);
@@ -74,6 +110,8 @@ public class PerformMeasurmentGUI extends EditorModules{
 		retPanel.add(movePosition);
 		retPanel.add(new JLabel("Target Position:"));
 		retPanel.add(targetPosition);
+		//Checkboxes have their own description therefore and empty label is added in order to 
+		//keep the structure of the table 
 		retPanel.add(new JLabel(""));
 		retPanel.add(moveFocus);
 		retPanel.add(new JLabel("Focus Mirror Position:"));
@@ -110,9 +148,12 @@ public class PerformMeasurmentGUI extends EditorModules{
 		retPanel.add(new JLabel("Minimal Nbr. Of BlinkingEvents:"));
 		retPanel.add(minimalNbrBlinkingEvents);
 		
-		
+		//whenever the move focus checkbox is selected the corresponding textfield should be active
+		//if the checkbox is not selected the focusMirrorPos textfield should be grey and disabled
+		//this behaviour is realized by adding ActionListener to the checkboxes. Whenever the checkbox
+		//is selected or deselected the actionPerformed method of the ActionListener is executed.
+		//in this case it simply switches the focusMirrorPos is enabled or disabled according to the state of the checkbox
 		moveFocus.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				focusMirrorPos.setEnabled(moveFocus.isSelected());
@@ -126,6 +167,7 @@ public class PerformMeasurmentGUI extends EditorModules{
 				targetPosition.setEnabled(movePosition.isSelected());
 			}
 		});
+		//this line selects the checkbox by default
 		movePosition.setSelected(true);
 		bleachSampleBeforeMeasurement.addActionListener(new ActionListener() {
 			@Override
@@ -158,17 +200,26 @@ public class PerformMeasurmentGUI extends EditorModules{
 		});
 		enableUVLaserControl.setSelected(false);
 		minimalNbrBlinkingEvents.setEnabled(false);
+		
+		//in the end the option panel gets returned and will be set as option panel
 		return retPanel;
 	}
 	
-			
+	//This method can be copied for new modules only the class name has to be altered (PerformMeasurementGUI must be changed in the name of the new class)	
 	@Override
 	public EditorModules getFunction(MainFrameEditor mfe) {
 		return new PerformMeasurmentGUI(mfe);
 	}
 
+	//This method is used to store the user set settings as an array of Strings
+	//all settings are expressed as Strings, the text fields in the obvious fashion
+	//for checkboxes the String selected is saved in the case of the selected checkbox
 	public String[] getSettings(){
+		//if the number of parameters is altered also the number of elements in the
+		//String array has to be adjusted. Each parameter and each checkbox counts as one
 		String[] tempString = new String[21];
+		//indexing starts at 0 so an array with 21 entries is composed of 
+		//tempString[0], tempString[1], ... , tempString[20]!
 		tempString[0] = measurementPath.getText();
 		tempString[1] = measurementTag.getText();
 		tempString[2] = targetPosition.getText();
@@ -222,7 +273,12 @@ public class PerformMeasurmentGUI extends EditorModules{
 		tempString[20] = minimalNbrBlinkingEvents.getText();
 		return tempString;
 	}
+	
+	//This function is used to recreate the option panel from the saved values
+	//all the parameters have to be filled in in the same variable as they were saved from
+	//otherwise parameters will get mixed up
 	public void setSettings(String[] tempString){
+		//For textfield the text is just overwritten with the saved text
 		measurementPath.setText(tempString[0]);
 		measurementTag.setText(tempString[1]);
 		targetPosition.setText(tempString[2]);
@@ -236,6 +292,8 @@ public class PerformMeasurmentGUI extends EditorModules{
 		nbrFrames.setText(tempString[10]);
 		pathToCalib.setText(tempString[11]);
 		cameraGain.setText(tempString[12]);
+		//for checkboxes there is a if-else block to either select or deselect the
+		//checkbox based on the stored state
 		if (tempString[13].equals("selected")){
 			bleachSampleBeforeMeasurement.setSelected(true);
 		}else {
@@ -244,6 +302,8 @@ public class PerformMeasurmentGUI extends EditorModules{
 		if (tempString[14].equals("selected")){
 			doSimultaneousReconstruction.setSelected(true);
 		}else {
+			//if action listener are connected to a checkbox and additional fields or
+			//checkboxes should be dissabled this is the place to to that
 			doSimultaneousReconstruction.setSelected(false);
 			recon3D.setEnabled(false);
 			movePosition.setEnabled(false);
@@ -269,12 +329,14 @@ public class PerformMeasurmentGUI extends EditorModules{
 		focusMirrorPos.setText(tempString[18]);
 		if (tempString[19].equals("selected")){
 			enableUVLaserControl.setSelected(true);
+			minimalNbrBlinkingEvents.setEnabled(true);
 		}else {
 			minimalNbrBlinkingEvents.setEnabled(false);
 		}
 		minimalNbrBlinkingEvents.setText(tempString[20]);
 	}
 
+	//this method can be copied when new modules are created but the classname has to be replaced with the new one
 	@Override
 	public EditorModules getEditorModulesObject(
 			EditorModules processingStepsPanelObject, MainFrameEditor mfe) {
@@ -285,16 +347,23 @@ public class PerformMeasurmentGUI extends EditorModules{
 		return null;
 	}
 
+	//this method can directly be copied, it will return the name of the module
 	@Override
 	public String getFunctionName() {
 		return name;
 	}
 
+	//special function only needed for the handling of coordinates, this does not have to be copied unless
+	//coordinates shall be processed
 	private double parseStageCoordinates(String coords, int index) {
 		String[] parts =coords.split("<->");
 		return Double.valueOf(parts[index]);
 	}
 
+	//this method initiates all the action once the module gets executed.
+	//in case of modules that control the microscope hardware only all instructions
+	//will be written in here. In this example there are many different tasks to perform
+	//for an easier example have a look at other modules from the "Microscope Functions" selection
 	@Override
 	public void perform() {
 		logTimeStart();
@@ -345,10 +414,14 @@ public class PerformMeasurmentGUI extends EditorModules{
 		}
 		//turn off laser
 		mfe.getMainFrameReference().setLaserIntensity(Integer.parseInt(Utility.parseParameter(laserIndex.getText(), mfe))-1, 0.1);
+		//and UV Laser
+		mfe.getMainFrameReference().setLaserIntensity(0, 0.1);
+		mfe.getMainFrameReference().setEnableUVControlState(false);
 		setProgressbarValue(100);
 		logTimeEnd();
 	}
 
+	//This method is used to do a coarse check for missing parameters 
 	@Override
 	public boolean checkForValidity() {
 		

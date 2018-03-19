@@ -8,7 +8,7 @@ import javax.swing.JTextField;
 import utility.Utility;
 import editor.EditorModules;
 import editor.MainFrameEditor;
-
+//for detailed comments look at performMeasurementGUI
 public class PauseGUI extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;
@@ -34,7 +34,7 @@ public class PauseGUI extends EditorModules{
 		Box verticalBox = Box.createVerticalBox();
 		
 		Box horizontalBox2 = Box.createHorizontalBox();
-		horizontalBox2.add(new JLabel("Duration of the pause in milliseconds:"));
+		horizontalBox2.add(new JLabel("Duration of the pause [seconds]:"));
 		horizontalBox2.add(Box.createHorizontalGlue());
 		verticalBox.add(horizontalBox2);
 		verticalBox.add(Box.createVerticalStrut(20));
@@ -84,7 +84,7 @@ public class PauseGUI extends EditorModules{
 	public void perform() {
 		logTimeStart();
 		try {
-			double duration = Long.parseLong(Utility.parseParameter(durationOfPause.getText(),mfe));
+			double duration = 1000*Long.parseLong(Utility.parseParameter(durationOfPause.getText(),mfe));
 			double interval = 100; //in ms
 			double elapsedTime = 0;
 			while (elapsedTime< duration - interval) {

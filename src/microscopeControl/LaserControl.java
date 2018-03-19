@@ -19,6 +19,7 @@ import java.util.Arrays;
 
 import javax.swing.border.TitledBorder;
 
+//
 public class LaserControl extends JPanel {
 	CMMCore core;
 
@@ -51,12 +52,16 @@ public class LaserControl extends JPanel {
 		String[] laserNames = mf.getLaserNames();
 		String[] laserWavelengths = mf.getLaserWavelengths();
 		
+		//at this point the 4 laser Panels are created. Each panel needs a name and a wavelength which is stored in
+		//the arrays laserNames and laserWavelengths. These arrays are defined in MainFrame.
+		//the widgets for the 4 individual laser are directly added to laserPanel which is a list of all lasers
 		for (int i =0; i<laserNames.length;i++){
 			laserPanels.add(new LaserPanel(mf,laserNames[i],laserWavelengths[i]));
 		}
 		
 		Component horizontalGlue = Box.createHorizontalGlue();
 		
+		//add widgets to the Laser Control GUI. without this line the laser panels would not be displayed
 		for (int i = 0; i<laserNames.length; i++){
 			horizontalBox.add(laserPanels.get(i));
 			horizontalBox.add(horizontalGlue);

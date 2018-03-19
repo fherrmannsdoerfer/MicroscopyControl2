@@ -11,11 +11,9 @@ import javax.swing.JTextField;
 
 import editor.EditorModules;
 import editor.MainFrameEditor;
-
+//for detailed comments look at performMeasurementGUI
 public class CommentaryBarGUI extends EditorModules{
-
 	
-		
 	private static final long serialVersionUID = 1L;
 	private EditorModules beginLoop;
 	private static String name = "Commentary Function";

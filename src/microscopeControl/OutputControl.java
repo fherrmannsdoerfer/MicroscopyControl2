@@ -118,5 +118,7 @@ public class OutputControl {
 		}	
 	}
 	
-	
+	static double getFreeSpaceInGB(String harddrive) {
+		return (new File(harddrive)).getFreeSpace()/1e9/1.024;
+	}
 }

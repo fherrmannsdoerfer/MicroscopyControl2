@@ -51,17 +51,29 @@ public class MainFrame extends JFrame {
 	//name of the hardware set in Micro-Manager
 	private String camName = "iXon Ultra";
 	private String zObjectiveName = "FocusLocPIZMotorObjective";
-	private String xyStageName = "PIXYStage";
+	private String xyStageName = "SmaractXY";
 	//Stage directly mounted on the xy stage
 	private String zStageName = "PIZStage";
 	private String mirrorFocuslock = "SmaractZSpiegel";
 	private String filterWheelName = "Thorlabs Filter Wheel";
 	private String[] filterNames = {"488 no UV", "561 no UV", "660", "488", "561", "free"};
+	//name specified in Micro Manager
 	private String[] laserNames = {"CoherentCube405","CoherentObis488","CoherentObis561","CoherentCube661"};
 	
 	//Wavelengths of the used lasers
 	private String[] laserWavelengths = {"405 nm", "488 nm", "561 nm","661 nm"};
 	private int indexOfUVLaser = 0;
+	
+	//minimal tolerated error for free disk memory in GB
+	private double minimalFreeSpaceForSingleMeasurement = 16;
+	private double minimalFreeSpaceForEditor = 200;
+	
+	//shift from center sample to objective
+	//for the case that the center of the sample does not match with the center of the objective
+	//this values can be used to reset the origin for the tilescan function and for the move to 
+	//command from the StageControl class
+	private double xShiftCenterSampleToObjective = 0;
+	private double yShiftCenterSampleToObjective = 0;
 	
 	//central object to control all hardware
 	CMMCore core;
@@ -69,7 +81,7 @@ public class MainFrame extends JFrame {
 	//contains for example information about the position lists
 	ScriptInterface app;
 	
-	//objects for all widgets
+	//objects for all widgets 
 	CameraWorker camWorker;
 	XYStageWorker xyStageWorker;
 	CameraParameter camParam;
@@ -128,6 +140,8 @@ public class MainFrame extends JFrame {
 		this.setBounds(100,00,972,1130);
 		this.setResizable(false);
 		contentPane = new JPanel();
+		//initialize individual widgets (small windows e.g. for camera parameters). Every part of the GUI from microscope control
+		//is organized in these widgets
 		statusCon = new StatusDisplayControl(this);
 		camWorker = new CameraWorker(this);
 		xyStageWorker = new XYStageWorker(this);
@@ -185,8 +199,9 @@ public class MainFrame extends JFrame {
 		filterWheelCon.setFilterInitially(2);
 		//set zstage (the large on on top of the xy stage) by default to 100
 		try {
-			core.setProperty(zStageName, "Position",100);
-			core.setProperty(zObjectiveName, "Position",25);
+			//core.setProperty(zStageName, "Position",100);
+			pifocCon.setZStagePosition(25);
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -233,7 +248,7 @@ public class MainFrame extends JFrame {
 	//function calls from ROISettings
 	public int getSelectedChannel(){return roiSet.getSelectedChannel();}
 	
-	public double getZStagePosition() throws NumberFormatException, Exception{return Double.valueOf(core.getProperty(zObjectiveName, "Position"));}
+	public double getZStagePosition() throws NumberFormatException, Exception {return pifocCon.getZStagePosition();}
 	public void setZStagePosition(double val) throws Exception {core.setProperty(zObjectiveName, "Position",val);}
 	
 	public void setAction(String action) {statusCon.setAction(action);}
@@ -345,8 +360,10 @@ public class MainFrame extends JFrame {
 	}
 
 	public XYStagePosition getXYStagePosition() {return xyStageWorker.getXYStagePosition();}
+	public XYStagePosition getXYStagePositionShifted() {return xyStageWorker.getXYStagePositionShifted();}
 
 	public void moveXYStage(double xPos, double yPos) {xyStageWorker.moveTo(xPos,yPos);}
+	public void moveXYStageShiftedCoordinates(double xPosWrong, double yPosWrong) {xyStageWorker.moveToShiftedCoordinates(xPosWrong, yPosWrong);}
 	
 	WindowListener main_window_WindowListener =new WindowAdapter() {
 		@Override
@@ -483,4 +500,30 @@ public class MainFrame extends JFrame {
 	
 	public void setEnableUVControlState(boolean state) {laserCon.setEnableUVControlState(state);}
 	public void setMinimalBlinkingNbr(int nbr) {laserCon.setBlinkingNumber(nbr);}
+
+	public double getXShift() {return xShiftCenterSampleToObjective;}
+	public double getYShift() {return yShiftCenterSampleToObjective;}
+	
+	public double getFreeSpaceInGB(String harddrive) {return OutputControl.getFreeSpaceInGB(harddrive);}
+	public boolean checkSpace(double minimalValue) {return Utility.checkSpace(getPath(), minimalValue, this);}
+
+	public double getMinimalFreeSpaceForSingleMeasurement() {
+		return minimalFreeSpaceForSingleMeasurement;
+	}
+
+	public void setMinimalFreeSpaceForSingleMeasurement(double minimalFreeSpaceForSingleMeasurement) {
+		this.minimalFreeSpaceForSingleMeasurement = minimalFreeSpaceForSingleMeasurement;
+	}
+
+	public double getMinimalFreeSpaceForEditor() {
+		return minimalFreeSpaceForEditor;
+	}
+
+	public void setMinimalFreeSpaceForEditor(double minimalFreeSpaceForEditor) {
+		this.minimalFreeSpaceForEditor = minimalFreeSpaceForEditor;
+	}
+
+	public void findFocus(double upperBound, double lowerBound, double stepsize) {
+		pifocCon.findAutoFocus(upperBound, lowerBound, stepsize);
+	}
 }

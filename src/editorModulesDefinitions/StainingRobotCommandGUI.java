@@ -8,7 +8,7 @@ import javax.swing.JTextField;
 import utility.Utility;
 import editor.EditorModules;
 import editor.MainFrameEditor;
-
+//for detailed comments look at performMeasurementGUI
 public class StainingRobotCommandGUI extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;

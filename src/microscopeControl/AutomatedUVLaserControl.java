@@ -16,6 +16,10 @@ import utility.Utility;
 import mmcorej.CMMCore;
 
 //Creates the panel to turn the automated UV laser power increment on
+//this class only provides the interface to couple the power of the UV laser
+//to the number of currently blinking fluorophores per frame. The order to do so and
+//the methods to decide whether or not to increase the laser power are located
+//in the LaserControl class
 public class AutomatedUVLaserControl extends JPanel {
 	JTextField textTargetBlinkingEventsPerFrame;
 	JLabel lblBlinkingEventsPerFrame;

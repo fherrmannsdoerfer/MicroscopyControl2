@@ -13,9 +13,10 @@ import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
 
-//Provides buttons to control the camere
+//Provides buttons to control the camera
 //start, stop image acquisition and live preview
 //and capture Widefield image
+//The actual work is done by the cameraWorker class
 public class CameraControl extends JPanel {
 
 	MainFrame mf;
@@ -55,7 +56,7 @@ public class CameraControl extends JPanel {
 			this.add(btnCaptureSingleImage);
 			
 	}
-	
+	//Action Listener for buttons
 	class BtnStartAcquisitionActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
@@ -103,6 +104,7 @@ public class CameraControl extends JPanel {
 		}
 	};
 
+	//Methods to set the button states from outside
 	public void setStartAcquisitionButtonState(boolean state) {this.btnStartAcquisition.setEnabled(state);}
 	public void setStopAcquisitionButtonState(boolean state) {this.btnStopAcquisition.setEnabled(state);}
 	public void setStartLivePreviewButtonState(boolean state) {this.btnStartLivePreview.setEnabled(state);}

@@ -3,6 +3,7 @@ package editorModulesDefinitions;
 import java.awt.GridLayout;
 
 import javax.swing.Box;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -10,15 +11,18 @@ import javax.swing.JTextField;
 import utility.Utility;
 import editor.EditorModules;
 import editor.MainFrameEditor;
+
 //for detailed comments look at performMeasurementGUI
-public class RemoveSolutionFromSampleGUI extends EditorModules{
+public class AutoFocusGUI extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;
-	JTextField volumePerSpot = new JTextField("200");
 	transient MainFrameEditor mfe;
-	private static String name = "RemoveSolutionFromSample";
+	private static String name = "AutoFocus";
+	private JTextField upperBound = new JTextField("38");
+	private JTextField lowerBound = new JTextField("12");
+	private JTextField stepSize = new JTextField("2");
 	
-	public RemoveSolutionFromSampleGUI(MainFrameEditor mfe) {
+	public AutoFocusGUI(MainFrameEditor mfe) {
 		super(mfe);
 		this.mfe = mfe;
 		this.setParameterButtonsName(name);
@@ -26,63 +30,74 @@ public class RemoveSolutionFromSampleGUI extends EditorModules{
 		this.setOptionPanel(createOptionPanel());
 	}
 	
-	public RemoveSolutionFromSampleGUI(){
+	public AutoFocusGUI(){
 		
 	}
 	
 	private JPanel createOptionPanel(){
 		JPanel retPanel = new JPanel();
-		retPanel.setLayout(new GridLayout(1, 2,60,15));
-		retPanel.add(new JLabel("Volume Per Spot [Microliter]:"));
-		retPanel.add(volumePerSpot);
+		retPanel.setLayout(new GridLayout(3,2,60,15));
+		retPanel.add(new JLabel("Upper Bound [Micrometers]:"));
+		retPanel.add(upperBound);
+		retPanel.add(new JLabel("Lower Bound [Micrometers]:"));
+		retPanel.add(lowerBound);
+		retPanel.add(new JLabel("Stepsize"));
+		retPanel.add(stepSize);
 		return retPanel;
 	}
 	
 	
 	@Override
 	public EditorModules getFunction(MainFrameEditor mfe) {
-		return new RemoveSolutionFromSampleGUI(mfe);
+		return new AutoFocusGUI(mfe);
 	}
 
 	@Override
 	public String[] getSettings() {
-		String[] tempString = new String[1];
-		tempString[0] = volumePerSpot.getText();
+		String[] tempString = new String[3];
+		tempString[0] = upperBound.getText();
+		tempString[1] = lowerBound.getText();
+		tempString[2] = stepSize.getText();
 		return tempString;
 	}
+	
 
 	@Override
 	public void setSettings(String[] tempString) {
-		volumePerSpot.setText(tempString[0]);
+		upperBound.setText(tempString[0]);
+		lowerBound.setText(tempString[1]);
+		stepSize.setText(tempString[2]);
 	}
 
+	
 	@Override
 	public EditorModules getEditorModulesObject(
 			EditorModules processingStepsPanelObject, MainFrameEditor mfe) {
-		if (processingStepsPanelObject instanceof RemoveSolutionFromSampleGUI){
-			RemoveSolutionFromSampleGUI returnObject = new RemoveSolutionFromSampleGUI(mfe);
+		if (processingStepsPanelObject instanceof AutoFocusGUI){
+			AutoFocusGUI returnObject = new AutoFocusGUI(mfe);
 			return returnObject;
 		}
 		return null;
 	}
+	
 
 	@Override
 	public String getFunctionName() {
 		return name;
 	}
+			
 
-	
 	@Override
 	public void perform() {
 		logTimeStart();
-		Utility.createSampleListForSolutionRemoval(getVolumePerSpot(volumePerSpot), mfe.getMainFrameReference().getXYStagePosition(),mfe.getMainFrameReference().getPathToExchangeFolder());
+		mfe.getMainFrameReference().findFocus(getPositiveValue(upperBound),getPositiveValue(lowerBound),getPositiveValue(stepSize));
 		setProgressbarValue(100);
 		logTimeEnd();
 	}
 
 	@Override
 	public boolean checkForValidity() {
-		if (getVolumePerSpot(volumePerSpot)==-1) {
+		if (getPositiveValue(upperBound)==-1|| getPositiveValue(lowerBound)==-1||getPositiveValue(stepSize)==-1) {
 			return false;
 		}
 		return true;

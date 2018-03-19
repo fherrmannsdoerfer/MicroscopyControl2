@@ -17,7 +17,7 @@ import utility.Utility;
 import mmcorej.CMMCore;
 
 
-//Class that does all the camera related tasks like image acquisition
+//Class that does all the camera related tasks like image acquisition or the capturing of widefield images
 public class CameraWorker  {
 	private MainFrame mf;
 	private String cameraName;
@@ -101,9 +101,10 @@ public class CameraWorker  {
 		livePreviewThread.start();
 	}
 
+	//this method first checks if it 
 	public void startSequenceAcquisition(boolean applyChecks) {
 		if (applyChecks) {
-			if (checkAcquisitionSettings()){
+			if (checkAcquisitionSettings()&& mf.checkSpace(mf.getMinimalFreeSpaceForSingleMeasurement())){
 				prepareAcquisition();
 			}
 			else{
@@ -319,8 +320,8 @@ public class CameraWorker  {
 		 }
 		 @Override
 		 public void run(){
-			 String basename1 = findBasename(path+"\\"+measurementTag+"\\LeftChannel\\", stackCounter);
-			 String basename2 = findBasename(path+"\\"+measurementTag+"\\RightChannel\\", stackCounter);
+			 String basename1 = findBasename(path+"\\"+measurementTag+"\\LeftChannel\\", stackCounter,"LeftChannel");
+			 String basename2 = findBasename(path+"\\"+measurementTag+"\\RightChannel\\", stackCounter,"RightChannel");
 			   
 			 //String basename1 = "LeftChannel"+measurementTag+"pt"+String.format("%03d", stackCounter);
 			 String pathTiffFile1 = path+"\\"+measurementTag+"\\LeftChannel\\"+basename1+".tif";
@@ -355,11 +356,11 @@ public class CameraWorker  {
 		 //in case of multiple measurements with the same output folder, 
 		 //check if the file already exists and increase the counter until
 		 //a new filename is generated
-		 String findBasename(String outputPath, int counter) {
+		 String findBasename(String outputPath, int counter, String channel) {
 			 String basename;
 			 String pathTiffFile;
 			 do {
-				 basename = "LeftChannel"+measurementTag+"pt"+String.format("%03d", counter);
+				 basename = channel + measurementTag+"pt"+String.format("%03d", counter);
 				 pathTiffFile = path+"\\"+measurementTag+"\\LeftChannel\\"+basename+".tif";
 				 counter = counter + 1;
 			 } while (new File(pathTiffFile).exists());

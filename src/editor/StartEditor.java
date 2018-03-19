@@ -8,7 +8,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import microscopeControl.MainFrame;
-
+//class to start the editor for test purposes, microscope control is started as well
+//but no functionality that needs hardware components like the ROILoop work
 
 public class StartEditor {
 	static ControlerEditor controler;

@@ -19,7 +19,8 @@ import dataTypes.CameraParameters;
 import utility.Utility;
 import mmcorej.CMMCore;
 
-
+//this class provides the interface to enter parameters for the camera like exposure time or gain
+//This class is also used to store this parameters and display them during execution of the experiment editor
 public class CameraParameter extends JPanel {
 	//boolean used to terminate the TimeLoop thread
 	boolean threadShouldStayRunning = true;
@@ -209,7 +210,7 @@ public class CameraParameter extends JPanel {
 	public CameraParameters getCameraParameter(){
 		return new CameraParameters(getExposureTime(), getEmGain(), getFrameNumber(), isShutterOpen());
 	}
-
+//method used to set the camera parameters from outside (Experiment editor)
 	public void setCameraParameters(CameraParameters camParam){
 		setEmGain(camParam.getEmGain());
 		setExposureTime(camParam.getExposureTime());

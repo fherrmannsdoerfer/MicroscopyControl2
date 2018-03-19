@@ -11,12 +11,13 @@ import utility.Utility;
 import editor.EditorModules;
 import editor.MainFrameEditor;
 import microscopeControl.MainFrame;
-
+//for detailed comments look at performMeasurementGUI
 public class MeasurementTagGUI extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;
 	JTextField measurementTag = new JTextField("");
 	JTextField pathField = new JTextField("");
+	JTextField comments = new JTextField("");
 	transient MainFrame mf;
 	private static String name = "Output Control";
 	transient MainFrameEditor mfe;
@@ -37,14 +38,16 @@ public class MeasurementTagGUI extends EditorModules{
 	
 	private JPanel createOptionPanel(){
 		JPanel retPanel = new JPanel();
-		retPanel.setLayout(new GridLayout(4, 1,6,15));
+		retPanel.setLayout(new GridLayout(6, 1,6,15));
 		retPanel.add(new JLabel("Path:"));
 		Utility.setFormatTextFields(pathField, 200, 20, 50);
 		retPanel.add(pathField);
-		
 		retPanel.add(new JLabel("Measurement tag:"));
 		Utility.setFormatTextFields(measurementTag, 200, 20, 50);
 		retPanel.add(measurementTag);
+		retPanel.add(new JLabel("Comments:"));
+		Utility.setFormatTextFields(comments, 200, 20, 50);
+		retPanel.add(comments);
 		
 		return retPanel;
 	}
@@ -57,9 +60,10 @@ public class MeasurementTagGUI extends EditorModules{
 
 	@Override
 	public String[] getSettings() {
-		String[] tempString = new String[2];
+		String[] tempString = new String[3];
 		tempString[0] = pathField.getText();
 		tempString[1] = measurementTag.getText();
+		tempString[2] = comments.getText();
 		return tempString;
 	}
 
@@ -67,6 +71,7 @@ public class MeasurementTagGUI extends EditorModules{
 	public void setSettings(String[] tempString) {
 		pathField.setText(tempString[0]);
 		measurementTag.setText(tempString[1]);
+		comments.setText(tempString[2]);
 	}
 
 	@Override

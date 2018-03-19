@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JPanel;
-
+//class used for drag and drop functionality
 class PanelDropTargetListener implements DropTargetListener {
 
     private final RootPanel rootPanel;

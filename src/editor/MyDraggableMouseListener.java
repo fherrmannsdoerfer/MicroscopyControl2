@@ -1,5 +1,5 @@
 package editor;
-
+//class used for drag and drop functionality
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
