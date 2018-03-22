@@ -19,17 +19,20 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
+import org.apache.commons.math3.util.Precision;
+
 import dataTypes.XYStagePosition;
 import utility.Utility;
 
 public class StageControl extends JPanel {
 	
 	double pixelSizeX = .129;
-	double pixelSizeY = .129; //with 3d lense 122 nm
+	double pixelSizeY = .122; //with 3d lense 122 nm
 	MainFrame mf;
 	
 	JButton btnSetUpperLeft;
 	JButton btnSetLowerRight;
+	JCheckBox chkBoxAnnotate;
 	JComboBox comboBoxOverlap;
 	JLabel lblUpperLeft;
 	JLabel lblLowerRight;
@@ -68,6 +71,7 @@ public class StageControl extends JPanel {
 		btnStartTileScan.addActionListener(new BtnStartTileScan_ActionListener());
 		btnStopTileScan = new JButton("Stop Tile Scan");
 		btnStopTileScan.addActionListener(new BtnStopTileScan_ActionListener());
+		chkBoxAnnotate = new JCheckBox("Annotate");
 		comboBoxOverlap = new JComboBox();
 		for (int i = 0; i< percentageOverlap.length; i++){
 			comboBoxOverlap.addItem(percentageOverlap[i]+" Percent");
@@ -77,7 +81,7 @@ public class StageControl extends JPanel {
 		tileScan.add(lblUpperLeft);
 		tileScan.add(btnSetLowerRight);
 		tileScan.add(lblLowerRight);
-		tileScan.add(new JLabel("Overlap:"));
+		tileScan.add(chkBoxAnnotate);
 		tileScan.add(comboBoxOverlap);
 		tileScan.add(btnStartTileScan);
 		tileScan.add(btnStopTileScan);
@@ -196,9 +200,13 @@ public class StageControl extends JPanel {
 					double xPos = upperLeftCorner.getxPos() + x * pixelSizeX * (256-overlapInPixelsX);
 					double yPos = upperLeftCorner.getyPos() - y * pixelSizeY * (512-overlapInPixelsY);
 					mf.moveXYStageShiftedCoordinates(xPos,yPos);
+					//mf.moveXYStage(xPos, yPos);
 					try {
-						Thread.sleep((long) (200+mf.getExposureTime()));
 						ImagePlus temp = mf.captureImage();
+						Thread.sleep((long) (10+mf.getExposureTime()));
+						if (chkBoxAnnotate.isSelected()) {
+							temp = Utility.annotateImage(temp, xPos,yPos);
+						}
 						mf.showCurrentImage(temp);
 						tileScanImages[x][y] = temp;
 					} catch (InterruptedException e) {
@@ -216,5 +224,6 @@ public class StageControl extends JPanel {
 				OutputControl.saveSingleImage(stichedImage, mf.getOutputFolder()+"stichedImage.tif");
 			}
 		}
+		
 	}
 }

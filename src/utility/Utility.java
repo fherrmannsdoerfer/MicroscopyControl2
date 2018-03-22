@@ -22,6 +22,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
+import org.apache.commons.math3.util.Precision;
+
 import dataTypes.ROIParameters;
 import dataTypes.XYStagePosition;
 import editor.MainFrameEditor;
@@ -142,7 +144,7 @@ public class Utility implements Serializable {
 		for (int xsmall =startPixelX, xPos = 0;xsmall <(startPixelX+widthCoreRegion);xsmall++, xPos++){
 			for (int ysmall =startPixelY, yPos = 0;ysmall <(startPixelY+heightCoreRegion);ysmall++,yPos++){
 				if (correctIntensities) {
-					weight[xsmall][ysmall] = 1./Math.exp(-(Math.pow((xsmall-128), 2)+Math.pow(ysmall-256, 2))/(2*260*260));
+					weight[xsmall][ysmall] = 1./Math.exp(-(Math.pow((xsmall-128), 2)+Math.pow(ysmall-256, 2))/(2*325*325));
 				} else {
 					weight[xsmall][ysmall]=1;
 				}
@@ -250,13 +252,15 @@ public class Utility implements Serializable {
 
 	public static void createSampleListForSolutionAdding(int vialNumber, int volume, boolean useLS2, boolean vortex, int vortexVolume, int vortexCycle, XYStagePosition xyStagePosition, String pathToExchangeFolder) {
 		String template;
-		if (useLS2) {
+		if (useLS2 && vortex) {
 			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromVialTokenVialPositionVolumeShiftXShiftYFillStrokesFillVolumeLS2.csl");
-		} else {
-			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromVialTokenVialPositionVolumeShiftXShiftYFillStrokesFillVolumeLS1.csl");
+		} else if(useLS2 &&!vortex) {
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromVialTokenVialPositionVolumeShiftXShiftYFillVolumeLS2.csl");
 		}
-		if (!vortex) {
-			vortexCycle = 0;
+		else if (!useLS2 && vortex) {
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromVialTokenVialPositionVolumeShiftXShiftYFillStrokesFillVolumeLS1.csl");
+		} else {
+			template = OutputControl.readFile("C:\\Users\\Public\\Documents\\Chronos\\Sample lists\\FinalSampleLists\\TemplateSolutionPlacementFromVialTokenVialPositionVolumeShiftXShiftYFillVolumeLS1.csl");
 		}
 		
 		String toReplaceVortexVolume = ">tokenVortexVolume<";
@@ -545,4 +549,162 @@ public class Utility implements Serializable {
 		
 	}
 	
+	//function to write black numbers close to the center of an ImagePlus
+	public static ImagePlus annotateImage(ImagePlus temp, double xPos, double yPos) {
+		int spaceX = 2;
+		int spaceY = 3;
+		int startX =128;
+		int startY = 256;
+		xPos = Precision.round(xPos,0);
+		yPos = Precision.round(yPos,0);
+		double[] positions = {xPos,yPos};
+		int[] valuesX ={1,0,1,
+						1,0,1,
+						0,1,0,
+						1,0,1,
+						1,0,1};
+		int[] valuesY = {1,0,1,
+						1,0,1,
+						0,1,0,
+						0,1,0,
+						0,1,0};
+		int[] valuesDouble = {0,0,0,
+							0,1,0,
+							0,0,0,
+							0,1,0,
+							0,0,0};
+		int[] valuesMinus = {	0,0,0,
+								0,0,0,
+								1,1,1,
+								0,0,0,
+								0,0,0};
+		int[] valuesPlus = {	0,0,0,
+								0,1,0,
+								1,1,1,
+								0,1,0,
+								0,0,0};
+		int[] values0 = {1,1,1,
+					    1,0,1,
+					    1,0,1,
+					    1,0,1,
+					    1,1,1};
+		int[] values1 = {0,0,1,
+						 0,1,1,
+						 0,0,1,
+						 0,0,1,
+						 0,0,1};
+		int[] values2 = {1,1,1,
+						 0,0,1,
+						 1,1,1,
+						 1,0,0,
+						 1,1,1};
+		int[] values3 ={1,1,1,
+				 		0,0,1,
+				 		1,1,1,
+				 		0,0,1,
+				 		1,1,1};
+		int[] values4 ={1,0,1,
+		 				1,0,1,
+		 				1,1,1,
+		 				0,0,1,
+		 				0,0,1};
+		int[] values5 ={1,1,1,
+		 				1,0,0,
+		 				1,1,1,
+		 				0,0,1,
+		 				1,1,1};
+		int[] values6 ={1,1,1,
+		 				1,0,0,
+		 				1,1,1,
+		 				1,0,1,
+		 				1,1,1};
+		int[] values7 ={1,1,1,
+						0,0,1,
+						0,1,1,
+						0,0,1,
+						0,0,1};
+		int[] values8 ={1,1,1,
+						1,0,1,
+						1,1,1,
+						1,0,1,
+						1,1,1};
+		int[] values9 ={1,1,1,
+						1,0,1,
+						1,1,1,
+						0,0,1,
+						1,1,1};
+			
+		for (int h =0;h<2;h++) {
+			//add a plus sign to positive numbers
+			boolean isPositive = positions[h]>=0;
+			String currNumberStr;
+			if (isPositive) {
+				currNumberStr = "+"+positions[h];
+			} else {
+				currNumberStr = ""+positions[h];
+			}
+			String[] parts = currNumberStr.split("\\.");
+			currNumberStr = parts[0];
+			
+			for (int i = 0;i<currNumberStr.length()+2;i++) {
+				int[] template = new int[15];
+				if (i>2) {
+					switch (Integer.parseInt(currNumberStr.substring(i-2, i-1))) {
+					case 0:
+						template = values0;
+						break;
+					case 1:
+						template = values1;
+						break;
+					case 2:
+						template = values2;
+						break;
+					case 3:
+						template = values3;
+						break;
+					case 4:
+						template = values4;
+						break;
+					case 5:
+						template = values5;
+						break;
+					case 6:
+						template = values6;
+						break;
+					case 7:
+						template = values7;
+						break;
+					case 8:
+						template = values8;
+						break;
+					case 9:
+						template = values9;
+						break;
+						
+					}
+				} else if (i==2) {
+					if (isPositive) {
+						template = valuesPlus;
+					} else {
+						template = valuesMinus;
+					}
+				}
+				else if (i==1) {
+					template = valuesDouble;
+				} else if (i==0 &&h ==0) {
+					template = valuesX;
+				}
+				else {
+					template = valuesY;
+				}
+				
+				for (int j = 0;j< 15;j++) {
+					int idxX = startX+j%3+i*(3+spaceX);
+					int idxY = (int) (startY+Math.floor(j/3))+(5+spaceY)*h;
+					temp.getProcessor().putPixelValue(idxX, idxY, temp.getProcessor().getPixel(idxX, idxY)*Math.abs(1-template[j]));
+				}
+			}
+		}	
+		return temp;
+	}
 }

@@ -526,4 +526,9 @@ public class MainFrame extends JFrame {
 	public void findFocus(double upperBound, double lowerBound, double stepsize) {
 		pifocCon.findAutoFocus(upperBound, lowerBound, stepsize);
 	}
+
+	public void setComments(String comment) {
+		comCon.setComment(comment);
+	}
+
 }

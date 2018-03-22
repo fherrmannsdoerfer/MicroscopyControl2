@@ -311,6 +311,8 @@ public class CameraWorker  {
 		 ImageStack stack2;
 		 int selectedIndex;
 		 int stackCounter;
+		 String nameChannel1 = "LeftChannel";
+		 String nameChannel2 = "RightChannel";
 		 
 		 SavingThread(ImageStack stack1, ImageStack stack2, int selectedIndex, int stackCounter){
 			 this.stack1 = stack1;
@@ -320,14 +322,14 @@ public class CameraWorker  {
 		 }
 		 @Override
 		 public void run(){
-			 String basename1 = findBasename(path+"\\"+measurementTag+"\\LeftChannel\\", stackCounter,"LeftChannel");
-			 String basename2 = findBasename(path+"\\"+measurementTag+"\\RightChannel\\", stackCounter,"RightChannel");
+			 String basename1 = findBasename(path,measurementTag, stackCounter,nameChannel1);
+			 String basename2 = findBasename(path,measurementTag, stackCounter,nameChannel2);
 			   
 			 //String basename1 = "LeftChannel"+measurementTag+"pt"+String.format("%03d", stackCounter);
-			 String pathTiffFile1 = path+"\\"+measurementTag+"\\LeftChannel\\"+basename1+".tif";
+			 String pathTiffFile1 = path+"\\"+measurementTag+"\\"+nameChannel1+"\\"+basename1+".tif";
 			
 			 //  String basename2 = "RightChannel"+measurementTag+"pt"+String.format("%03d", stackCounter);
-			 String pathTiffFile2 = path+"\\"+measurementTag+"\\RightChannel\\"+basename2+".tif";
+			 String pathTiffFile2 = path+"\\"+measurementTag+"\\"+nameChannel2+"\\"+basename2+".tif";
 			 
 			 String outputPath = mf.getRelativeOutputPath();
 			   if (selectedIndex == 0){
@@ -356,12 +358,12 @@ public class CameraWorker  {
 		 //in case of multiple measurements with the same output folder, 
 		 //check if the file already exists and increase the counter until
 		 //a new filename is generated
-		 String findBasename(String outputPath, int counter, String channel) {
+		 String findBasename(String path, String measurementTag, int counter, String channel) {
 			 String basename;
 			 String pathTiffFile;
 			 do {
 				 basename = channel + measurementTag+"pt"+String.format("%03d", counter);
-				 pathTiffFile = path+"\\"+measurementTag+"\\LeftChannel\\"+basename+".tif";
+				 pathTiffFile = path+"\\"+measurementTag+"\\"+channel+"\\"+basename+".tif";
 				 counter = counter + 1;
 			 } while (new File(pathTiffFile).exists());
 			 

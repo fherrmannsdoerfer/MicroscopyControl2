@@ -32,5 +32,7 @@ public class CommentControl extends JPanel {
 		mf.writeCommentaryToOutputFolder(textPane.getText(), "Comments.txt", false);
 	}
 
-	
+	public void setComment(String comment) {
+		textPane.setText(comment);
+	}
 }

@@ -97,6 +97,7 @@ public class MeasurementTagGUI extends EditorModules{
 			System.out.println(Utility.parseParameter(measurementTag.getText(), mfe));
 			mf.setPathForMeasurment(Utility.parseParameter(pathField.getText(), mfe));
 			mf.setMeasurementTag(Utility.parseParameter(measurementTag.getText(), mfe));
+			mf.setComments(Utility.parseParameter(comments.getText(), mfe));
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

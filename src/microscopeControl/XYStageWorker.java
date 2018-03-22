@@ -2,6 +2,8 @@ package microscopeControl;
 
 import javax.swing.JOptionPane;
 
+import org.apache.commons.math3.util.Precision;
+
 import dataTypes.XYStagePosition;
 import mmcorej.CMMCore;
 //class to interact with the connected XY stage
@@ -44,14 +46,25 @@ public class XYStageWorker {
 			}
 			//move the stage
 			else{
+				//the smaract stage does not perform for numbers with more than 1 decimal...
+				xPos = Precision.round(xPos,1);
+				yPos = Precision.round(yPos,1);
+				Thread.sleep(100);
 				mf.setAction("Moving Stage");
 				core.setXYPosition(xPos, yPos);
 				//check constantly if there is a offset between the desired and the current stage position
 				//this blocks execution of all other microscope function until the stage is close to 
 				//its target position
+				int counter = 0;
 				while (true){ //delay Program until moving has finished
 					Thread.sleep(100);
+					System.out.println(core.getXPosition(xyStageName) + " "+core.getYPosition(xyStageName));
 					if (Math.abs(core.getXPosition(xyStageName) - xPos) < 2 &&Math.abs(core.getYPosition(xyStageName) - yPos) < 2){
+						break;
+					}
+					counter = counter + 1;
+					if (counter>30) {
+						System.err.println("Stage position was not reached in time");
 						break;
 					}
 				}

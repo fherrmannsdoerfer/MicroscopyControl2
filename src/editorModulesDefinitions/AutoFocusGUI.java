@@ -26,7 +26,7 @@ public class AutoFocusGUI extends EditorModules{
 		super(mfe);
 		this.mfe = mfe;
 		this.setParameterButtonsName(name);
-		this.setColor(mfe.style.getColorStainingRobot());
+		this.setColor(mfe.style.getColorMicroscope());
 		this.setOptionPanel(createOptionPanel());
 	}
 	
