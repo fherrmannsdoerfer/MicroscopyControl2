@@ -27,7 +27,7 @@ import utility.Utility;
 public class StageControl extends JPanel {
 	
 	double pixelSizeX = .129;
-	double pixelSizeY = .122; //with 3d lense 122 nm
+	double pixelSizeY = .121; //with 3d lense 122 nm
 	MainFrame mf;
 	
 	JButton btnSetUpperLeft;

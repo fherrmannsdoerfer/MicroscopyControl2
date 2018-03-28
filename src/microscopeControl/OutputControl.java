@@ -12,6 +12,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import dataTypes.StormData;
+
 
 public class OutputControl {
 	public static boolean createFolder(String folderName){
@@ -120,5 +122,9 @@ public class OutputControl {
 	
 	static double getFreeSpaceInGB(String harddrive) {
 		return (new File(harddrive)).getFreeSpace()/1e9/1.024;
+	}
+
+	public static StormData readStormData(String pathToReferenceMeasurement) {
+		return new StormData(pathToReferenceMeasurement);
 	}
 }

@@ -68,8 +68,18 @@ public class XYStageWorker {
 						break;
 					}
 				}
+				Thread.sleep(50);
 				mf.setAction("");
 			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void setXYStageSpeed(double speed) {
+		try {
+			core.setProperty(xyStageName, "Speed", speed);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

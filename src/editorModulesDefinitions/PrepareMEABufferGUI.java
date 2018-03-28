@@ -137,6 +137,9 @@ public class PrepareMEABufferGUI extends EditorModules{
 		fieldCreateStockSolution.setText(tempString[9]);
 		if (tempString[10].equals("selected")){
 			createStockSolution.setSelected(true);
+			volumePBSForStock.setEnabled(true);
+		} else {
+			volumePBSForStock.setEnabled(false);
 		}
 		volumeVortex.setText(tempString[11]);
 	}

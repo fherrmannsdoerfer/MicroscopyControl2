@@ -10,6 +10,7 @@ public class StyleClass implements Serializable{
 	private Color colorStainingRobot = new Color(101,194,148);
 	private Color colorLoop = new Color(88,197,199);
 	private Color colorComment = new Color(100,100,100);
+	private Color colorAutoFocus = new Color(20,20,255);
 	private Color batchProcessing = new Color(180,180,180);
 	private int widthProcessingStepsPanel = 300;
 	private int heightProcessingStepsPanel = 60;
@@ -128,6 +129,9 @@ public class StyleClass implements Serializable{
 	}
 	public void setSizeEditor(Dimension sizeEditor) {
 		this.sizeEditor = sizeEditor;
+	}
+	public Color getColorAutoFocus() {
+		return colorAutoFocus;
 	}
 
 }

@@ -159,11 +159,11 @@ public class AutomatedReconstructionControl extends JPanel {
 		String pixelsize = "";
 		if (use3D){
 			image = "--ChooseTransmission Image --ColourScheme ByCoordinate --HueCoordinate PositionZ";
-			pixelsize = " --PixelSizeInNM 133,123 ";
+			pixelsize = " --PixelSizeInNM 129,121 ";
 		}
 		else{
 			image = "--ChooseTransmission Image --ColourScheme Grayscale";
-			pixelsize = " --PixelSizeInNM 133,133 ";
+			pixelsize = " --PixelSizeInNM 129,129 ";
 		}
 		String scriptPath = path+"\\"+measurementTag+"\\"+outputPath+"\\PythonSkripts\\";
 		OutputControl.createFolder(scriptPath);
@@ -282,6 +282,10 @@ public class AutomatedReconstructionControl extends JPanel {
 	//set the state for the checkbox which controls 3D vs 2D reconstruction
 	public void setStateDo3DReconstruction(boolean state) {
 		chkBoxDo3D.setSelected(state);
+	}
+	
+	public boolean getStateDo3DReconstruction() {
+		return chkBoxDo3D.isSelected();
 	}
 	
 	public String getRelativeOutputPath() {

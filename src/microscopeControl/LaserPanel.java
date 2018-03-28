@@ -169,7 +169,7 @@ public class LaserPanel extends JPanel {
 	//set LaserPower to specified power
 	public void setLaserPower(double power){
 		try {
-			if (power>1){
+			if (power>=1){
 				core.setProperty(laserName, "State", true);
 				core.setProperty(laserName, "PowerSetpoint", power);
 			}else{

@@ -9,15 +9,15 @@ import utility.Utility;
 import editor.EditorModules;
 import editor.MainFrameEditor;
 //for detailed comments look at performMeasurementGUI
-public class MoveFocalPlaneGUI extends EditorModules{
+public class MoveFocalPlaneAbsoluteGUI extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;
 	JTextField mirrorPosition = new JTextField("");
 	
-	private static String name = "Shift Focal Plane Relativly";
+	private static String name = "Shift Focal Plane Absolut";
 	transient MainFrameEditor mfe;
 	
-	public MoveFocalPlaneGUI(MainFrameEditor mfe) {
+	public MoveFocalPlaneAbsoluteGUI(MainFrameEditor mfe) {
 		super(mfe);
 		this.mfe = mfe;
 		this.setParameterButtonsName(name);
@@ -25,7 +25,7 @@ public class MoveFocalPlaneGUI extends EditorModules{
 		this.setOptionPanel(createOptionPanel());
 	}
 	
-	public MoveFocalPlaneGUI(){
+	public MoveFocalPlaneAbsoluteGUI(){
 		
 	}
 	
@@ -34,7 +34,7 @@ public class MoveFocalPlaneGUI extends EditorModules{
 		Box verticalBox = Box.createVerticalBox();
 		
 		Box horizontalBox2 = Box.createHorizontalBox();
-		horizontalBox2.add(new JLabel("Relative Mirrorposition (Using Focuslock):"));
+		horizontalBox2.add(new JLabel("Absolute Mirrorposition (Using Focuslock):"));
 		horizontalBox2.add(Box.createHorizontalGlue());
 		verticalBox.add(horizontalBox2);
 		verticalBox.add(Box.createVerticalStrut(20));
@@ -50,7 +50,7 @@ public class MoveFocalPlaneGUI extends EditorModules{
 	
 	@Override
 	public EditorModules getFunction(MainFrameEditor mfe) {
-		return new MoveFocalPlaneGUI(mfe);
+		return new MoveFocalPlaneAbsoluteGUI(mfe);
 	}
 
 	@Override
@@ -68,8 +68,8 @@ public class MoveFocalPlaneGUI extends EditorModules{
 	@Override
 	public EditorModules getEditorModulesObject(
 			EditorModules processingStepsPanelObject, MainFrameEditor mfe) {
-		if (processingStepsPanelObject instanceof MoveFocalPlaneGUI){
-			MoveFocalPlaneGUI returnObject = new MoveFocalPlaneGUI(mfe);
+		if (processingStepsPanelObject instanceof MoveFocalPlaneAbsoluteGUI){
+			MoveFocalPlaneAbsoluteGUI returnObject = new MoveFocalPlaneAbsoluteGUI(mfe);
 			return returnObject;
 		}
 		return null;
@@ -83,19 +83,15 @@ public class MoveFocalPlaneGUI extends EditorModules{
 	@Override
 	public void perform() {
 		logTimeStart();
-		mfe.getMainFrameReference().moveMirrorPositionRelative(Double.parseDouble(Utility.parseParameter(mirrorPosition.getText(), mfe)));
+		mfe.getMainFrameReference().setMirrorPosition(Double.parseDouble(Utility.parseParameter(mirrorPosition.getText(), mfe)));
 		setProgressbarValue(100);
 		logTimeEnd();
 	}
 
 	@Override
 	public boolean checkForValidity() {
-		if (mirrorPosition.getText().isEmpty()) {
-			return false;
-		}
-		else {
-			return true;
-		}
+		// TODO Auto-generated method stub
+		return true;
 	}
 
 }

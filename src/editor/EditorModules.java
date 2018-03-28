@@ -444,4 +444,13 @@ public abstract class EditorModules extends JPanel implements PropertyChangeList
 			return -1;
 		}
 	}
+	
+	protected double getNegativeValue(JTextField valueTxt) {
+		double value = Double.parseDouble(Utility.parseParameter(valueTxt.getText(), mfe));
+		if (value <0) {
+			return value;
+		} else {
+			return -1;
+		}
+	}
 }

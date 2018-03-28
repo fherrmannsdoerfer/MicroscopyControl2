@@ -114,7 +114,7 @@ public class PerformMeasurmentGUI extends EditorModules{
 		//keep the structure of the table 
 		retPanel.add(new JLabel(""));
 		retPanel.add(moveFocus);
-		retPanel.add(new JLabel("Focus Mirror Position:"));
+		retPanel.add(new JLabel("Absolute Focus Mirror Position:"));
 		retPanel.add(focusMirrorPos);
 		retPanel.add(new JLabel("Laser Index:"));
 		retPanel.add(laserIndex);

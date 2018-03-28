@@ -25,6 +25,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -42,10 +43,12 @@ import editorModulesDefinitions.AddSolutionFromVialToSampleGUI;
 import editorModulesDefinitions.AddWashingSolutionToSampleGUI;
 import editorModulesDefinitions.AddWashingSolutionToVialGUI;
 import editorModulesDefinitions.AutoFocusGUI;
+import editorModulesDefinitions.AutofocusBeadBasedGUI;
 import editorModulesDefinitions.BreakPointGUI;
 import editorModulesDefinitions.CameraParametersGUI;
 import editorModulesDefinitions.CaptureWidefieldImageGUI;
 import editorModulesDefinitions.CommentaryBarGUI;
+import editorModulesDefinitions.DefineReferenceForAutoFocus;
 import editorModulesDefinitions.EndLoopGUI;
 import editorModulesDefinitions.FilterWheelGUI;
 import editorModulesDefinitions.FocusLockStateGUI;
@@ -53,6 +56,7 @@ import editorModulesDefinitions.LaserControl;
 import editorModulesDefinitions.LoopIterableGUI;
 import editorModulesDefinitions.LoopROIsGUI;
 import editorModulesDefinitions.MeasurementTagGUI;
+import editorModulesDefinitions.MoveFocalPlaneAbsoluteGUI;
 import editorModulesDefinitions.MoveFocalPlaneGUI;
 import editorModulesDefinitions.MoveStageGUI;
 import editorModulesDefinitions.PauseGUI;
@@ -67,7 +71,7 @@ import editorModulesDefinitions.VortexVialGUI;
 import editorModulesDefinitions.Wash3TimesWithPBSLS2GUI;
 import editorModulesDefinitions.WashSyringeGUI;
 //Main class behind the experiment editor. The GUI is created here. Also the handling of all button callbacks are managed within this class
-public class MainFrameEditor extends JDialog implements Serializable{
+public class MainFrameEditor extends JFrame implements Serializable{
 	
 	transient private MainFrame mf;
 	private ArrayList<EditorModules> listProcessingStepPanels = new ArrayList<EditorModules>();
@@ -104,6 +108,7 @@ public class MainFrameEditor extends JDialog implements Serializable{
 	public MainFrameEditor(final ControlerEditor controler, MainFrame mf) {
 		this.mf = mf;
 		this.controlerReference = controler;
+		this.setTitle("Experiment Editor");
 		mfe = this;
 		//Create if necessary default folder in user.home directory
 		folder.mkdir();
@@ -132,10 +137,13 @@ public class MainFrameEditor extends JDialog implements Serializable{
 		microscopeComboBoxOptions.add(new MeasurementTagGUI());
 		microscopeComboBoxOptions.add(new CommentaryBarGUI());
 		microscopeComboBoxOptions.add(new FocusLockStateGUI());
+		microscopeComboBoxOptions.add(new MoveFocalPlaneAbsoluteGUI());
 		microscopeComboBoxOptions.add(new MoveFocalPlaneGUI());
 		microscopeComboBoxOptions.add(new PerformMeasurmentGUI());
 		microscopeComboBoxOptions.add(new BreakPointGUI());
 		microscopeComboBoxOptions.add(new AutoFocusGUI());
+		microscopeComboBoxOptions.add(new DefineReferenceForAutoFocus());
+		microscopeComboBoxOptions.add(new AutofocusBeadBasedGUI());
 		
 		stainingRobotComboBoxOptions.add(new StainingRobotCommandGUI());
 		stainingRobotComboBoxOptions.add(new RemoveSolutionFromSampleGUI());
@@ -611,8 +619,9 @@ public class MainFrameEditor extends JDialog implements Serializable{
 			for (int i = 0; i < tempOrderList.size(); i++){						
 				EditorModules tempObject = tempOrderList.get(i);
 				EditorModules tmp = tempObject.getEditorModulesObject(tempObject, mfe);
-				tmp.setSettings(tempOrderList.get(i).getSettings());
+				//tmp.setSettings(tempOrderList.get(i).getSettings());
 				listProcessingStepPanels.add(tmp);
+				listProcessingStepPanels.get(listProcessingStepPanels.size()-1).setSettings(tempOrderList.get(i).getSettings());
 			}
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block

@@ -143,19 +143,29 @@ public class LoopROIsGUI extends LoopModules{
 	@Override
 	public String[] getSettings() {
 		//The first entry is reserved to the number of runs, then comes the parameterTag and the parameters for each ParameterTag object.
-		int nbrElements =1+parameterTags.size()*(Integer.parseInt(numberRuns.getText())+1);
+		int nbrElements;
+		try {
+			nbrElements =1+parameterTags.size()*(Integer.parseInt(numberRuns.getText())+1);
+		} catch(Exception e) {
+			nbrElements = 1;
+		}
 		String[] tempString = new String[nbrElements];
-		tempString[0] = numberRuns.getText();
-		int counter = 1;
-		while (counter < nbrElements){
-			for (ParameterTag pt:parameterTags){
-				tempString[counter] = pt.getParameterTag();
-				counter +=1;
-				for (String parameterVal:pt.getParameterList()){
-					tempString[counter] = parameterVal;
+		try {
+			tempString[0] = numberRuns.getText();
+			int counter = 1;
+			while (counter < nbrElements){
+				for (ParameterTag pt:parameterTags){
+					tempString[counter] = pt.getParameterTag();
 					counter +=1;
+					for (String parameterVal:pt.getParameterList()){
+						tempString[counter] = parameterVal;
+						counter +=1;
+					}
 				}
 			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+			e.printStackTrace();
+			
 		}
 		return tempString;
 	}
@@ -163,7 +173,12 @@ public class LoopROIsGUI extends LoopModules{
 	@Override
 	public void setSettings(String[] tempString) {
 		numberRuns.setText(tempString[0]);
-		int nbrRuns = Integer.parseInt(tempString[0]);
+		int nbrRuns;
+		try {
+			nbrRuns = Integer.parseInt(tempString[0]);
+		} catch (Exception e) {
+			nbrRuns = 0;
+		}
 		//tempString.length -1 is the number of elements for the individual parameterTags,
 		//Integer.parseInt(tempString[0])+1 is the number of field that is occupied by each 
 		//parameterTag, 1 for the tag itself and numberRuns (tempString[0]) for the parameters

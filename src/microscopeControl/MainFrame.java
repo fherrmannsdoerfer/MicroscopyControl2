@@ -40,6 +40,7 @@ import mmcorej.CMMCore;
 
 //MainFrame is the parent window for all control elements
 public class MainFrame extends JFrame {
+
 	//Path to the python executable
 	String pathToPython = "C:\\ProgramData\\Anaconda3\\python.exe";
 	
@@ -47,7 +48,7 @@ public class MainFrame extends JFrame {
 	private String pathToLogFile = "D:\\Measurements\\LogFileEditor.txt";
 	//Path to the exchange folder monitored by the Chronos plugin
 	private String pathToExchangeFolder ="C:\\Users\\Public\\Folder For Chronos\\ExchangeFolder";
-	private String pathTo3DCalibrationFileRapidStorm ="D:\\MessungenTemp\\calibFiles\\20180301_Calibration_661Laser.txt";
+	private String pathTo3DCalibrationFileRapidStorm ="D:\\Measurements\\_STORM_general\\calibFiles\\20180301_Calibration_661Laser.txt";
 	//name of the hardware set in Micro-Manager
 	private String camName = "iXon Ultra";
 	private String zObjectiveName = "FocusLocPIZMotorObjective";
@@ -74,6 +75,19 @@ public class MainFrame extends JFrame {
 	//command from the StageControl class
 	private double xShiftCenterSampleToObjective = 0;
 	private double yShiftCenterSampleToObjective = 0;
+	
+	//reference position for autofocus
+	private XYStagePosition referencePosition;
+	private String outputPathForAutoFocus = "D:\\Measurements\\AutofocusTmp\\";
+	private String referencePositionOutputPath = "D:\\Measurements\\";
+	private String referencePositionOutputTag = "referenceMeasurementForAutofocus";
+	private int exposureTimeForAutofocus = 100;
+	private int gainForAutofocus = 10;
+	private int nbrFramesForAutofocus = 100;
+	private double lastMirrorPosition = -1;
+	private int filterWheelPositionForAutoFocus = 2;
+	private int laserIndexForAutoFocus = 3;
+	private double laserPowerForAutoFocus = 2;
 	
 	//central object to control all hardware
 	CMMCore core;
@@ -197,17 +211,20 @@ public class MainFrame extends JFrame {
 	private void setUp() {
 		camWorker.setExposureTime(camParam.getExposureTime());
 		filterWheelCon.setFilterInitially(2);
-		//set zstage (the large on on top of the xy stage) by default to 100
+		//einkommentieren wenn Z steuerung über Stage möglich ist
+//		setZStagePosition(zStageName,100);
+		pifocCon.setZStagePosition(25);
+		xyStageWorker.setXYStageSpeed(500);		
+	}
+	
+	public void setZStagePosition(String stagename,double position) {
 		try {
-			//core.setProperty(zStageName, "Position",100);
-			pifocCon.setZStagePosition(25);
-			
+			core.setProperty(stagename, "Position",position);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
 	//getter for device names
 	public String getCamName() {return camName;}
 
@@ -248,8 +265,8 @@ public class MainFrame extends JFrame {
 	//function calls from ROISettings
 	public int getSelectedChannel(){return roiSet.getSelectedChannel();}
 	
-	public double getZStagePosition() throws NumberFormatException, Exception {return pifocCon.getZStagePosition();}
-	public void setZStagePosition(double val) throws Exception {core.setProperty(zObjectiveName, "Position",val);}
+	public double getZStagePosition() {return pifocCon.getZStagePosition();}
+	public void setZStagePosition(double val) {pifocCon.setZStagePosition(val);}
 	
 	public void setAction(String action) {statusCon.setAction(action);}
 
@@ -423,7 +440,17 @@ public class MainFrame extends JFrame {
 
 	public void setMeasurementTag(String text) {outCon.setMeasurementTag(text);}
 
-	public void setMirrorPosition(double d) {try {core.setPosition(mirrorFocuslock, d);} catch (Exception e) {e.printStackTrace();}}
+	public void moveMirrorPositionRelative(double d) {
+		setMirrorPosition(getMirrorPosition()+d);
+	}
+	
+	public void setMirrorPosition(double d) {
+		try {
+			core.setPosition(mirrorFocuslock, (int)Math.round(d));
+		} catch (Exception e) {
+			e.printStackTrace();}
+		}
+	public double getMirrorPosition() {try {return core.getPosition(mirrorFocuslock);} catch(Exception e) {e.printStackTrace();return (Double) null;}}
 	
 	public boolean isAcquisitionRunning(){
 		return acquisitionIsRunning;
@@ -472,6 +499,10 @@ public class MainFrame extends JFrame {
 
 	public String getPathTo3DCalibrationFileRapidStorm() {
 		return pathTo3DCalibrationFileRapidStorm;
+	}
+	
+	public boolean getStateDo3DReconstruction() {
+		return autoRecCon.getStateDo3DReconstruction();
 	}
 
 	public void setPathTo3DCalibrationFileRapidStorm(String pathTo3DCalibrationFileRapidStorm) {
@@ -531,4 +562,66 @@ public class MainFrame extends JFrame {
 		comCon.setComment(comment);
 	}
 
+	public void setReferencePosition(XYStagePosition xyStagePosition) {
+		referencePosition = xyStagePosition;
+	}
+
+	public XYStagePosition getReferencePosition() {
+		return referencePosition;
+	}
+
+	public String getReferencePositionOutputPath() {
+		return referencePositionOutputPath;
+	}
+
+	public String getReferencePositionOutputTag() {
+		return referencePositionOutputTag;
+	}
+
+	public int getExposureTimeForAutofocus() {
+		return exposureTimeForAutofocus;
+	}
+
+	public int getGainForAutofocus() {
+		return gainForAutofocus;
+	}
+
+	public int getNbrFramesForAutofocus() {
+		return nbrFramesForAutofocus;
+	}
+
+	public void setLastMirrorPosition(double mirrorPosition) {
+		lastMirrorPosition = mirrorPosition;
+	}
+	
+	public double getLastMirrorPosition() {
+		return lastMirrorPosition;
+	}
+
+	public int getFilterWheelPositionForAutoFocus() {
+		return filterWheelPositionForAutoFocus;
+	}
+
+	public int getLaserIndexForAutoFocus() {
+		return laserIndexForAutoFocus;
+	}
+
+	public double getLaserPowerForAutoFocus() {
+		return laserPowerForAutoFocus;
+	}
+
+	public String getOutputPathForAutoFocus() {
+		return outputPathForAutoFocus;
+	}
+
+	public String getPathForReferenceMeasurement() {
+		return (referencePositionOutputPath+"\\"+referencePositionOutputTag+"\\");
+	}
+
+	public String getRelativeOutputTag() {
+		return referencePositionOutputTag;
+	}
+	
+
+	
 }

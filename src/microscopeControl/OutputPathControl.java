@@ -27,7 +27,7 @@ public class OutputPathControl extends JPanel {
 		setMinimumSize(minSize);
 		setPreferredSize(prefSize);
 		setMaximumSize(maxSize);
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd");
 
 		setBorder(new TitledBorder(null, "Output Path", TitledBorder.LEADING, TitledBorder.TOP, mf.getTitelFont(), null));
 		setLayout(new GridLayout(2, 1,10,10));

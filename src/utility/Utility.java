@@ -15,6 +15,8 @@ import java.awt.Polygon;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Locale;
 
 import javax.swing.JDialog;
@@ -24,7 +26,12 @@ import javax.swing.JTextField;
 
 import org.apache.commons.math3.util.Precision;
 
+import comperators.StormLocalizationFrameComperator;
+
+import dataTypes.CameraParameters;
 import dataTypes.ROIParameters;
+import dataTypes.StormData;
+import dataTypes.StormLocalization;
 import dataTypes.XYStagePosition;
 import editor.MainFrameEditor;
 
@@ -649,38 +656,42 @@ public class Utility implements Serializable {
 			for (int i = 0;i<currNumberStr.length()+2;i++) {
 				int[] template = new int[15];
 				if (i>2) {
-					switch (Integer.parseInt(currNumberStr.substring(i-2, i-1))) {
-					case 0:
-						template = values0;
-						break;
-					case 1:
-						template = values1;
-						break;
-					case 2:
-						template = values2;
-						break;
-					case 3:
-						template = values3;
-						break;
-					case 4:
-						template = values4;
-						break;
-					case 5:
-						template = values5;
-						break;
-					case 6:
-						template = values6;
-						break;
-					case 7:
-						template = values7;
-						break;
-					case 8:
-						template = values8;
-						break;
-					case 9:
-						template = values9;
-						break;
-						
+					try {
+						switch (Integer.parseInt(currNumberStr.substring(i-2, i-1))) {
+						case 0:
+							template = values0;
+							break;
+						case 1:
+							template = values1;
+							break;
+						case 2:
+							template = values2;
+							break;
+						case 3:
+							template = values3;
+							break;
+						case 4:
+							template = values4;
+							break;
+						case 5:
+							template = values5;
+							break;
+						case 6:
+							template = values6;
+							break;
+						case 7:
+							template = values7;
+							break;
+						case 8:
+							template = values8;
+							break;
+						case 9:
+							template = values9;
+							break;
+							
+						}
+					} catch (NumberFormatException e) {
+						System.out.println(currNumberStr);
 					}
 				} else if (i==2) {
 					if (isPositive) {
@@ -706,5 +717,378 @@ public class Utility implements Serializable {
 			}
 		}	
 		return temp;
+	}
+	
+	public static void findFocusLockMirrorPosition(int mirrorPosInterval, int lowerLimit, int upperLimit , MainFrame mf) {
+		//falls 2. Filterwheel 1 für Linse 0 ohne linse
+		//mf.getCoreObject().setProperty(filterWheelName2tesFilterWheel, "State", 1);
+		mf.setFocusLockState(false);
+		mf.sleep(1000);
+		mf.setFocusLockState(true);
+		mf.sleep(1000);
+		mf.moveXYStage(mf.getReferencePosition().getxPos(), mf.getReferencePosition().getyPos());
+		double initialMirrorPos = mf.getLastMirrorPosition();
+		String outputpathtmp = mf.getOutputPathForAutoFocus();
+		deleteFolder(new File(outputpathtmp));
+		int nbrImagesPerRound = mf.getNbrFramesForAutofocus();
+		int exposureTime = mf.getExposureTimeForAutofocus();
+		int laserIndex = mf.getLaserIndexForAutoFocus();
+		double laserPower = mf.getLaserPowerForAutoFocus();
+		int filterWheelPos = mf.getFilterWheelPositionForAutoFocus();
+		ArrayList<Double> trueMirrorPosition = new ArrayList<Double>();
+		mf.setAction("Autofocus");
+		CameraParameters camParam = new CameraParameters(exposureTime, mf.getGainForAutofocus(), nbrImagesPerRound, true);
+		mf.setCameraParameter(camParam);
+		mf.setFilterWheelPosition(filterWheelPos);
+		mf.setLaserIntensity(laserIndex, laserPower);
+		//reference image acquisition
+		for (int relDiff = lowerLimit; relDiff<upperLimit; relDiff=(int) (relDiff+mirrorPosInterval)) {
+			mf.setPathForMeasurment(outputpathtmp);
+			mf.setMeasurementTag("relDiff"+relDiff);
+			
+			mf.setMirrorPosition(initialMirrorPos+relDiff);
+			mf.sleep(200);
+			trueMirrorPosition.add(mf.getMirrorPosition());
+			mf.startSequenceAcquisition(false);
+			while (mf.isAcquisitionRunning()){
+				mf.sleep(200);
+			}
+		}
+		mf.setLaserIntensity(laserIndex, 0.1);
+		//find and evaluate bead z values
+		mf.sleep(2500);
+		double referenceMeanZ = getMeanZValue(mf.getPathForReferenceMeasurement()+mf.getRelativeOutputPath()+"LeftChannel"+mf.getRelativeOutputTag()+"pt000.txt");
+		System.out.println(referenceMeanZ);
+		ArrayList<Double> meanZMeasurement = new ArrayList<Double>();
+		ArrayList<Double> difference = new ArrayList<Double>();
+		ArrayList<Integer> shifts = new ArrayList<Integer>();
+		for (int relDiff = lowerLimit, i=0; relDiff<upperLimit; relDiff=(int) (relDiff+mirrorPosInterval),i++) {
+			meanZMeasurement.add(getMeanZValue(outputpathtmp+"\\relDiff"+relDiff+"\\Auswertung\\RapidStorm\\LeftChannelrelDiff"+relDiff+"pt000.txt"));
+			difference.add(meanZMeasurement.get(i)-referenceMeanZ);
+			shifts.add(relDiff);
+		}
+		//find mirror position that matches closest to the reference position by finding switch in sign in the difference
+		boolean lastDifferenceWasPositive = difference.get(0)>0;
+		//needed shift for mirror position
+		double trueDiff = 0;
+		for (int relDiff = lowerLimit, i=0; relDiff<upperLimit; relDiff=(int) (relDiff+mirrorPosInterval), i++) {
+			boolean thisDifferenceIsPositive = difference.get(i)>0;
+			if (lastDifferenceWasPositive == thisDifferenceIsPositive) {
+				
+			} else {
+				trueDiff = shifts.get(i)- (meanZMeasurement.get(i) - referenceMeanZ)/( meanZMeasurement.get(i-1) - meanZMeasurement.get(i)) * (shifts.get(i-1) - shifts.get(i));
+				break;
+			}
+		}
+		mf.setMirrorPosition(initialMirrorPos + trueDiff);
+		mf.setLastMirrorPosition(initialMirrorPos + trueDiff);
+		mf.setAction("Standby");
+		////falls 3D filterwheel auf Position 1 lassen, falls 2. Filterwheel auf Position 0 stellen
+		//if (mf.getStateDo3DReconstruction()) {
+		//	mf.getCoreObject().setProperty(filterWheelName2tesFilterWheel, "State", 1);
+		//} else {
+		//	mf.getCoreObject().setProperty(filterWheelName2tesFilterWheel, "State", 0);
+		//}
+		
+	}
+	
+	public static void deleteFolder(File folder) {
+	    File[] files = folder.listFiles();
+	    if(files!=null) { //some JVMs return null for empty dirs
+	        for(File f: files) {
+	            if(f.isDirectory()) {
+	                deleteFolder(f);
+	            } else {
+	                f.delete();
+	            }
+	        }
+	    }
+	    folder.delete();
+	}
+	
+	public static double getMeanZValue(String fname) {
+		StormData reference = OutputControl.readStormData(fname);
+		if (reference.getSize()==0) {
+			System.out.println("No localizations found!!!");
+			return 0;
+		}
+		ArrayList<ArrayList<StormLocalization>> beads = findBeads(reference, reference);
+		double meanZ = 0;
+		for (int i = 0; i<beads.get(0).size();i++) {
+			meanZ += beads.get(0).get(i).getZ();
+		}
+		meanZ = meanZ/beads.get(0).size();
+		return meanZ;
+	}
+	
+	
+	public static ArrayList<ArrayList<double[]>> findBeadCandidatesTraceBased(StormData sd1, 
+			StormData sd2, int minimalTracelength){
+		ArrayList<ArrayList<double[]>> retList = new ArrayList<ArrayList<double[]>>();
+		ArrayList<double[]> candidatesCh1 = new ArrayList<double[]>();
+		ArrayList<double[]> candidatesCh2 = new ArrayList<double[]>();
+		ArrayList<ArrayList<StormLocalization>> tracesCh1 = 
+				findTraces(sd1.getLocs(), 200, 200, 400, 50);
+		int maxTraceLength = 0;
+		for (int i = 0; i< tracesCh1.size(); i++){
+			if (tracesCh1.get(i).size() > maxTraceLength){
+				maxTraceLength = tracesCh1.get(i).size();
+				System.out.println("Maximal TraceLengthCh1: "+maxTraceLength);
+			}
+			if (tracesCh1.get(i).size()>minimalTracelength){
+				double meanX = 0;
+				double meanY = 0;
+				for (int j = 0; j<tracesCh1.get(i).size(); j++){
+					meanX = meanX + tracesCh1.get(i).get(j).getX();
+					meanY = meanY + tracesCh1.get(i).get(j).getY();
+				}
+				double[] tmp = {meanX / tracesCh1.get(i).size(),meanY / tracesCh1.get(i).size()};
+				candidatesCh1.add(tmp);
+			}
+		}
+		ArrayList<ArrayList<StormLocalization>> tracesCh2 = 
+				findTraces(sd2.getLocs(), 200, 200, 200, 50);
+		maxTraceLength = 0;
+		for (int i = 0; i< tracesCh2.size(); i++){
+			if (tracesCh2.get(i).size() > maxTraceLength){
+				maxTraceLength = tracesCh2.get(i).size();
+				System.out.println("Maximal TraceLengthCh2: "+maxTraceLength);
+			}
+			if (tracesCh2.get(i).size()>minimalTracelength){
+				double meanX = 0;
+				double meanY = 0;
+				for (int j = 0; j<tracesCh2.get(i).size(); j++){
+					meanX = meanX + tracesCh2.get(i).get(j).getX();
+					meanY = meanY + tracesCh2.get(i).get(j).getY();
+				}
+				double[] tmp = {meanX / tracesCh2.get(i).size(),meanY / tracesCh2.get(i).size()};
+				candidatesCh2.add(tmp);
+			}
+		}
+		retList.add(candidatesCh1);
+		retList.add(candidatesCh2);
+		return retList;
+	}
+	
+	private static ArrayList<ArrayList<StormLocalization>> findBeads(StormData sd1, StormData sd2) {
+		ArrayList<ArrayList<double[]>> beadEstimates = findBeadCandidatesTraceBased(sd1,sd2,20);
+
+		ArrayList<ArrayList<StormLocalization>> listOfBeadsCh1 = new ArrayList<ArrayList<StormLocalization>>(); //an Arraylist for each potential bead
+		ArrayList<ArrayList<StormLocalization>> listOfBeadsCh2 = new ArrayList<ArrayList<StormLocalization>>(); //to collect all localizations to be averaged later
+		for (int i = 0; i<beadEstimates.get(0).size(); i++){
+			listOfBeadsCh1.add(new ArrayList<StormLocalization>());
+		}
+		for (int i = 0; i<beadEstimates.get(1).size(); i++){
+			listOfBeadsCh2.add(new ArrayList<StormLocalization>());
+		}
+		sd1.sortX();
+		sd2.sortX();
+		double lateralTolerance = 100; //in nm
+		for (int i = 0; i<sd1.getSize();i++){
+			for (int j = 0; j<beadEstimates.get(0).size();j++){
+				if(Math.abs(sd1.getElement(i).getX()-beadEstimates.get(0).get(j)[0])<lateralTolerance
+				&& Math.abs(sd1.getElement(i).getY()-beadEstimates.get(0).get(j)[1])<lateralTolerance){
+					listOfBeadsCh1.get(j).add(sd1.getElement(i));
+				}
+			}
+		}
+		for (int i = 0; i<sd2.getSize();i++){
+			for (int j = 0; j<beadEstimates.get(1).size();j++){
+				if(Math.abs(sd2.getElement(i).getX()-beadEstimates.get(1).get(j)[0])<lateralTolerance
+				&& Math.abs(sd2.getElement(i).getY()-beadEstimates.get(1).get(j)[1])<lateralTolerance){
+					listOfBeadsCh2.get(j).add(sd2.getElement(i));
+				}
+			}
+		}
+			
+		ArrayList<StormLocalization> sl1 = new ArrayList<StormLocalization>();
+		ArrayList<StormLocalization> sl2 = new ArrayList<StormLocalization>();
+	
+		for (int j = 0; j<listOfBeadsCh1.size(); j++){
+			double posx = 0;
+			double posy = 0;
+			double posz = 0;
+			double weights = 0;
+			ArrayList<StormLocalization> currBead = listOfBeadsCh1.get(j);
+			for (int i = 0; i < currBead.size(); i++){
+				posx = posx + currBead.get(i).getX() * Math.sqrt(currBead.get(i).getIntensity()); //weight by square root of intensity
+				posy = posy + currBead.get(i).getY() * Math.sqrt(currBead.get(i).getIntensity());
+				posz = posz + currBead.get(i).getZ() * Math.sqrt(currBead.get(i).getIntensity());
+				weights = weights + Math.sqrt(currBead.get(i).getIntensity());
+			}
+			sl1.add(new StormLocalization(posx / weights, posy / weights, posz / weights, 0, currBead.size()));
+		}
+		
+		for (int j = 0; j<listOfBeadsCh2.size(); j++){
+			double posx = 0;
+			double posy = 0;
+			double posz = 0;
+			double weights = 0;
+			ArrayList<StormLocalization> currBead = listOfBeadsCh2.get(j);
+			for (int i = 0; i < currBead.size(); i++){
+				posx = posx + currBead.get(i).getX() * Math.sqrt(currBead.get(i).getIntensity()); //weight by squareroot of intensity
+				posy = posy + currBead.get(i).getY() * Math.sqrt(currBead.get(i).getIntensity());
+				posz = posz + currBead.get(i).getZ() * Math.sqrt(currBead.get(i).getIntensity());
+				weights = weights + Math.sqrt(currBead.get(i).getIntensity());
+			}
+			sl2.add(new StormLocalization(posx / weights, posy / weights, posz / weights, 0, currBead.size()));
+		}
+		
+		ArrayList<ArrayList<StormLocalization>> retList = new ArrayList<ArrayList<StormLocalization>>();
+		retList.add(sl1);
+		retList.add(sl2);
+		return retList;
+	}
+	
+	
+	
+	public static ArrayList<ArrayList<StormLocalization>> findTraces(ArrayList<StormLocalization> locs, double dx, double dy, double dz, int maxdistBetweenLocalizations) {
+		return findTraces( locs, dx, dy, dz, maxdistBetweenLocalizations, true);
+	}
+	
+	public static ArrayList<ArrayList<StormLocalization>> findTraces(ArrayList<StormLocalization> locs, double dx, double dy, double dz, int maxdistBetweenLocalizations, boolean showProgress) {
+		Comparator<StormLocalization> compFrame = new StormLocalizationFrameComperator();
+		Collections.sort(locs,compFrame);
+		int framemax = locs.get(locs.size()-1).getFrame();
+		int framemin = locs.get(0).getFrame();
+		//System.out.println(framemax+" "+framemin);
+
+		ArrayList<ArrayList> connectedPoints = new ArrayList<ArrayList>();
+		ArrayList<ArrayList<StormLocalization>> traces = new ArrayList<ArrayList<StormLocalization>>();
+		ArrayList<ArrayList<StormLocalization>> frames = new ArrayList<ArrayList<StormLocalization>>();
+		
+		for (int k = 0; k<=framemax+1; k++) {
+			frames.add(new ArrayList<StormLocalization>());
+		}
+		for (int j = 0; j< locs.size(); j++){
+			frames.get(locs.get(j).getFrame()).add(locs.get(j)); //frames contains one list for each frame the data of the current subset is fed into it.
+		}
+		
+						
+		for (int i = 0; i<framemax+1; i++){
+			for (int j = 0; j<frames.get(i).size(); j++){
+				StormLocalization currLoc = frames.get(i).get(j);
+				ArrayList<StormLocalization> currTrace = new ArrayList<StormLocalization>();
+				currTrace.add(currLoc);
+				int currFrame = currLoc.getFrame();
+				int evaluatedFrame = currFrame + 1;
+				//System.out.println(i+" "+j);
+				while (currFrame + maxdistBetweenLocalizations >= evaluatedFrame && evaluatedFrame < framemax){//runs as long as there are consecutive localizations within a maximum distance of maxdistBetweenLoc...
+					for (int k = 0; k<frames.get(evaluatedFrame).size(); k++){//runs through all locs of the currently evaluated frame
+						StormLocalization compLoc = frames.get(evaluatedFrame).get(k);
+						if (Math.abs(currLoc.getY()-compLoc.getY())<dy && Math.abs(currLoc.getX()-compLoc.getX())<dx && Math.abs(currLoc.getZ()-compLoc.getZ())<dz) {
+							frames.get(evaluatedFrame).remove(k); // remove found localization to avoid duplication
+							currFrame = evaluatedFrame; //currFrame describes the frame of the current localization so it is changed to the frame of the matching loc which becomes the new current loc
+							evaluatedFrame = currFrame +1;
+							currTrace.add(compLoc);
+							currLoc = compLoc;
+							break;
+						}
+					}
+					evaluatedFrame += 1;
+				}
+				traces.add(currTrace);
+				if (showProgress){
+
+				}
+			}
+			//System.out.println(i +" " +frames.get(i).size());
+		}
+		System.out.println("Number of detected traces: "+traces.size()+" Number of all localizations: "+locs.size());
+		return traces;
+	}
+	
+	public static ArrayList<ArrayList<StormLocalization>> findTraces2(ArrayList<StormLocalization> locs, double dx, double dy, double dz, int maxdistBetweenLocalizations) {
+		Comparator<StormLocalization> compFrame = new StormLocalizationFrameComperator();
+		Collections.sort(locs,compFrame);
+		int framemax = locs.get(locs.size()-1).getFrame();
+		int framemin = locs.get(0).getFrame();
+		//System.out.println(framemax+" "+framemin);
+
+		ArrayList<ArrayList> connectedPoints = new ArrayList<ArrayList>();
+		ArrayList<ArrayList<StormLocalization>> traces = new ArrayList<ArrayList<StormLocalization>>();
+		ArrayList<ArrayList<StormLocalization>> frames = new ArrayList<ArrayList<StormLocalization>>();
+		
+		for (int k = 0; k<=framemax+1; k++) {
+			frames.add(new ArrayList<StormLocalization>());
+		}
+		for (int j = 0; j< locs.size(); j++){
+			frames.get(locs.get(j).getFrame()).add(locs.get(j)); //frames contains one list for each frame the data of the current subset is fed into it.
+		}
+		
+		for (int i = 0; i<framemax+1; i++){
+			for (int j = 0; j<frames.get(i).size(); j++){
+				StormLocalization currLoc = frames.get(i).get(j);
+				ArrayList<StormLocalization> currTrace = new ArrayList<StormLocalization>();
+				currTrace.add(currLoc);
+				int currFrame = currLoc.getFrame();
+				int evaluatedFrame = currFrame + 1;
+				//System.out.println(i+" "+j);
+				while (currFrame + maxdistBetweenLocalizations >= evaluatedFrame && evaluatedFrame < framemax){//runs as long as there are consecutive localizations within a maximum distance of maxdistBetweenLoc...
+					ArrayList<Double> distX = new ArrayList<Double>();
+					ArrayList<Double> distY = new ArrayList<Double>();
+					ArrayList<Double> distZ = new ArrayList<Double>();
+					int idx = 0;
+					for (int k = 0; k<frames.get(evaluatedFrame).size(); k++){//runs through all locs of the currently evaluated frame
+						StormLocalization compLoc = frames.get(evaluatedFrame).get(k);
+						distX.add(Math.abs(currLoc.getX()-compLoc.getX()));
+						distY.add(Math.abs(currLoc.getY()-compLoc.getY()));
+						distZ.add(Math.abs(currLoc.getZ()-compLoc.getZ()));
+
+						
+					}
+					double mindist = 9e9;
+					idx = -1;
+					for (int k = 0; k<frames.get(evaluatedFrame).size(); k++){
+						double dist = Math.sqrt(distX.get(k)*distX.get(k)+distY.get(k)*distY.get(k)+distZ.get(k)*distZ.get(k));
+						if (dist<mindist&&dist<(Math.sqrt(dx*dx+dy*dy+dz*dz))){
+							mindist = dist;
+							idx = k;
+						}		
+					}
+					if (idx>-1){
+						currTrace.add(frames.get(evaluatedFrame).get(idx));
+						currLoc = frames.get(evaluatedFrame).get(idx);
+						currFrame = evaluatedFrame;
+					}
+					evaluatedFrame += 1;
+				}
+				traces.add(currTrace);
+
+			}
+			//System.out.println(i +" " +frames.get(i).size());
+		}
+		System.out.println("Number of detected traces: "+traces.size()+" Number of all localizations: "+locs.size());
+		return traces;
+	}
+	
+	public static ArrayList<StormLocalization> connectTraces(
+			ArrayList<ArrayList<StormLocalization>> traces) {
+		// consecutive detections will be merged spatial coordinates are averaged
+		//intensities added and the first frame is chosen for the connected localization
+		ArrayList<StormLocalization> connectedLoc = new ArrayList<StormLocalization>();
+		int counter = 0;
+		for (int i = 0; i< traces.size(); i++) {
+			if (traces.get(i).size() < 10){ //beads are not connected
+				if (traces.get(i).size()>1){
+					counter = counter + 1;
+				}
+				double x = 0, y = 0, z = 0, intensity =0,angle = 0;
+				int frame = traces.get(i).get(0).getFrame();
+				for (int j = 0; j<traces.get(i).size(); j++) {
+					x = x + traces.get(i).get(j).getX();
+					y = y + traces.get(i).get(j).getY();
+					z = z + traces.get(i).get(j).getZ();
+					intensity = intensity + traces.get(i).get(j).getIntensity();
+					angle = angle +traces.get(i).get(j).getAngle();
+				}
+				x = x / traces.get(i).size();
+				y = y / traces.get(i).size();
+				z = z / traces.get(i).size();
+				angle =angle / traces.get(i).size();
+				connectedLoc.add(new StormLocalization(x,y,z,frame,intensity,angle));	
+			}
+		}
+		return connectedLoc;
 	}
 }

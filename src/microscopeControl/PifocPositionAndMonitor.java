@@ -204,11 +204,25 @@ public class PifocPositionAndMonitor extends JPanel {
 		}
 	}
 	
-	public double getZStagePosition() throws NumberFormatException, Exception{
-		return Double.valueOf(mf.getCoreObject().getProperty(mf.getZObjectiveName(), "Position"));
+	public double getZStagePosition() {
+		try {
+			return Double.valueOf(mf.getCoreObject().getProperty(mf.getZObjectiveName(), "Position"));
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return (Double) null;
 	}
 	
-	public void setZStagePosition(double position) throws Exception {
-		mf.getCoreObject().setProperty(mf.getZObjectiveName(), "Position",position);
+	public void setZStagePosition(double position) {
+		try {
+			mf.getCoreObject().setProperty(mf.getZObjectiveName(), "Position",position);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
