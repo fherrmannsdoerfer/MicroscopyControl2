@@ -48,7 +48,7 @@ public class MainFrame extends JFrame {
 	private String pathToLogFile = "D:\\Measurements\\LogFileEditor.txt";
 	//Path to the exchange folder monitored by the Chronos plugin
 	private String pathToExchangeFolder ="C:\\Users\\Public\\Folder For Chronos\\ExchangeFolder";
-	private String pathTo3DCalibrationFileRapidStorm ="D:\\Measurements\\_STORM_general\\calibFiles\\20180301_Calibration_661Laser.txt";
+	private String pathTo3DCalibrationFileRapidStorm ="D:\\Measurements\\_STORM_general\\calibFiles\\180328_Calibration_661LaserRS.txt";
 	//name of the hardware set in Micro-Manager
 	private String camName = "iXon Ultra";
 	private String zObjectiveName = "FocusLocPIZMotorObjective";

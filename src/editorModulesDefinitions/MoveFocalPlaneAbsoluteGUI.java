@@ -90,8 +90,12 @@ public class MoveFocalPlaneAbsoluteGUI extends EditorModules{
 
 	@Override
 	public boolean checkForValidity() {
-		// TODO Auto-generated method stub
-		return true;
+		if (mirrorPosition.getText().isEmpty()) {
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
 
 }
