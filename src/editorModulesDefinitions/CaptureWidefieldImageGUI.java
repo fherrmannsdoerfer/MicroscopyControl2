@@ -86,7 +86,7 @@ public class CaptureWidefieldImageGUI extends EditorModules{
 	@Override
 	public boolean checkForValidity() {
 		
-		if (exposureTime.getText().isEmpty()) {
+		if (exposureTime.getText().isEmpty()||exposureTime.getText().contains(",")) {
 			return false;
 		} else {return true;}
 		

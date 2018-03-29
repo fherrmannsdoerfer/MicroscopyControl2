@@ -129,7 +129,7 @@ public class AddSolutionFromVialToSampleGUI extends EditorModules{
 
 	@Override
 	public boolean checkForValidity() {
-		if (getVialNumber(vialNumber) == -1 || getVolume(volume, useLS2.isSelected()) == -1|| getVolume(vortexVolume,useLS2.isSelected())==-1|| getNbrCycles(nbrVortexCycles)==-1) {
+		if (vialNumber.getText().isEmpty() ||volume.getText().isEmpty()||vortexVolume.getText().isEmpty() ||nbrVortexCycles.getText().isEmpty()) {
 			return false;
 		}
 		return true;

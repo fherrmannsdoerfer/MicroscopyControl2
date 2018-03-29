@@ -107,7 +107,7 @@ public class PauseGUI extends EditorModules{
 
 	@Override
 	public boolean checkForValidity() {
-		if (durationOfPause.getText().isEmpty()) {
+		if (durationOfPause.getText().isEmpty()||durationOfPause.getText().contains(",")) {
 			return false;
 		}
 		else {

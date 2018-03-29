@@ -148,7 +148,7 @@ public class CameraParametersGUI extends EditorModules{
 
 	@Override
 	public boolean checkForValidity() {
-		if(exposureTime.getText().isEmpty()||emGain.getText().isEmpty()||nbrFrames.getText().isEmpty()) {
+		if(exposureTime.getText().isEmpty()||emGain.getText().isEmpty()||nbrFrames.getText().isEmpty()||exposureTime.getText().contains(",")||emGain.getText().contains(",")||nbrFrames.getText().contains(",")) {
 			return false;
 		}
 		return true;

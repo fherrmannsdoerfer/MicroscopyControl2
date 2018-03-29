@@ -83,14 +83,14 @@ public class MoveFocalPlaneGUI extends EditorModules{
 	@Override
 	public void perform() {
 		logTimeStart();
-		mfe.getMainFrameReference().moveMirrorPositionRelative(Double.parseDouble(Utility.parseParameter(mirrorPosition.getText(), mfe)));
+		mfe.getMainFrameReference().moveMirrorPositionRelative(Double.parseDouble((Utility.parseParameter(mirrorPosition.getText(), mfe)).replace(",", ".")));
 		setProgressbarValue(100);
 		logTimeEnd();
 	}
 
 	@Override
 	public boolean checkForValidity() {
-		if (mirrorPosition.getText().isEmpty()) {
+		if (mirrorPosition.getText().isEmpty()||mirrorPosition.getText().contains(",")) {
 			return false;
 		}
 		else {

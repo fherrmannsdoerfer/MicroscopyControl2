@@ -39,7 +39,7 @@ public class ControlerEditor implements Serializable{
 		
 		System.out.println("Program finished");
 	}
-
+	
 	private void processModuleList(ArrayList<EditorModules> functions) {
 		int endOfLoop = 0;
 		for (int i =0; i<functions.size();i++){
@@ -83,7 +83,22 @@ public class ControlerEditor implements Serializable{
 	//not nice but also no time... This finds the right parameter entry for the given tag depending on the iteration step,
 	//only makes sense for LoopIterableGUI objects
 	public String getIterationValue(String parameterTag){
-		for (LoopModules loopModule :loopModules){
+		if (loopModules.size() ==0){
+			ArrayList<LoopModules> loopModulesLocal = new ArrayList<LoopModules>();
+			for (EditorModules em:mfe.getListProcessingStepPanels()) {
+				if (em instanceof LoopModules){
+					LoopModules thisModule = (LoopModules) em;
+					loopModulesLocal.add(thisModule);
+				}
+			}
+			return getIterationValueFromLoop(loopModulesLocal, parameterTag);
+		}else {
+			return getIterationValueFromLoop(loopModules, parameterTag);
+		}
+	}
+	
+	private String getIterationValueFromLoop(ArrayList<LoopModules> loops, String parameterTag) {
+		for (LoopModules loopModule :loops){
 			ArrayList<editor.LoopModules.ParameterTag> pts = loopModule.getParameters();
 			for (int i =0; i<pts.size();i++){
 				if(pts.get(i).getParameterTag().equals(parameterTag)){

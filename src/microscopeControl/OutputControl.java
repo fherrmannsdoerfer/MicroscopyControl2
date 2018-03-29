@@ -127,4 +127,5 @@ public class OutputControl {
 	public static StormData readStormData(String pathToReferenceMeasurement) {
 		return new StormData(pathToReferenceMeasurement);
 	}
+
 }

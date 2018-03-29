@@ -782,27 +782,32 @@ public class MainFrameEditor extends JFrame implements Serializable{
 	class RunButtonActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (mf.checkSpace(mf.getMinimalFreeSpaceForEditor())) {
-				Thread t = new Thread(){
-					@Override
-					public 
-					void run(){
-						editorShouldBeRunning = true;
-						controlerReference.resetData();
-						controlerReference.resetProgressBar(getListProcessingStepPanels());
-						String content = "-------------------------------------------------------------------------------------------------\n";
-						content += new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-						content = content + ":\nStart of processing.\n\n";
-						runButton.setEnabled(false);
-						getMainFrameReference().writeToEditorLogfile(content);
-						controlerReference.startProcessing(getListProcessingStepPanels());
-						content = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-						content = content + ":\nEnd of processing.\n-------------------------------------------------------------------------------------------------\n";
-						getMainFrameReference().writeToEditorLogfile(content);
-						runButton.setEnabled(true);
-					}
-				};
-				t.start();
+			if (mf.checkChronosState()) {	
+				if (mf.checkSpace(mf.getMinimalFreeSpaceForEditor())) {
+					Thread t = new Thread(){
+						@Override
+						public 
+						void run(){
+							editorShouldBeRunning = true;
+							controlerReference.resetData();
+							controlerReference.resetProgressBar(getListProcessingStepPanels());
+							String content = "-------------------------------------------------------------------------------------------------\n";
+							content += new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+							content = content + ":\nStart of processing.\n\n";
+							runButton.setEnabled(false);
+							getMainFrameReference().writeToEditorLogfile(content);
+							controlerReference.startProcessing(getListProcessingStepPanels());
+							content = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+							content = content + ":\nEnd of processing.\n-------------------------------------------------------------------------------------------------\n";
+							getMainFrameReference().writeToEditorLogfile(content);
+							if (getMainFrameReference().getSwitchChronosOffAfterEachEditorCompletion()) {
+								getMainFrameReference().sendAbortSignalToChronos();
+							}
+							runButton.setEnabled(true);
+						}
+					};
+					t.start();
+				}
 			}
 		}		
 	}

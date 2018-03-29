@@ -40,7 +40,10 @@ import mmcorej.CMMCore;
 
 //MainFrame is the parent window for all control elements
 public class MainFrame extends JFrame {
-
+ 
+	//if true the Chronos Plugin will have to be started before each imaging round
+	boolean switchOfChronosAfterEditorCompletion = true;
+	
 	//Path to the python executable
 	String pathToPython = "C:\\ProgramData\\Anaconda3\\python.exe";
 	
@@ -57,7 +60,7 @@ public class MainFrame extends JFrame {
 	private String zStageName = "PIZStage";
 	private String mirrorFocuslock = "SmaractZSpiegel";
 	private String filterWheelName = "Thorlabs Filter Wheel";
-	private String[] filterNames = {"488 no UV", "561 no UV", "660", "488", "561", "free"};
+	private String[] filterNames = {"488 no IR", "561 no IR", "660", "488", "561", "free"};
 	//name specified in Micro Manager
 	private String[] laserNames = {"CoherentCube405","CoherentObis488","CoherentObis561","CoherentCube661"};
 	
@@ -620,6 +623,18 @@ public class MainFrame extends JFrame {
 
 	public String getRelativeOutputTag() {
 		return referencePositionOutputTag;
+	}
+
+	public void sendAbortSignalToChronos() {
+		OutputControl.writeFileContainingSampleListPathToExchangeFolder(pathToExchangeFolder, "AbortAbortAbortAbortAbort");
+	}
+
+	public boolean getSwitchChronosOffAfterEachEditorCompletion() {
+		return switchOfChronosAfterEditorCompletion;
+	}
+
+	public boolean checkChronosState() {
+		return Utility.showCheckChronosSoftwareStateDialog();
 	}
 	
 

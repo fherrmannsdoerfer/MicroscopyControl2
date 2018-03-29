@@ -123,7 +123,7 @@ public class LaserControl extends EditorModules{
 
 	@Override
 	public boolean checkForValidity() {
-		if (laserIntensity.getText().isEmpty()|| laserIntensity.getText().isEmpty()){
+		if (laserIntensity.getText().isEmpty()|| laserIntensity.getText().isEmpty()||laserIntensity.getText().contains(",")|| laserIntensity.getText().contains(",")){
 			return false;
 		} else {return true;}
 	}

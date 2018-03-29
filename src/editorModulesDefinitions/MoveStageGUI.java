@@ -140,7 +140,7 @@ public class MoveStageGUI extends EditorModules{
 			return true;
 		}
 		else{
-			if(xPos.getText().isEmpty()||yPos.getText().isEmpty()) {
+			if(xPos.getText().isEmpty()||yPos.getText().isEmpty()||xPos.getText().contains(",")||yPos.getText().contains(",")) {
 				return false;
 			}
 			else {return true;}

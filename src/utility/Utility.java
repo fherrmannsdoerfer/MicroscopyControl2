@@ -553,7 +553,15 @@ public class Utility implements Serializable {
 			}
 		}
 		return true;
-		
+	}
+	
+	public static boolean showCheckChronosSoftwareStateDialog() {
+		int result = JOptionPane.showConfirmDialog((Component) null, "Is the Chronos plugin started? Press ok to proceed (after you turned it on) and cancel to abort!",
+		        "alert", JOptionPane.OK_CANCEL_OPTION);
+		if (result ==2) {
+			return false;
+		}
+		return true;
 	}
 	
 	//function to write black numbers close to the center of an ImagePlus
