@@ -62,6 +62,8 @@ public class AddWashingSolutionToSampleGUI extends EditorModules{
 		tempString[1] = volume.getText();
 		if (useLS2.isSelected()){
 			tempString[2] = "selected";
+		} else {
+			tempString[2] = "ns";
 		}
 		tempString[3] = pumpDuration.getText();
 		return tempString;
@@ -73,6 +75,8 @@ public class AddWashingSolutionToSampleGUI extends EditorModules{
 		volume.setText(tempString[1]);
 		if (tempString[2].equals("selected")){
 			useLS2.setSelected(true);
+		} else {
+			useLS2.setSelected(false);
 		}
 		pumpDuration.setText(tempString[3]);
 	}

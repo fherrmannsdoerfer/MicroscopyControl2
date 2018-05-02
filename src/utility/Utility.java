@@ -77,6 +77,9 @@ public class Utility implements Serializable {
 			}else { //if there is something behind the last tag is must be added as well
 				retString += parameter.substring(startStr, parameter.length());
 			}
+			while (retString.contains("%")) {
+				retString = parseParameter(retString, mfe);
+			}
 			return retString;
 		}
 		

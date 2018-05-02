@@ -1,11 +1,15 @@
 package editorModulesDefinitions;
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 
 import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 
 import utility.Utility;
 import editor.EditorModules;
@@ -17,7 +21,7 @@ public class MeasurementTagGUI extends EditorModules{
 	private static final long serialVersionUID = 1L;
 	JTextField measurementTag = new JTextField("");
 	JTextField pathField = new JTextField("");
-	JTextField comments = new JTextField("");
+	JTextArea comments = new JTextArea();
 	transient MainFrame mf;
 	private static String name = "Output Control";
 	transient MainFrameEditor mfe;
@@ -38,17 +42,18 @@ public class MeasurementTagGUI extends EditorModules{
 	
 	private JPanel createOptionPanel(){
 		JPanel retPanel = new JPanel();
-		retPanel.setLayout(new GridLayout(6, 1,6,15));
-		retPanel.add(new JLabel("Path:"));
-		Utility.setFormatTextFields(pathField, 200, 20, 50);
-		retPanel.add(pathField);
-		retPanel.add(new JLabel("Measurement tag:"));
-		Utility.setFormatTextFields(measurementTag, 200, 20, 50);
-		retPanel.add(measurementTag);
-		retPanel.add(new JLabel("Comments:"));
-		Utility.setFormatTextFields(comments, 200, 20, 50);
-		retPanel.add(comments);
-		
+		Box verticalBox = Box.createVerticalBox();
+		verticalBox.add(new JLabel("Path:"));
+		Utility.setFormatTextFields(pathField, 300, 20, 50);
+		verticalBox.add(pathField);
+		verticalBox.add(new JLabel("Measurement tag:"));
+		Utility.setFormatTextFields(measurementTag, 300, 20, 50);
+		verticalBox.add(measurementTag);
+		verticalBox.add(new JLabel("Comments:"));
+		comments.setMaximumSize(new Dimension(300, 600));
+		comments.setBackground(new Color(150,150,150));
+		verticalBox.add(comments);
+		retPanel.add(verticalBox);
 		return retPanel;
 	}
 	

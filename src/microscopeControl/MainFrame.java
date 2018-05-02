@@ -41,7 +41,8 @@ import mmcorej.CMMCore;
 //MainFrame is the parent window for all control elements
 public class MainFrame extends JFrame {
  
-	//if true the Chronos Plugin will have to be started before each imaging round
+	//if true the Chronos Plugin will have to be started before each round of the editor
+	//boolean switchOfChronosAfterEditorCompletion = false;
 	boolean switchOfChronosAfterEditorCompletion = true;
 	
 	//Path to the python executable
@@ -626,7 +627,7 @@ public class MainFrame extends JFrame {
 	}
 
 	public void sendAbortSignalToChronos() {
-		OutputControl.writeFileContainingSampleListPathToExchangeFolder(pathToExchangeFolder, "AbortAbortAbortAbortAbort");
+		Utility.startChronosPlugin(pathToExchangeFolder, "AbortAbortAbortAbortAbort");
 	}
 
 	public boolean getSwitchChronosOffAfterEachEditorCompletion() {

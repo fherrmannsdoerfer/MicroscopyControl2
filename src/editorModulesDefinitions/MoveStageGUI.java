@@ -95,6 +95,8 @@ public class MoveStageGUI extends EditorModules{
 		tagROILoop.setText(tempString[2]);
 		if (tempString[3].equals("selected")){
 			useVariableFromLoop.setSelected(true);
+		} else {
+			useVariableFromLoop.setSelected(false);
 		}
 	}
 

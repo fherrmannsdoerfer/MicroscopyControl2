@@ -83,9 +83,13 @@ public class TransfereSolutionsFromVialToVial extends EditorModules{
 		tempString[2] = volume.getText();
 		if (useLS2.isSelected()){
 			tempString[3] = "selected";
+		} else {
+			tempString[3] = "ns";
 		}
 		if (vortex.isSelected()){
 			tempString[4] = "selected";
+		} else {
+			tempString[4] = "ns";
 		}
 		tempString[5] = vortexVolume.getText();
 		tempString[6] = nbrVortexCycles.getText();
@@ -99,9 +103,13 @@ public class TransfereSolutionsFromVialToVial extends EditorModules{
 		volume.setText(tempString[2]);
 		if (tempString[3].equals("selected")){
 			useLS2.setSelected(true);
+		} else {
+			useLS2.setSelected(false);
 		}
 		if (tempString[4].equals("selected")){
 			vortex.setSelected(true);
+		} else {
+			vortex.setSelected(false);
 		}
 		vortexVolume.setText(tempString[5]);
 		nbrVortexCycles.setText(tempString[6]);

@@ -101,7 +101,7 @@ public class AutomatedReconstructionControl extends JPanel {
 		
 		thresholdText = new JTextField();
 		//here you can set the default Local Relative Threshold
-		thresholdText.setText("30");
+		thresholdText.setText("40");
 		Utility.setFormatTextFields(thresholdText, 50, 20, 5);
 		
 		horizontalBoxThresholdComboboxValue.add(new JLabel("Threshold:"));

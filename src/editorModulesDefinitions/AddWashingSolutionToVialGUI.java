@@ -63,6 +63,8 @@ public class AddWashingSolutionToVialGUI extends EditorModules{
 		tempString[2] = targetVial.getText();
 		if (useLS2.isSelected()){
 			tempString[3] = "selected";
+		} else {
+			tempString[3] = "ns";
 		}
 		return tempString;
 	}
@@ -74,6 +76,8 @@ public class AddWashingSolutionToVialGUI extends EditorModules{
 		targetVial.setText(tempString[2]);
 		if (tempString[3].equals("selected")){
 			useLS2.setSelected(true);
+		} else {
+			useLS2.setSelected(false);
 		}
 	}
 

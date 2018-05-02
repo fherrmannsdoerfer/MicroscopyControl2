@@ -60,6 +60,8 @@ public class RunPumpsGUI extends EditorModules{
 		tempString[1] = time.getText();
 		if (useLS2.isSelected()){
 			tempString[2] = "selected";
+		} else {
+			tempString[2] = "ns";
 		}
 		return tempString;
 	}
@@ -71,6 +73,8 @@ public class RunPumpsGUI extends EditorModules{
 		time.setText(tempString[1]);
 		if (tempString[2].equals("selected")){
 			useLS2.setSelected(true);
+		} else {
+			useLS2.setSelected(false);
 		}
 	}
 

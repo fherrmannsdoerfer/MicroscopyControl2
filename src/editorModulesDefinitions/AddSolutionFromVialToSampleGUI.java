@@ -79,9 +79,13 @@ public class AddSolutionFromVialToSampleGUI extends EditorModules{
 		tempString[1] = volume.getText();
 		if (useLS2.isSelected()){
 			tempString[2] = "selected";
+		} else {
+			tempString[2] = "ns";
 		}
 		if (vortex.isSelected()){
 			tempString[3] = "selected";
+		} else {
+			tempString[3] = "ns";
 		}
 		tempString[4] = vortexVolume.getText();
 		tempString[5] = nbrVortexCycles.getText();
@@ -94,9 +98,13 @@ public class AddSolutionFromVialToSampleGUI extends EditorModules{
 		volume.setText(tempString[1]);
 		if (tempString[2].equals("selected")){
 			useLS2.setSelected(true);
+		} else {
+			useLS2.setSelected(false);
 		}
 		if (tempString[3].equals("selected")){
 			vortex.setSelected(true);
+		} else {
+			vortex.setSelected(false);
 		}
 		vortexVolume.setText(tempString[4]);
 		nbrVortexCycles.setText(tempString[5]);
