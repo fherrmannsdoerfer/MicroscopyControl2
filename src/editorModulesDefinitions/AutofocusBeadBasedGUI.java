@@ -17,7 +17,7 @@ public class AutofocusBeadBasedGUI extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;
 	transient MainFrameEditor mfe;
-	private static String name = "AutoFocusBead";
+	private static String name = "Autofocus Bead-Based";
 	private JTextField interval = new JTextField("100");
 	private JTextField lowerPos = new JTextField("-300");
 	private JTextField upperPos = new JTextField("300");

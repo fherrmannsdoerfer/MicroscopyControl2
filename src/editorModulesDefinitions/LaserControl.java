@@ -23,7 +23,7 @@ public class LaserControl extends EditorModules{
 	JTextField laserSelectionNumber = new JTextField("");
 	JTextField laserIntensity = new JTextField("0.1");
 	transient MainFrameEditor mfe;
-	private static String name = "LaserControl";
+	private static String name = "Laser Control";
 	String[] dummyLaserNames = {"laser1","laser2","laser3","laser4"};
 	
 	public LaserControl(MainFrameEditor mfe) {

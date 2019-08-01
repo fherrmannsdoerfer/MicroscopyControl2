@@ -21,7 +21,7 @@ public class BreakPointGUI extends EditorModules{
 	private static final long serialVersionUID = 1L;
 	transient MainFrameEditor mfe;
 	JTextField message = new JTextField("Place message here.");
-	private static String name = "BreakPointGUI";
+	private static String name = "Break Point";
 
 	public BreakPointGUI(MainFrameEditor mfe) {
 		super(mfe);

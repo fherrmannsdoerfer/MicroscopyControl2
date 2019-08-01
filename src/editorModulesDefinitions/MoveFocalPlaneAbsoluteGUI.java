@@ -14,7 +14,7 @@ public class MoveFocalPlaneAbsoluteGUI extends EditorModules{
 	private static final long serialVersionUID = 1L;
 	JTextField mirrorPosition = new JTextField("");
 	
-	private static String name = "Shift Focal Plane Absolut";
+	private static String name = "Shift Focal Plane Absolutely";
 	transient MainFrameEditor mfe;
 	
 	public MoveFocalPlaneAbsoluteGUI(MainFrameEditor mfe) {

@@ -22,6 +22,7 @@ public class MeasurementTagGUI extends EditorModules{
 	JTextField measurementTag = new JTextField("");
 	JTextField pathField = new JTextField("");
 	JTextArea comments = new JTextArea();
+	//JTextField comments = new JTextField();
 	transient MainFrame mf;
 	private static String name = "Output Control";
 	transient MainFrameEditor mfe;

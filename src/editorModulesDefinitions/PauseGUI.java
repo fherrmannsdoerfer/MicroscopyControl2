@@ -14,7 +14,7 @@ public class PauseGUI extends EditorModules{
 	private static final long serialVersionUID = 1L;
 	JTextField durationOfPause = new JTextField("");
 	
-	private static String name = "Pause Microscope";
+	private static String name = "Pause";
 	transient MainFrameEditor mfe;
 	
 	public PauseGUI(MainFrameEditor mfe) {

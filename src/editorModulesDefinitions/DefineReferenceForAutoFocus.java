@@ -24,7 +24,7 @@ public class DefineReferenceForAutoFocus extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;
 	transient MainFrameEditor mfe;
-	private static String name = "Set Reference For Autofocus";
+	private static String name = "Set Reference for Autofocus";
 	JButton getCurrentPosition = new JButton("Define Current Position As Reference:");
 	JLabel currentPositionLabel = new JLabel("position not yet set");
 		

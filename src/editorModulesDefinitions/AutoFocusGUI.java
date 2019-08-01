@@ -17,7 +17,7 @@ public class AutoFocusGUI extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;
 	transient MainFrameEditor mfe;
-	private static String name = "AutoFocus";
+	private static String name = "Autofocus";
 	private JTextField upperBound = new JTextField("38");
 	private JTextField lowerBound = new JTextField("12");
 	private JTextField stepSize = new JTextField("2");

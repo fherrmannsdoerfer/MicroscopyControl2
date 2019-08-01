@@ -16,7 +16,7 @@ public class AddWashingSolutionToVialGUI extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;
 	transient MainFrameEditor mfe;
-	private static String name = "AddWashingSolutionToVial";
+	private static String name = "Add Washing Solution to Vial";
 	private JTextField washingStationIndex = new JTextField("1");
 	private JTextField volume = new JTextField("300");
 	private JTextField targetVial = new JTextField("-1");

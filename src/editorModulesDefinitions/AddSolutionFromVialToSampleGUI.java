@@ -19,7 +19,7 @@ public class AddSolutionFromVialToSampleGUI extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;
 	transient MainFrameEditor mfe;
-	private static String name = "AddSolutionToSample";
+	private static String name = "Add Solution to Sample";
 	private JTextField vialNumber = new JTextField("-1");
 	private JTextField volume = new JTextField("300");
 	private JCheckBox useLS2 = new JCheckBox("Use LS 2");

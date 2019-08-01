@@ -26,7 +26,7 @@ public class MoveStageGUI extends EditorModules{
 	JCheckBox useVariableFromLoop = new JCheckBox("Use ROI From Loop");
 	transient MainFrameEditor mfe;
 	JTextField tagROILoop = new JTextField();
-	private static String name = "MoveXYStage";
+	private static String name = "Move XY-Stage";
 	
 	public MoveStageGUI(MainFrameEditor mfe) {
 		super(mfe);

@@ -16,7 +16,7 @@ public class AddWashingSolutionToSampleGUI extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;
 	transient MainFrameEditor mfe;
-	private static String name = "AddWashingSolutionToSample";
+	private static String name = "Add Washing Solution to Sample";
 	private JTextField washingStationIndex = new JTextField("1");
 	private JTextField volume = new JTextField("300");
 	private JCheckBox useLS2 = new JCheckBox("Use LS2");

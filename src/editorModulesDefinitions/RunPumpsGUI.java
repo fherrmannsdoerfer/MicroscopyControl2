@@ -17,7 +17,7 @@ public class RunPumpsGUI extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;
 	transient MainFrameEditor mfe;
-	private static String name = "RunPumps";
+	private static String name = "Run Pumps";
 	private JTextField washingStationIndex = new JTextField("1");
 	private JTextField time = new JTextField("10");
 	private JCheckBox useLS2 = new JCheckBox("Use LS2");

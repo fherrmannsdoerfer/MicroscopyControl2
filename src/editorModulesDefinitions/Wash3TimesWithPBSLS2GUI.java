@@ -16,7 +16,7 @@ public class Wash3TimesWithPBSLS2GUI extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;
 	transient MainFrameEditor mfe;
-	private static String name = "Wash3TimesWithPBS";
+	private static String name = "Wash 3 Times with PBS";
 	JTextField injectionVolume = new JTextField("300");
 	JTextField volumePerSpot = new JTextField("200");
 	JTextField waitTimeSeks = new JTextField("300");

@@ -25,7 +25,7 @@ public class FocusLockStateGUI extends EditorModules{
 	JTextField focuslockStateSelectionNumber = new JTextField("1");
 	
 	transient MainFrameEditor mfe;
-	private static String name = "FocusLockStateGUI";
+	private static String name = "Focus Lock State";
 	
 	public FocusLockStateGUI(MainFrameEditor mfe) {
 		super(mfe);

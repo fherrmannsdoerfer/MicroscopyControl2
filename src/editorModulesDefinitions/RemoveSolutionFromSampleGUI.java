@@ -16,7 +16,7 @@ public class RemoveSolutionFromSampleGUI extends EditorModules{
 	private static final long serialVersionUID = 1L;
 	JTextField volumePerSpot = new JTextField("200");
 	transient MainFrameEditor mfe;
-	private static String name = "RemoveSolutionFromSample";
+	private static String name = "Remove Solution from Sample";
 	
 	public RemoveSolutionFromSampleGUI(MainFrameEditor mfe) {
 		super(mfe);

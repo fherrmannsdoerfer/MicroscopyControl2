@@ -22,7 +22,7 @@ public class StartImageAcquisitionGUI extends EditorModules{
 	transient MainFrameEditor mfe;
 	JCheckBox applyChecks = new JCheckBox("Apply Checks For Overwriting, ROI, etc..");
 	
-	private static String name = "StartImageAcquisition";
+	private static String name = "Start Image Acquisition";
 	
 	public StartImageAcquisitionGUI(MainFrameEditor mfe) {
 		super(mfe);

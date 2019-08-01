@@ -27,7 +27,7 @@ public class CameraParametersGUI extends EditorModules{
 	JTextField exposureTime = new JTextField("100");
 	JTextField nbrFrames = new JTextField("20000");
 	transient MainFrameEditor mfe;
-	private static String name = "CameraParametersGUI";
+	private static String name = "Camera Parameters";
 	String[] dummyLaserNames = {"laser1","laser2","laser3","laser4"};
 	
 	public CameraParametersGUI(MainFrameEditor mfe) {

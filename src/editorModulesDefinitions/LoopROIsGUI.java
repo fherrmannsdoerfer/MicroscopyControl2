@@ -29,7 +29,7 @@ public class LoopROIsGUI extends LoopModules{
 	transient MainFrameEditor mfe;
 	JPanel dispList;
 	
-	private static String name = "LoopROIs";
+	private static String name = "Loop ROIs";
 	EditorModules endLoop = new EndLoopGUI(this);
 	JScrollPane scrollPane2;
 	
@@ -108,7 +108,7 @@ public class LoopROIsGUI extends LoopModules{
 		dispList.removeAll();
 		PositionList list = mfe.getMainFrameReference().getPositionList();
 		numberRuns.setText(String.valueOf(list.getNumberOfPositions()));
-		dispList.setLayout(new GridLayout(list.getNumberOfPositions()+1,4,10,10));
+		/*dispList.setLayout(new GridLayout(list.getNumberOfPositions()+1,4,10,10));
 		dispList.add(new JLabel("Position:"));
 		dispList.add(new JLabel("X:"));
 		dispList.add(new JLabel("Y:"));
@@ -118,13 +118,14 @@ public class LoopROIsGUI extends LoopModules{
 			dispList.add(new JLabel(String.valueOf(list.getPosition(i).getX())));
 			dispList.add(new JLabel(String.valueOf(list.getPosition(i).getY())));
 			dispList.add(new JLabel(String.valueOf(list.getPosition(i).getZ())));
-		}
+		}*/
 		
 		ParameterTag pt = new ParameterTag(mfe);
 		pt.setParameterTag("%Positions%");
 		for (int i = 0;i<list.getNumberOfPositions(); i++){
 			pt.addRow(String.format(Locale.US,"%.3f<->%.3f", list.getPosition(i).getX(),list.getPosition(i).getY()));
 		}
+		
 		pt.fillScrollPane();
 		replaceParameterTag(pt,0);
 		

@@ -17,7 +17,7 @@ public class VortexVialGUI extends EditorModules{
 	
 	private static final long serialVersionUID = 1L;
 	transient MainFrameEditor mfe;
-	private static String name = "Vortex Vial";
+	private static String name = "Agitate Solution in Vial";
 	private JTextField vialIndex = new JTextField("-1");
 	private JTextField repetitions = new JTextField("3");
 	private JTextField vortexVolume = new JTextField("200");

@@ -29,7 +29,7 @@ public class LoopIterableGUI extends LoopModules{
 	JTextField numberRuns = new JTextField("1");
 	JButton addParameterTag = new JButton("Add Parameter Tag");
 	
-	private static String name = "LoopIterable";
+	private static String name = "Loop Iterable";
 	EditorModules endLoop = new EndLoopGUI(this);
 	transient MainFrameEditor mfe;
 	JScrollPane scrollPane;

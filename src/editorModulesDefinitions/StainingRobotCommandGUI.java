@@ -14,7 +14,7 @@ public class StainingRobotCommandGUI extends EditorModules{
 	private static final long serialVersionUID = 1L;
 	JTextField pathInstructionList = new JTextField("");
 	transient MainFrameEditor mfe;
-	private static String name = "StainingRobotCommand";
+	private static String name = "Staining Robot Command";
 	
 	public StainingRobotCommandGUI(MainFrameEditor mfe) {
 		super(mfe);
